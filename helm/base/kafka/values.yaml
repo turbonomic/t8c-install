@@ -9,6 +9,24 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+env:
+  - name: BROKER_ID
+    value: "1"
+  - name: KAFKA_INTERNAL_BROKER_ADDRESS
+    value: kafka
+  - name: KAFKA_INTERNAL_PORT
+    value: "9092"
+  - name: KAFKA_EXTERNAL_BROKER_ADDRESS
+    value: kafka-ext
+  - name: KAFKA_EXTERNAL_PORT
+    value: "9093"
+  - name: KAFKA_LOG_RETENTION_HRS
+    value: "24"
+  - name: KAFKA_MAX_MESSAGE_BYTES
+    value: "67108864"
+  - name: ZOOKEEPER_HOSTS
+    value: zookeeper:2181
+
 resources:
   limits:
     memory: 4Gi

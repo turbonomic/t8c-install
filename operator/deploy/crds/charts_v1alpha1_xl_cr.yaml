@@ -4,14 +4,17 @@ metadata:
   name: xl-release
 spec:
   # Default values copied from <project_dir>/helm-charts/xl/values.yaml
-  
+
   # Default values for xl.
   # This is a YAML-formatted file.
   # Declare variables to be passed into your templates.
-  
+
+  # Any changes run : kubectl apply -f deploy/crds/charts_v1alpha1_xl_cr.yaml -n turbonomic
+
   global:
   #  registry: index.docker.io
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 7.16.0
+    tag: 7.17.0
+    externalIP: 10.0.2.15

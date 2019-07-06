@@ -9,6 +9,12 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+env:
+  - name: ARANGO_ROOT_PASSWORD
+    value: root
+  - name: ARANGODB_DEFAULT_ROOT_PASSWORD
+    value: root
+
 resources:
   limits:
     memory: 2Gi

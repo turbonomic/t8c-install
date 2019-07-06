@@ -9,6 +9,13 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+env:
+  - name: METRON_ENABLED
+    value: "true"
+  # Uncomment to specify the dump interval for influx. Default is once per day if unspecified.
+  #- name: INFLUX_DUMP_INTERVAL_SECONDS
+  #  value: 300
+
 resources:
   limits:
     memory: 1Gi

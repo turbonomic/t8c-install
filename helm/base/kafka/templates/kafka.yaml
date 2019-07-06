@@ -1,10 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}-log
   labels:
     zone: internal
-    io.kompose.service: kafka-log
-  name: {{ .Chart.Name }}-log
+    app.kubernetes.io/name: {{ .Chart.Name }}-log
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -15,51 +17,29 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: internal
-    io.kompose.service: kafka
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         zone: internal
-        io.kompose.service: kafka
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
-        - name: BROKER_ID
-          value: "1"
-        - name: KAFKA_INTERNAL_BROKER_ADDRESS
-          value: kafka
-        - name: KAFKA_INTERNAL_PORT
-          value: "9092"
-        - name: KAFKA_EXTERNAL_BROKER_ADDRESS
-          value: kafka-ext
-        - name: KAFKA_EXTERNAL_PORT
-          value: "9093"
-        - name: KAFKA_LOG_RETENTION_HRS
-          value: "24"
-        - name: KAFKA_MAX_MESSAGE_BYTES
-          value: "67108864"
-        - name: ZOOKEEPER_HOSTS
-          value: zookeeper:2181
-        - name: clustermgr_host
-          value: clustermgr
-        - name: clustermgr_port
-          value: "8080"
-        - name: clustermgr_retry_delay_sec
-          value: "10"
-        - name: consul_host
-          value: consul
-        ports:
-        - containerPort: 9092
+{{ toYaml .Values.env | indent 8 -}}
         readinessProbe:
           tcpSocket:
             port: 9092
@@ -88,23 +68,27 @@ spec:
       volumes:
       - name: kafka-log
         persistentVolumeClaim:
-          claimName: kafka-log
+          claimName: {{ .Chart.Name }}-log
       - name: kafka-tmpfs0
         emptyDir: {}
   selector:
     matchLabels:
-      io.kompose.service: kafka
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: internal
-    io.kompose.service: kafka
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
   - name: tcp-kafka
     port: 9092
   selector:
-    io.kompose.service: kafka
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

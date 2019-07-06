@@ -1,12 +1,14 @@
 {{ if .Values.global }}
-  {{ if (not .Values.global.externalDBName) }}
+  {{ if and (not .Values.global.externalDBName) (not .Values.global.externalDbIP)}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}-data
   labels:
     zone: secure
-    io.kompose.service: mysql-data
-  name: mysql-data
+    app.kubernetes.io/name: {{ .Chart.Name }}-data
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -14,46 +16,32 @@ spec:
     requests:
       storage: 500Gi
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  labels:
-    zone: secure
-    io.kompose.service: mysql-log
-  name: mysql-log
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: secure
-    io.kompose.service: db
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         zone: secure
-        io.kompose.service: db
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
-        - name: DB_MEM_PCT_FOR_BUFFER_POOL
-          value: "80"
-        ports:
-        - containerPort: 3306
+{{ toYaml .Values.env | indent 8 -}}
         readinessProbe:
           tcpSocket:
             port: 3306
@@ -61,7 +49,6 @@ spec:
 {{ toYaml .Values.resources | indent 12 }}
         securityContext:
           readOnlyRootFilesystem: true
-          privileged: true
         volumeMounts:
         - mountPath: /var/lib/mysql
           name: mysql-data
@@ -85,10 +72,9 @@ spec:
       volumes:
       - name: mysql-data
         persistentVolumeClaim:
-          claimName: mysql-data
+          claimName: {{ .Chart.Name }}-data
       - name: mysql-log
-        persistentVolumeClaim:
-          claimName: mysql-log
+        emptyDir: {}
       - name: mysql-tmp
         emptyDir: {}
       - name: mysqld-run
@@ -97,26 +83,48 @@ spec:
         emptyDir: {}
   selector:
     matchLabels:
-      io.kompose.service: db
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   {{ end }}
 {{ end }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: secure
-    io.kompose.service: db
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
+  ports:
+  - name: mysql-db
+    port: 3306
 {{- if .Values.global }}
   {{- if .Values.global.externalDBName }}
   type: ExternalName
   externalName: {{ .Values.global.externalDBName }}
   {{- end -}}
-{{- end }}
-  ports:
-  - name: mysql-db
-    port: 3306
+  {{- if and (not .Values.global.externalDBName) (not .Values.global.externalDbIP)}}
   selector:
-    io.kompose.service: db
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  {{- end -}}
+
+ {{- if and (.Values.global.externalDbIP) (not .Values.global.externalDBName)}}
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{ .Chart.Name }}
+subsets:
+ -
+  addresses:
+  -
+   ip: {{ .Values.global.externalDbIP | quote }}
+  ports:
+    - port: 3306
+      name: "mysql-db"
+  {{- end -}}
+{{- end }}

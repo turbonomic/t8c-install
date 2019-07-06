@@ -9,6 +9,12 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+env:
+  - name: ZOO_MY_ID
+    value: "1"
+  - name: ZOO_SERVERS
+    value: zoo
+
 resources:
   limits:
     memory: 1Gi

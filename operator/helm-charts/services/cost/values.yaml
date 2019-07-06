@@ -10,7 +10,39 @@ image:
   pullPolicy: IfNotPresent
 
 java:
-  options: ""
+  options: "-XX:+UseG1GC -Xms16m -XX:MaxRAMPercentage=75.0 -XX:CompileThreshold=1500 -XX:+ExitOnOutOfMemoryError -verbose:gc
+            -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+PrintConcurrentLocks -XX:+PrintClassHistogram
+            -XX:+PrintCommandLineFlags -XX:+UseStringDeduplication -XX:StringDeduplicationAgeThreshold=1
+            -Djavax.xml.bind.JAXBContextFactory=com.sun.xml.bind.v2.ContextFactory
+            -Djavax.xml.ws.spi.Provider=com.sun.xml.ws.spi.ProviderImpl
+            -Djavax.xml.soap.SAAJMetaFactory=com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl
+            -Djava.security.egd=file:/dev/./urandom -Djava.net.preferIPv4Stack=true -XX:-OmitStackTraceInFastThrow
+            -Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
+
+env:
+  - name: clustermgr_host
+    value: clustermgr
+  - name: clustermgr_port
+    value: "8080"
+  - name: clustermgr_retry_delay_sec
+    value: "10"
+  - name: component_type
+    value: cost
+  - name: consul_host
+    value: consul
+  - name: instance_id
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: instance_ip
+    valueFrom:
+      fieldRef:
+        fieldPath: status.podIP
+  - name: kafkaServers
+    value: kafka:9092
+  # Enables the realtime topology listener. Should be "true" for cloud support.
+  - name: enableTopologyListener
+    value: "false"
 
 resources:
   limits:

@@ -1,10 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: dmz
-    io.kompose.service: api-certs
-  name: {{ .Chart.Name }}-certs
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -15,10 +17,12 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}-certs
   labels:
     zone: dmz
-    io.kompose.service: api
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}-certs
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -29,19 +33,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: dmz
-    io.kompose.service: api
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         zone: dmz
-        io.kompose.service: api
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
@@ -58,24 +65,7 @@ spec:
 {{- else }}
           value: {{ .Values.java.options }}
 {{- end }}
-        - name: clustermgr_host
-          value: clustermgr
-        - name: clustermgr_port
-          value: "8080"
-        - name: clustermgr_retry_delay_sec
-          value: "10"
-        - name: component_type
-          value: api
-        - name: consul_host
-          value: consul
-        - name: instance_id
-          value: api-1
-        - name: kafkaServers
-          value: kafka:9092
-        - name: realtimeTopologyContextId
-          value: "777777"
-        - name: enableVMVirtualVolumeAspectMapper
-          value: "false"
+{{ toYaml .Values.env | indent 8 -}}
         readinessProbe:
           httpGet:
             port: 8080
@@ -106,23 +96,26 @@ spec:
       volumes:
       - name: api
         persistentVolumeClaim:
-          claimName: api
+          claimName: {{ .Chart.Name }}
       - name: api-certs
         persistentVolumeClaim:
-          claimName: api-certs
+          claimName: {{ .Chart.Name }}-certs
       - name: api-tmpfs0
         emptyDir: {}
   selector:
     matchLabels:
-      io.kompose.service: api
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: dmz
-    io.kompose.service: api
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
   - name: http-api
@@ -138,4 +131,5 @@ spec:
   - name: grpc-api
     port: 9001
   selector:
-    io.kompose.service: api
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

@@ -9,7 +9,7 @@ global:
 #  imageUsername: turbouser
 #  imagePassword: turbopassword
   repository: turbonomic
-  tag: 7.16.4
+  tag: 7.17.0
 #  externalIP: 10.233.0.3 # byo k8s DNS
 #              10.100.0.10 # eks DNS
 #              10.0.0.10 # aks DNS
@@ -18,13 +18,11 @@ global:
   elk: false
 #  externalSyslog: a608c38591a9f11e9ad190efbcf8c7e5-1236730884.us-east-1.elb.amazonaws.com
   #  debug: true
-  dev_options: "-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n"
+  dev_options: "-agentlib:jdwp=transport=dt_socket,address=0.0.0.0:8000,server=y,suspend=n"
 
 ui:
   enabled: true
-history:
-  enabled: true
-reporting:
+platform:
   enabled: true
 metron:
   enabled: false
@@ -43,23 +41,19 @@ appdynamics:
   enabled: false
 aws:
   enabled: false
-awsbilling:
-  enabled: false
-awscost:
+datadog:
   enabled: false
 awslambda:
   enabled: false
 azure:
-  enabled: false
-azurecost:
-  enabled: false
-azurevolumes:
   enabled: false
 cloudfoundry:
   enabled: false
 compellent:
   enabled: false
 dynatrace:
+  enabled: false
+gcp:
   enabled: false
 hpe3par:
   enabled: false
@@ -102,8 +96,6 @@ ucsdirector:
 vcd:
   enabled: false
 vcenter:
-  enabled: false
-vcenterbrowsing:
   enabled: false
 vmax:
   enabled: false

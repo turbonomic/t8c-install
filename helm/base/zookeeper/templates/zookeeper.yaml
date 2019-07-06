@@ -1,10 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}-data
   labels:
     zone: internal
-    io.kompose.service: zookeeper-data
-  name: {{ .Chart.Name }}-data
+    app.kubernetes.io/name: {{ .Chart.Name }}-data
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -15,39 +17,29 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: internal
-    io.kompose.service: zookeeper
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         zone: internal
-        io.kompose.service: zookeeper
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
-        - name: ZOO_MY_ID
-          value: "1"
-        - name: ZOO_SERVERS
-          value: zoo
-        - name: clustermgr_host
-          value: clustermgr
-        - name: clustermgr_port
-          value: "8080"
-        - name: clustermgr_retry_delay_sec
-          value: "10"
-        - name: consul_host
-          value: consul
-        ports:
-        - containerPort: 2181
+{{ toYaml .Values.env | indent 8 -}}
         readinessProbe:
           exec:
             command:
@@ -78,23 +70,27 @@ spec:
       volumes:
       - name: zookeeper-data
         persistentVolumeClaim:
-          claimName: zookeeper-data
+          claimName: {{ .Chart.Name }}-data
       - name: zookeeper-tmpfs0
         emptyDir: {}
   selector:
     matchLabels:
-      io.kompose.service: zookeeper
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: internal
-    io.kompose.service: zookeeper
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
   - name: tcp-zookeeper
     port: 2181
   selector:
-    io.kompose.service: zookeeper
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

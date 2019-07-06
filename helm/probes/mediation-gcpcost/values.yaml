@@ -1,0 +1,62 @@
+# Default values for mediation-gcpcost.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: turbonomic
+  tag: latest
+  pullPolicy: IfNotPresent
+
+java:
+  options: "-XX:+UseG1GC -Xms16m -XX:MaxRAMPercentage=75.0 -XX:CompileThreshold=1500 -XX:+ExitOnOutOfMemoryError -verbose:gc
+            -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+PrintConcurrentLocks -XX:+PrintClassHistogram
+            -XX:+PrintCommandLineFlags -XX:+UseStringDeduplication -XX:StringDeduplicationAgeThreshold=1
+            -Djavax.xml.bind.JAXBContextFactory=com.sun.xml.bind.v2.ContextFactory
+            -Djavax.xml.ws.spi.Provider=com.sun.xml.ws.spi.ProviderImpl
+            -Djavax.xml.soap.SAAJMetaFactory=com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl
+            -Dorg.eclipse.jetty.websocket.jsr356.ssl-trust-all=true
+            -Djava.security.egd=file:/dev/./urandom -Djava.net.preferIPv4Stack=true -XX:-OmitStackTraceInFastThrow
+            -Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0
+            -DLog4jContextSelector=com.vmturbo.mediation.common.context.ThreadGroupPrefixContextSelector"
+
+env:
+  - name: clustermgr_host
+    value: clustermgr
+  - name: clustermgr_port
+    value: "8080"
+  - name: clustermgr_retry_delay_sec
+    value: "10"
+  - name: consul_host
+    value: consul
+  - name: consul_port
+    value: "8500"
+  - name: kvStoreRetryIntervalMillis
+    value: "1"
+  - name: serverHttpPort
+    value: "8080"
+  - name: serverGrpcPort
+    value: "9001"
+  - name: component_type
+    value: mediation-gcpcost
+  - name: instance_id
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: instance_ip
+    valueFrom:
+      fieldRef:
+        fieldPath: status.podIP
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    memory: 384Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

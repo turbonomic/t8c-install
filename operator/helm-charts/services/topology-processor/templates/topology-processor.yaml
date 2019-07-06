@@ -1,10 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: internal
-    io.kompose.service: topology-processor
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -15,19 +17,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: internal
-    io.kompose.service: topology-processor
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         zone: internal
-        io.kompose.service: topology-processor
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
@@ -44,26 +49,7 @@ spec:
 {{- else }}
           value: {{ .Values.java.options }}
 {{- end }}
-        - name: clustermgr_host
-          value: clustermgr
-        - name: clustermgr_port
-          value: "8080"
-        - name: clustermgr_retry_delay_sec
-          value: "10"
-        - name: component_type
-          value: topology-processor
-        - name: consul_host
-          value: consul
-        - name: instance_id
-          value: topology-processor-1
-        - name: kafkaServers
-          value: kafka:9092
-        - name: node_name
-          value: default
-        - name: realtimeTopologyContextId
-          value: "777777"
-        ports:
-        - containerPort: 8080
+{{ toYaml .Values.env | indent 8 -}}
         readinessProbe:
           httpGet:
             port: 8080
@@ -92,20 +78,23 @@ spec:
       volumes:
       - name: topology-processor
         persistentVolumeClaim:
-          claimName: topology-processor
+          claimName: {{ .Chart.Name }}
       - name: topology-processor-tmpfs0
         emptyDir: {}
   selector:
     matchLabels:
-      io.kompose.service: topology-processor
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: internal
-    io.kompose.service: topology-processor
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
   - name: http-topology-processor
@@ -119,4 +108,5 @@ spec:
   - name: grpc-topology-processor
     port: 9001
   selector:
-    io.kompose.service: topology-processor
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

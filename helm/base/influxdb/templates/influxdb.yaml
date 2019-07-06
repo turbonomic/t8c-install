@@ -1,10 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: secure
-    io.kompose.service: influxdb
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -15,10 +17,12 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}-dump
   labels:
     zone: secure
-    io.kompose.service: influxdb-dump
-  name: {{ .Chart.Name }}-dump
+    app.kubernetes.io/name: {{ .Chart.Name }}-dump
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -31,30 +35,26 @@ kind: Deployment
 metadata:
   labels:
     zone: secure
-    io.kompose.service: influxdb
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   name: {{ .Chart.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         zone: secure
-        io.kompose.service: influxdb
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
-          - name: METRON_ENABLED
-            value: "true"
-          # Uncomment to specify the dump interval for influx. Default is once per day if unspecified.
-          #- name: INFLUX_DUMP_INTERVAL_SECONDS
-          #  value: 300
-        ports:
-        - containerPort: 8086
+{{ toYaml .Values.env | indent 8 -}}
         readinessProbe:
           tcpSocket:
             port: 8086
@@ -84,23 +84,26 @@ spec:
       volumes:
       - name: influxdb
         persistentVolumeClaim:
-          claimName: influxdb
+          claimName: {{ .Chart.Name }}
       - name: influxdb-dump
         persistentVolumeClaim:
-          claimName: influxdb-dump
+          claimName: {{ .Chart.Name }}-dump
       - name: influxdb-tmpfs0
         emptyDir: {}
   selector:
     matchLabels:
-      io.kompose.service: influxdb
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: secure
-    io.kompose.service: influxdb
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
   - name: http-influxdb
@@ -108,4 +111,5 @@ spec:
   - name: rpc-influxdb-dump
     port: 8088
   selector:
-    io.kompose.service: influxdb
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

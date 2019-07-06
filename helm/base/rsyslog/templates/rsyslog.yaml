@@ -3,10 +3,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}-auditlogdata
   labels:
     zone: internal
-    io.kompose.service: rsyslog-auditlogdata
-  name: {{ .Chart.Name }}-auditlogdata
+    app.kubernetes.io/name: {{ .Chart.Name }}-auditlogdata
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -17,10 +19,12 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}-syslogdata
   labels:
     zone: internal
-    io.kompose.service: rsyslog-syslogdata
-  name: {{ .Chart.Name }}-syslogdata
+    app.kubernetes.io/name: {{ .Chart.Name }}-syslogdata
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -33,17 +37,20 @@ kind: Deployment
 metadata:
   labels:
     zone: internal
-    io.kompose.service: rsyslog
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
   name: {{ .Chart.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         zone: internal
-        io.kompose.service: rsyslog
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
@@ -78,25 +85,28 @@ spec:
       volumes:
       - name: rsyslog-syslogdata
         persistentVolumeClaim:
-          claimName: rsyslog-syslogdata
+          claimName: {{ .Chart.Name }}-syslogdata
       - name: rsyslog-auditlogdata
         persistentVolumeClaim:
-          claimName: rsyslog-auditlogdata
+          claimName: {{ .Chart.Name }}-auditlogdata
       - name: rsyslog-tmpfs0
         emptyDir: {}
   selector:
     matchLabels:
-      io.kompose.service: rsyslog
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   {{ end }}
 {{ end }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: internal
-    io.kompose.service: rsyslog
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
 {{- if .Values.global }}
   {{- if .Values.global.elk }}
@@ -113,4 +123,5 @@ spec:
   - name: http-rsyslog
     port: 8080
   selector:
-    io.kompose.service: rsyslog
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

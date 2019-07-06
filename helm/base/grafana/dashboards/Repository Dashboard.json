@@ -15,7 +15,6 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 5,
   "links": [],
   "panels": [
     {
@@ -44,6 +43,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
       "points": true,
@@ -58,14 +58,22 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
+          "legendFormat": "{{topology_type}}",
           "refId": "A"
+        },
+        {
+          "expr": "delta(repo_update_topology_duration_seconds_sum{topology_type=\"projected\"}[10m])",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{topology_type}}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Repository store source topology",
+      "title": "Repository store topology",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -128,6 +136,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
       "points": true,
@@ -142,6 +151,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
+          "legendFormat": "{{service}}",
           "refId": "A"
         }
       ],
@@ -212,6 +222,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
       "points": true,
@@ -296,6 +307,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
       "points": true,
@@ -310,6 +322,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
+          "legendFormat": "{{gc}}",
           "refId": "A"
         }
       ],
@@ -318,6 +331,93 @@
       "timeRegions": [],
       "timeShift": null,
       "title": "Repository GC Collection Time",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 2,
+          "format": "s",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 35
+      },
+      "id": 5,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 5,
+      "points": true,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"repository\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{area}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Repository java memory usage",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -364,9 +464,9 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 42
       },
-      "id": 5,
+      "id": 7,
       "legend": {
         "avg": false,
         "current": false,
@@ -380,6 +480,7 @@
       "linewidth": 1,
       "links": [],
       "nullPointMode": "null",
+      "paceLength": 10,
       "percentage": false,
       "pointradius": 5,
       "points": true,
@@ -390,10 +491,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "jvm_memory_bytes_used{service=\"repository\"}",
+          "expr": "container_memory_rss{name=~\"^k8s_repository.*\"}",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
+          "legendFormat": "{{pod_name}}",
           "refId": "A"
         }
       ],
@@ -401,7 +503,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Repository memory usage",
+      "title": "Repository container memory usage",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -439,7 +541,7 @@
       }
     }
   ],
-  "schemaVersion": 16,
+  "schemaVersion": 18,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -477,5 +579,5 @@
   "timezone": "browser",
   "title": "Repository Dashboard",
   "uid": "IzcKas1iz",
-  "version": 2
+  "version": 1
 }

@@ -9,6 +9,10 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+env:
+  - name: DB_MEM_PCT_FOR_BUFFER_POOL
+    value: "80"
+
 resources:
   limits:
     memory: 4Gi

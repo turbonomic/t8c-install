@@ -1,10 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}-data
   labels:
     zone: secure
-    io.kompose.service: consuldata
-  name: {{ .Chart.Name }}data
+    app.kubernetes.io/name: {{ .Chart.Name }}-data
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -15,19 +17,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: secure
-    io.kompose.service: consul
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         zone: secure
-        io.kompose.service: consul
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
@@ -40,24 +45,6 @@ spec:
         env:
         - name: CONSUL_BIND_INTERFACE
           value: eth0
-        ports:
-        - containerPort: 8500
-          name: ui-port
-        - containerPort: 8400
-          name: alt-port
-        - containerPort: 53
-          name: udp-port
-        - containerPort: 443
-          name: https-port
-        - containerPort: 8080
-          name: http-port
-        - containerPort: 8301
-          name: serflan
-        - containerPort: 8302
-          name: serfwan
-        - containerPort: 8600
-          name: consuldns
-        - containerPort: 8300
         readinessProbe:
           httpGet:
             port: 8500
@@ -86,20 +73,23 @@ spec:
       volumes:
       - name: consuldata
         persistentVolumeClaim:
-          claimName: consuldata
+          claimName: {{ .Chart.Name }}-data
       - name: consul-tmpfs0
         emptyDir: {}
   selector:
     matchLabels:
-      io.kompose.service: consul
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: secure
-    io.kompose.service: consul
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
   # the port that this service should serve on
@@ -116,4 +106,5 @@ spec:
   - name: udp-consuldns
     port: 8600
   selector:
-    io.kompose.service: consul
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

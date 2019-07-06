@@ -1,10 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: secure
-    io.kompose.service: arangodb
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -17,11 +19,11 @@ kind: PersistentVolumeClaim
 metadata:
   labels:
     zone: secure
-    io.kompose.service: arangodb-dump
-  name: {{ .Chart.Name }}-dump
+    io.kompose.service: arangodb-apps
+  name: {{ .Chart.Name }}-apps
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 2Gi
@@ -29,10 +31,12 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}-dump
   labels:
     zone: secure
-    io.kompose.service: arangodb-apps
-  name: {{ .Chart.Name }}-apps
+    app.kubernetes.io/name: {{ .Chart.Name }}-dump
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -43,31 +47,29 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: secure
-    io.kompose.service: arangodb
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         zone: secure
-        io.kompose.service: arangodb
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
-        - name: ARANGO_ROOT_PASSWORD
-          value: root
-        - name: ARANGODB_DEFAULT_ROOT_PASSWORD
-          value: root
-        ports:
-        - containerPort: 8529
+{{ toYaml .Values.env | indent 8 -}}
         readinessProbe:
           httpGet:
             port: 8529
@@ -101,31 +103,35 @@ spec:
       volumes:
       - name: arangodb
         persistentVolumeClaim:
-          claimName: arangodb
+          claimName: {{ .Chart.Name }}
       - name: arangodb-apps
         persistentVolumeClaim:
-          claimName: arangodb-apps
+          claimName: {{ .Chart.Name }}-apps
       - name: arangodb-dump
         persistentVolumeClaim:
-          claimName: arangodb-dump
+          claimName: {{ .Chart.Name }}-dump
       - name: arangodb-tmpfs0
         emptyDir: {}
   selector:
     matchLabels:
-      io.kompose.service: arangodb
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: secure
-    io.kompose.service: arangodb
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
-  - name: http-arangodb
+  - name: tcp-arangodb
     port: 8529
   - name: http-arangodb-dump
     port: 8599
   selector:
-    io.kompose.service: arangodb
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

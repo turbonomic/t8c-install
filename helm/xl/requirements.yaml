@@ -3,12 +3,15 @@ dependencies:
   - name: arangodb
     repository: file://../base/arangodb
     version: 0.1.0
+    condition: platform.enabled
   - name: consul
     repository: file://../base/consul
     version: 0.1.0
+    condition: platform.enabled
   - name: db
     repository: file://../base/db
     version: 0.1.0
+    condition: platform.enabled
   - name: influxdb
     repository: file://../base/influxdb
     version: 0.1.0
@@ -16,6 +19,7 @@ dependencies:
   - name: kafka
     repository: file://../base/kafka
     version: 0.1.0
+    condition: platform.enabled
   - name: nginx
     repository: file://../base/nginx
     version: 0.1.0
@@ -26,6 +30,7 @@ dependencies:
   - name: zookeeper
     repository: file://../base/zookeeper
     version: 0.1.0
+    condition: platform.enabled
 
 # Services dependencies
   - name: api
@@ -35,25 +40,31 @@ dependencies:
   - name: auth
     repository: file://../services/auth
     version: 0.1.0
+    condition: platform.enabled
   - name: action-orchestrator
     repository: file://../services/action-orchestrator
     version: 0.1.0
+    condition: platform.enabled
   - name: clustermgr
     repository: file://../services/clustermgr
     version: 0.1.0
+    condition: platform.enabled
   - name: cost
     repository: file://../services/cost
     version: 0.1.0
+    condition: platform.enabled
   - name: group
     repository: file://../services/group
     version: 0.1.0
+    condition: platform.enabled
   - name: history
     repository: file://../services/history
     version: 0.1.0
-    condition: history.enabled
+    condition: platform.enabled
   - name: market
     repository: file://../services/market
     version: 0.1.0
+    condition: platform.enabled
   - name: ml-datastore
     repository: file://../services/ml-datastore
     version: 0.1.0
@@ -65,16 +76,19 @@ dependencies:
   - name: plan-orchestrator
     repository: file://../services/plan-orchestrator
     version: 0.1.0
+    condition: platform.enabled
   - name: reporting
     repository: file://../services/reporting
     version: 0.1.0
-    condition: reporting.enabled
+    condition: platform.enabled
   - name: repository
     repository: file://../services/repository
     version: 0.1.0
+    condition: platform.enabled
   - name: topology-processor
     repository: file://../services/topology-processor
     version: 0.1.0
+    condition: platform.enabled
 
 # Logging dependencies
   - name: elasticsearch
@@ -120,11 +134,15 @@ dependencies:
   - name: mediation-awsbilling
     repository: file://../probes/mediation-awsbilling
     version: 0.1.0
-    condition: awsbilling.enabled
+    condition: aws.enabled
   - name: mediation-awscost
     repository: file://../probes/mediation-awscost
     version: 0.1.0
-    condition: awscost.enabled
+    condition: aws.enabled
+  - name: mediation-datadog
+    repository: file://../probes/mediation-datadog
+    version: 0.1.0
+    condition: datadog.enabled
   - name: mediation-awslambda
     repository: file://../probes/mediation-awslambda
     version: 0.1.0
@@ -136,11 +154,11 @@ dependencies:
   - name: mediation-azurecost
     repository: file://../probes/mediation-azurecost
     version: 0.1.0
-    condition: azurecost.enabled
+    condition: azure.enabled
   - name: mediation-azurevolumes
     repository: file://../probes/mediation-azurevolumes
     version: 0.1.0
-    condition: azurevolumes.enabled
+    condition: azure.enabled
   - name: mediation-cloudfoundry
     repository: file://../probes/mediation-cloudfoundry
     version: 0.1.0
@@ -153,6 +171,14 @@ dependencies:
     repository: file://../probes/mediation-dynatrace
     version: 0.1.0
     condition: dynatrace.enabled
+  - name: mediation-gcp
+    repository: file://../probes/mediation-gcp
+    version: 0.1.0
+    condition: gcp.enabled
+  - name: mediation-gcpcost
+    repository: file://../probes/mediation-gcpcost
+    version: 0.1.0
+    condition: gcp.enabled
   - name: mediation-hds
     repository: file://../probes/mediation-hds
     version: 0.1.0
@@ -236,7 +262,7 @@ dependencies:
   - name: mediation-vcenterbrowsing
     repository: file://../probes/mediation-vcenterbrowsing
     version: 0.1.0
-    condition: vcenterbrowsing.enabled
+    condition: vcenter.enabled
   - name: mediation-vcd
     repository: file://../probes/mediation-vcd
     version: 0.1.0
