@@ -1,0 +1,7193 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 12,
+  "iteration": 1559313424970,
+  "links": [],
+  "panels": [
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": "component",
+      "repeatDirection": "h",
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "action-orchestrator",
+          "value": "action-orchestrator"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      },
+      "id": 3,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "api",
+          "value": "api"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "arangodb",
+          "value": "arangodb"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 5,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "auth",
+          "value": "auth"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 7
+      },
+      "id": 6,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "clustermgr",
+          "value": "clustermgr"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 7
+      },
+      "id": 7,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "consul",
+          "value": "consul"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 7
+      },
+      "id": 8,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "coredns",
+          "value": "coredns"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 7
+      },
+      "id": 9,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "cost",
+          "value": "cost"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 14
+      },
+      "id": 10,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "db",
+          "value": "db"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 14
+      },
+      "id": 11,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15d5e655-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15d5e655-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 14
+      },
+      "id": 12,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15d69825-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15d69825-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 14
+      },
+      "id": 13,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15db372b-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15db372b-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 21
+      },
+      "id": 14,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15dbe529-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15dbe529-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 21
+      },
+      "id": 15,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15dd7137-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15dd7137-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 21
+      },
+      "id": 16,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15df03c3-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15df03c3-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 21
+      },
+      "id": 17,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15e0bdc0-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15e0bdc0-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 28
+      },
+      "id": 18,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15e27e82-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15e27e82-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 28
+      },
+      "id": 19,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15e41182-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15e41182-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 28
+      },
+      "id": 20,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15e5e9b7-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15e5e9b7-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 28
+      },
+      "id": 21,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15e71725-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15e71725-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 35
+      },
+      "id": 22,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15e858cd-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15e858cd-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 35
+      },
+      "id": 23,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15e965fe-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15e965fe-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 35
+      },
+      "id": 24,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15ed3679-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15ed3679-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 35
+      },
+      "id": 25,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15ee730c-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15ee730c-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 42
+      },
+      "id": 26,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15ef870e-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15ef870e-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 42
+      },
+      "id": 27,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15f162ee-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15f162ee-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 42
+      },
+      "id": 28,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "glusterfs-dynamic-15f2f66f-7ce0-11e9-a388-005056b86efc",
+          "value": "glusterfs-dynamic-15f2f66f-7ce0-11e9-a388-005056b86efc"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 42
+      },
+      "id": 29,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "grafana",
+          "value": "grafana"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 49
+      },
+      "id": 30,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "group",
+          "value": "group"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 49
+      },
+      "id": 31,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "heketi",
+          "value": "heketi"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 49
+      },
+      "id": 32,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "heketi-storage-endpoints",
+          "value": "heketi-storage-endpoints"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 49
+      },
+      "id": 33,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "history",
+          "value": "history"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 56
+      },
+      "id": 34,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "kafka",
+          "value": "kafka"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 56
+      },
+      "id": 35,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "kubernetes",
+          "value": "kubernetes"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 56
+      },
+      "id": 36,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "kubernetes-dashboard",
+          "value": "kubernetes-dashboard"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 56
+      },
+      "id": 37,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "market",
+          "value": "market"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 63
+      },
+      "id": 38,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "nginx",
+          "value": "nginx"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 63
+      },
+      "id": 39,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "plan-orchestrator",
+          "value": "plan-orchestrator"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 63
+      },
+      "id": 40,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "prometheus-alertmanager",
+          "value": "prometheus-alertmanager"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 63
+      },
+      "id": 41,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "prometheus-kube-state-metrics",
+          "value": "prometheus-kube-state-metrics"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 70
+      },
+      "id": 42,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "prometheus-node-exporter",
+          "value": "prometheus-node-exporter"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 70
+      },
+      "id": 43,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "prometheus-pushgateway",
+          "value": "prometheus-pushgateway"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 70
+      },
+      "id": 44,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "prometheus-server",
+          "value": "prometheus-server"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 70
+      },
+      "id": 45,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "reporting",
+          "value": "reporting"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 77
+      },
+      "id": 46,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "repository",
+          "value": "repository"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 77
+      },
+      "id": 47,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "rsyslog",
+          "value": "rsyslog"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 77
+      },
+      "id": 48,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "tiller-deploy",
+          "value": "tiller-deploy"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 77
+      },
+      "id": 49,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "topology-processor",
+          "value": "topology-processor"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 84
+      },
+      "id": 50,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 0.5,
+      "points": true,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "repeatIteration": 1559313424970,
+      "repeatPanelId": 2,
+      "scopedVars": {
+        "component": {
+          "selected": false,
+          "text": "zookeeper",
+          "value": "zookeeper"
+        }
+      },
+      "seriesOverrides": [
+        {
+          "alias": "action-orchestrator JVM Uptime",
+          "yaxis": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{service=\"$component\"}",
+          "format": "time_series",
+          "hide": false,
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}}",
+          "refId": "A"
+        },
+        {
+          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} RSS",
+          "refId": "B"
+        },
+        {
+          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Cache ",
+          "refId": "C"
+        },
+        {
+          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{container_name}} Swap",
+          "refId": "D"
+        },
+        {
+          "expr": "jvm_buffer_pool_used_bytes{service=\"[[component]]\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{pool}} buffer pool",
+          "refId": "E"
+        },
+        {
+          "expr": "jvm_memory_bytes_committed{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} {{area}} committed",
+          "refId": "F"
+        },
+        {
+          "expr": "component_jvm_uptime_minutes{service=\"[[component]]\"} ",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{service}} JVM Uptime",
+          "refId": "G"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "[[component]] Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "schemaVersion": 18,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(service)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Component",
+        "multi": true,
+        "name": "component",
+        "options": [],
+        "query": "label_values(service)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-12h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "Component Memory",
+  "uid": "ffmepcRZk",
+  "version": 1
+}

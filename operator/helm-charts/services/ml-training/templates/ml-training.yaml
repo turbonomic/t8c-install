@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    zone: internal
+    io.kompose.service: ml-training
+  name: {{ .Chart.Name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        zone: internal
+        io.kompose.service: ml-training
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ template "image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: JAVA_OPTS
+{{- if .Values.global }}
+  {{- if .Values.global.debug }}
+          value: {{ .Values.global.dev_options }} {{ .Values.java.options }}
+  {{- else }}
+          value: {{ .Values.java.options }}
+  {{- end }}
+{{- else }}
+          value: {{ .Values.java.options }}
+{{- end }}
+        - name: METRON_ENABLED
+          value: "true"
+        - name: clustermgr_host
+          value: clustermgr
+        - name: clustermgr_port
+          value: "8080"
+        - name: clustermgr_retry_delay_sec
+          value: "10"
+        - name: component_type
+          value: ml-training
+        - name: consul_host
+          value: consul
+        - name: instance_id
+          value: ml-training-1
+        - name: kafkaServers
+          value: kafka:9092
+        readinessProbe:
+          httpGet:
+            port: 8080
+            path: /health
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - mountPath: /tmp
+          name: ml-training-tmpfs0
+{{- if .Values.global }}
+  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+      imagePullSecrets:
+      - name: turbocred
+  {{- end -}}
+{{- end }}
+      restartPolicy: Always
+      volumes:
+      - name: ml-training-tmpfs0
+        emptyDir: {}
+  selector:
+    matchLabels:
+      io.kompose.service: ml-training
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    zone: internal
+    io.kompose.service: ml-training
+  name: {{ .Chart.Name }}
+spec:
+  ports:
+  - name: http-ml-training
+    port: 8080
+{{- if .Values.global }}
+  {{- if .Values.global.debug }}
+  - name: tcp-ml-datastore-debug
+    port: 8000
+  {{- end -}}
+{{- end }}
+  selector:
+    io.kompose.service: ml-training
