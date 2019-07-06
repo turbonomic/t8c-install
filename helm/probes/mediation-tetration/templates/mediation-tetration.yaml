@@ -1,0 +1,90 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    zone: secure
+    io.kompose.service: mediation-tetration
+  name: mediation-tetration
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        zone: secure
+        io.kompose.service: mediation-tetration
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ template "tetration_image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: JAVA_OPTS
+{{- if .Values.global }}
+  {{- if .Values.global.debug }}
+          value: {{ .Values.global.dev_options }} {{ .Values.java.options }}
+  {{- else }}
+          value: {{ .Values.java.options }}
+  {{- end }}
+{{- else }}
+          value: {{ .Values.java.options }}
+{{- end }}
+        - name: LOG4J_CONTEXT_SELECTOR
+          value: com.vmturbo.mediation.common.context.ThreadGroupPrefixContextSelector
+        - name: clustermgr_host
+          value: clustermgr
+        - name: clustermgr_port
+          value: "8080"
+        - name: clustermgr_retry_delay_sec
+          value: "10"
+        - name: component_type
+          value: mediation-tetration
+        - name: consul_host
+          value: consul
+        - name: instance_id
+          value: mediation-tetration-1
+        readinessProbe:
+          httpGet:
+            port: 8080
+            path: /health
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - mountPath: /tmp
+          name: mediation-tetration-tmpfs0
+{{- if .Values.global }}
+  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+      imagePullSecrets:
+      - name: turbocred
+  {{- end -}}
+{{- end }}
+      restartPolicy: Always
+      volumes:
+      - name: mediation-tetration-tmpfs0
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    zone: secure
+    io.kompose.service: mediation-tetration
+  name: mediation-tetration
+spec:
+  ports:
+  - name: mediation-tetration
+    port: 8080
+{{- if .Values.global }}
+  {{- if .Values.global.debug }}
+  - name: mediation-tetration-debug
+    port: 8000
+  {{- end -}}
+{{- end }}
+  selector:
+    io.kompose.service: mediation-tetration

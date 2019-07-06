@@ -1,0 +1,104 @@
+{{ if .Values.global }}
+  {{ if (not .Values.global.externalDBName) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    zone: secure
+    io.kompose.service: mysql-data
+  name: mysql-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    zone: secure
+    io.kompose.service: db
+  name: {{ .Chart.Name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        zone: secure
+        io.kompose.service: db
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ template "image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: DB_MEM_PCT_FOR_BUFFER_POOL
+          value: "80"
+        ports:
+        - containerPort: 3306
+        readinessProbe:
+          tcpSocket:
+            port: 3306
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+        securityContext:
+          readOnlyRootFilesystem: true
+          privileged: true
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-data
+        - mountPath: /var/log/mysql
+          name: mysql-log
+        - mountPath: /var/lib/mysql/tmp
+          name: mysql-tmp
+        - mountPath: /run/mysqld
+          name: mysqld-run
+        - mountPath: /tmp
+          name: db-tmpfs0
+{{- if .Values.global }}
+  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+      imagePullSecrets:
+      - name: turbocred
+  {{- end -}}
+{{- end }}
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 0
+      volumes:
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: mysql-data
+      - name: mysql-log
+        emptyDir: {}
+      - name: mysql-tmp
+        emptyDir: {}
+      - name: mysqld-run
+        emptyDir: {}
+      - name: db-tmpfs0
+        emptyDir: {}
+  {{ end }}
+{{ end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    zone: secure
+    io.kompose.service: db
+  name: {{ .Chart.Name }}
+spec:
+{{- if .Values.global }}
+  {{- if .Values.global.externalDBName }}
+  type: ExternalName
+  externalName: {{ .Values.global.externalDBName }}
+  {{- end -}}
+{{- end }}
+  ports:
+  - name: db
+    port: 3306
+  selector:
+    io.kompose.service: db

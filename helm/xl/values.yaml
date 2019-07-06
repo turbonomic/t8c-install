@@ -1,0 +1,129 @@
+# Default values for xl.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+global:
+#  registry: index.docker.io
+#  imageUsername: turbouser
+#  imagePassword: turbopassword
+  repository: turbonomic
+  tag: 7.13.0
+#  externalIP: 10.233.0.3 # byo k8s DNS
+#              10.100.0.10 # eks DNS
+#              10.0.0.10 # aks DNS
+#              10.23.240.10 # gke DNS
+#  externalDBName: xl-hackaton.cmachd0izjog.ca-central-1.rds.amazonaws.com
+#  debug: true
+  dev_options: "-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n"
+
+ui:
+  enabled: true
+history:
+  enabled: true
+reporting:
+  enabled: true
+metron:
+  enabled: false
+
+prometheus:
+  enabled: false
+grafana:
+  enabled: false
+
+# Enable mediation
+actionscript:
+  enabled: false
+aix:
+  enabled: false
+appdynamics:
+  enabled: false
+aws:
+  enabled: false
+awsbilling:
+  enabled: false
+awscost:
+  enabled: false
+awslambda:
+  enabled: false
+azure:
+  enabled: false
+azurevolumes:
+  enabled: false
+cloudfoundry:
+  enabled: false
+compellent:
+  enabled: false
+dynatrace:
+  enabled: false
+hpe3par:
+  enabled: false
+hds:
+  enabled: false
+hyperflex:
+  enabled: false
+hyperv:
+  enabled: false
+istio:
+  enabled: false
+mssql:
+  enabled: false
+netapp:
+  enabled: false
+netflow:
+  enabled: false
+oneview:
+  enabled: false
+openstack:
+  enabled: false
+pivotal:
+  enabled: false
+pure:
+  enabled: false
+rhv:
+  enabled: false
+scaleio:
+  enabled: false
+snmp:
+  enabled: false
+tetration:
+  enabled: false
+ucs:
+  enabled: false
+ucsdirector:
+  enabled: false
+vcd:
+  enabled: false
+vcenter:
+  enabled: false
+vcenterbrowsing:
+  enabled: false
+vmax:
+  enabled: false
+vmm:
+  enabled: false
+vplex:
+  enabled: false
+wmi:
+  enabled: false
+xtremio:
+  enabled: false
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

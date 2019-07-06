@@ -1,0 +1,92 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    zone: internal
+    io.kompose.service: cost
+  name: {{ .Chart.Name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        zone: internal
+        io.kompose.service: cost
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ template "cost_image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: JAVA_OPTS
+{{- if .Values.global }}
+  {{- if .Values.global.debug }}
+          value: {{ .Values.global.dev_options }} {{ .Values.java.options }}
+  {{- else }}
+          value: {{ .Values.java.options }}
+  {{- end }}
+{{- else }}
+          value: {{ .Values.java.options }}
+{{- end }}
+        - name: clustermgr_host
+          value: clustermgr
+        - name: clustermgr_port
+          value: "8080"
+        - name: clustermgr_retry_delay_sec
+          value: "10"
+        - name: component_type
+          value: cost
+        - name: consul_host
+          value: consul
+        - name: instance_id
+          value: cost-1
+        - name: kafkaServers
+          value: kafka:9092
+        readinessProbe:
+          httpGet:
+            port: 8080
+            path: /health
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - mountPath: /tmp
+          name: cost-tmpfs0
+{{- if .Values.global }}
+  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+      imagePullSecrets:
+      - name: turbocred
+  {{- end -}}
+{{- end }}
+      restartPolicy: Always
+      volumes:
+      - name: cost-tmpfs0
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    zone: internal
+    io.kompose.service: cost
+  name: {{ .Chart.Name }}
+spec:
+  ports:
+  - name: cost
+    port: 8080
+{{- if .Values.global }}
+  {{- if .Values.global.debug }}
+  - name: cost-debug
+    port: 8000
+  {{- end -}}
+{{- end }}
+  - name: "9001"
+    port: 9001
+  selector:
+    io.kompose.service: cost

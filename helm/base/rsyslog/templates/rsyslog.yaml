@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    zone: internal
+    io.kompose.service: rsyslog-auditlogdata
+  name: {{ .Chart.Name }}-auditlogdata
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    zone: internal
+    io.kompose.service: rsyslog-syslogdata
+  name: {{ .Chart.Name }}-syslogdata
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    zone: internal
+    io.kompose.service: rsyslog
+  name: {{ .Chart.Name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        zone: internal
+        io.kompose.service: rsyslog
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ template "syslog_image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 2514
+        readinessProbe:
+          tcpSocket:
+            port: 2514
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - mountPath: /home/vmtsyslog
+          name: rsyslog-syslogdata
+        - mountPath: /var/log/turbonomic
+          name: rsyslog-auditlogdata
+        - mountPath: /tmp
+          name: rsyslog-tmpfs0
+{{- if .Values.global }}
+  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+      imagePullSecrets:
+      - name: turbocred
+  {{- end -}}
+{{- end }}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 1000
+      volumes:
+      - name: rsyslog-syslogdata
+        persistentVolumeClaim:
+          claimName: rsyslog-syslogdata
+      - name: rsyslog-auditlogdata
+        persistentVolumeClaim:
+          claimName: rsyslog-auditlogdata
+      - name: rsyslog-tmpfs0
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    zone: internal
+    io.kompose.service: rsyslog
+  name: {{ .Chart.Name }}
+spec:
+  ports:
+  - name: rsyslog
+    port: 2514
+  - name: rsyslog-http
+    port: 8080
+  selector:
+    io.kompose.service: rsyslog

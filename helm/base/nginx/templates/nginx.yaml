@@ -1,0 +1,120 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    zone: public
+    io.kompose.service: nginx-certs
+  name: {{ .Chart.Name }}-certs
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    zone: public
+    io.kompose.service: nginx
+  name: {{ .Chart.Name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        zone: public
+        io.kompose.service: nginx
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ template "image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: API
+          value: api.{{ .Release.Namespace }}.svc.cluster.local
+        - name: TOPOLOGY
+          value: topology-processor.{{ .Release.Namespace }}.svc.cluster.local
+        - name: clustermgr_host
+          value: clustermgr
+        - name: clustermgr_port
+          value: "8080"
+        - name: clustermgr_retry_delay_sec
+          value: "10"
+        - name: component_type
+          value: nginx
+        - name: consul_host
+          value: consul
+        - name: instance_id
+          value: nginx-1
+        ports:
+        - containerPort: 8443
+        - containerPort: 8000
+        readinessProbe:
+          tcpSocket:
+            port: 8443
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - mountPath: /etc/nginx/certs
+          name: nginx-certs
+        - mountPath: /var/www/load-status
+          name: nginx-load-status
+        - mountPath: /var/cache/nginx
+          name: nginx-data
+        - mountPath: /var/run
+          name: nginx-run
+        - mountPath: /tmp
+          name: nginx-tmpfs0
+{{- if .Values.global }}
+  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+      imagePullSecrets:
+      - name: turbocred
+  {{- end -}}
+{{- end }}
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 2000
+      volumes:
+      - name: nginx-certs
+        persistentVolumeClaim:
+          claimName: nginx-certs
+      - name: nginx-load-status
+        emptyDir: {}
+      - name: nginx-data
+        emptyDir: {}
+      - name: nginx-run
+        emptyDir: {}
+      - name: nginx-tmpfs0
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    zone: public
+    io.kompose.service: nginx
+  name: {{ .Chart.Name }}
+spec:
+  type: LoadBalancer
+  ports:
+  - name: nginx-https
+    port: 443
+    targetPort: 8443
+  - name: nginx-http
+    port: 80
+    targetPort: 8000
+  selector:
+    io.kompose.service: nginx
+{{- if .Values.global }}
+  {{- if .Values.global.externalIP }}
+  externalIPs:
+    - {{ .Values.global.externalIP }}
+  {{- end -}}
+{{- end -}}
