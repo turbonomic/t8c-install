@@ -73,7 +73,7 @@ spec:
         readinessProbe:
           httpGet:
             port: 8529
-            path: /
+            path: /_admin/server/availability
         resources:
 {{ toYaml .Values.resources | indent 12 }}
         securityContext:
