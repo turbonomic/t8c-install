@@ -68,7 +68,7 @@ spec:
       permissions:
         - rules:
             - apiGroups:
-                - ""
+                - ''
               resources:
                 - pods
                 - services
@@ -86,13 +86,13 @@ spec:
               verbs:
                 - '*'
             - apiGroups:
-                - ""
+                - ''
               resources:
                 - namespaces
               verbs:
                 - get
             - apiGroups:
-                - ""
+                - ''
               resources:
                 - configmaps
                 - secrets

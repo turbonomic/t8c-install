@@ -2,7 +2,7 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   annotations:
-    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1alpha1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"repository":"turbonomic","tag":"7.16.0"}}}]'
+    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1alpha1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"repository":"turbonomic","tag":"7.16.4"}}}]'
     capabilities: Basic Install
     categories: Monitoring
     certified: "false"
@@ -68,7 +68,7 @@ spec:
       permissions:
         - rules:
             - apiGroups:
-                - ""
+                - ''
               resources:
                 - pods
                 - services
@@ -86,13 +86,13 @@ spec:
               verbs:
                 - '*'
             - apiGroups:
-                - ""
+                - ''
               resources:
                 - namespaces
               verbs:
                 - get
             - apiGroups:
-                - ""
+                - ''
               resources:
                 - configmaps
                 - secrets
