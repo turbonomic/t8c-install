@@ -2,18 +2,18 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   annotations:
-    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1alpha1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"repository":"turbonomic","tag":"7.17.1"}}}]'
+    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1alpha1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"repository":"turbonomic","tag":"7.16.4"}}}]'
     capabilities: Basic Install
     categories: Monitoring
     certified: "false"
-    containerImage: turbonomic/t8c-operator:7.17
-    createdAt: "2019-06-01T00:00:00.000Z"
+    containerImage: registry.connect.redhat.com/turbonomic/t8c-operator:7.16
+    createdAt: "2019-05-01T00:00:00.000Z"
     description: Turbonomic Workload Automation for Multicloud simultaneously optimizes
       performance, compliance, and cost in real-time. Workloads are precisely resourced,
       automatically, to perform while satisfying business constraints.
     repository: https://github.com/turbonomic/t8c-install/tree/master/operator
     support: Turbonomic, Inc.
-  name: t8c-operator.v7.17.0
+  name: t8c-operator.v7.16.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -69,7 +69,7 @@ spec:
                             fieldPath: metadata.name
                       - name: OPERATOR_NAME
                         value: t8c-operator
-                    image: turbonomic/t8c-operator:7.17
+                    image: registry.connect.redhat.com/turbonomic/t8c-operator:7.16
                     imagePullPolicy: Always
                     name: t8c-operator
                     resources: {}
@@ -135,5 +135,4 @@ spec:
   maturity: alpha
   provider:
     name: Turbonomic, Inc.
-  replaces: t8c-operator.v7.16.0
-  version: 7.17.0
+  version: 7.16.0
