@@ -6,7 +6,7 @@ metadata:
     capabilities: Basic Install
     categories: Monitoring
     certified: "false"
-    containerImage: turbonomic/t8c-operator:7.17
+    containerImage: registry.connect.redhat.com/turbonomic/t8c-operator:7.17
     createdAt: "2019-06-01T00:00:00.000Z"
     description: Turbonomic Workload Automation for Multicloud simultaneously optimizes
       performance, compliance, and cost in real-time. Workloads are precisely resourced,
@@ -69,7 +69,7 @@ spec:
                             fieldPath: metadata.name
                       - name: OPERATOR_NAME
                         value: t8c-operator
-                    image: turbonomic/t8c-operator:7.17
+                    image: registry.connect.redhat.com/turbonomic/t8c-operator:7.17
                     imagePullPolicy: Always
                     name: t8c-operator
                     resources: {}
