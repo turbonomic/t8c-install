@@ -33,11 +33,11 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: secure
-      app.kubernetes.io/name: {{ .Chart.Name }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
-  name: {{ .Chart.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   strategy:
