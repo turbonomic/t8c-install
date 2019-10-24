@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubeturbo.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "kubeturbo.name" . }}
+    helm.sh/chart: {{ include "kubeturbo.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "kubeturbo.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+        kubeturbo.io/controllable: "false"
+      labels:
+        app.kubernetes.io/name: {{ include "kubeturbo.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccount: turbo-user
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --turboconfig=/etc/kubeturbo/turbo.config
+            - --v={{ .Values.args.logginglevel }}
+          {{- if .Values.args.kubelethttps }}
+            - --kubelet-https={{ .Values.args.kubelethttps }}
+            - --kubelet-port={{ .Values.args.kubeletport }}
+          {{- end }}
+          {{- if not .Values.args.stitchuuid }}
+            - --stitch-uuid={{ .Values.args.stitchuuid }}
+          {{- end }}
+          {{- if .Values.args.pre16k8sVersion }}
+            - --k8sVersion=1.5
+          {{- end }}
+          volumeMounts:
+          - name: turbo-volume
+            mountPath: /etc/kubeturbo
+            readOnly: true
+          - name: varlog
+            mountPath: /var/log
+      volumes:
+      - name: turbo-volume
+        configMap:
+          name: turbo-config-{{ .Release.Name }}
+      - name: varlog
+        emptyDir: {}
+      restartPolicy: Always

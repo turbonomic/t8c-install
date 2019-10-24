@@ -15,6 +15,9 @@ env:
   - name: ARANGODB_DEFAULT_ROOT_PASSWORD
     value: root
 
+persistence:
+  size: 100Gi
+
 resources:
   limits:
     memory: 2Gi

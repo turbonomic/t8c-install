@@ -16,6 +16,9 @@ env:
   #- name: INFLUX_DUMP_INTERVAL_SECONDS
   #  value: 300
 
+persistence:
+  size: 128Gi
+
 resources:
   limits:
     memory: 1Gi

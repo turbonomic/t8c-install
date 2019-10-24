@@ -14,7 +14,7 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 500Gi
+      storage: {{ .Values.persistence.size }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -39,9 +39,11 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "image" . }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        imagePullPolicy: {{ template "pullPolicy" . }}
         env:
 {{ toYaml .Values.env | indent 8 -}}
+        ports:
+          - containerPort: 3306
         readinessProbe:
           tcpSocket:
             port: 3306
@@ -111,20 +113,17 @@ spec:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
   {{- end -}}
-
- {{- if and (.Values.global.externalDbIP) (not .Values.global.externalDBName)}}
+  {{- if and (.Values.global.externalDbIP) (not .Values.global.externalDBName)}}
 ---
 apiVersion: v1
 kind: Endpoints
 metadata:
   name: {{ .Chart.Name }}
 subsets:
- -
-  addresses:
-  -
-   ip: {{ .Values.global.externalDbIP | quote }}
-  ports:
-    - port: 3306
-      name: "mysql-db"
+  - addresses:
+    - ip: {{ .Values.global.externalDbIP | quote }}
+    ports:
+    - name: "mysql-db"
+      port: {{ .Values.global.externalDbPort | default 3306 }}
   {{- end -}}
 {{- end }}

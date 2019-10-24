@@ -21,7 +21,7 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "actionscript_image" . }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        imagePullPolicy: {{ template "pullPolicy" . }}
         env:
         - name: JAVA_OPTS
 {{- if .Values.global }}
@@ -34,6 +34,8 @@ spec:
           value: {{ .Values.java.options }}
 {{- end }}
 {{ toYaml .Values.env | indent 8 -}}
+        ports:
+          - containerPort: 8080
         readinessProbe:
           httpGet:
             port: 8080
@@ -46,6 +48,9 @@ spec:
             drop:
             - ALL
         volumeMounts:
+        - mountPath: /etc/turbonomic
+          name: turbo-volume
+          readOnly: true
         - mountPath: /tmp
           name: mediation-actionscript-tmpfs0
 {{- if .Values.global }}
@@ -56,6 +61,10 @@ spec:
 {{- end }}
       restartPolicy: Always
       volumes:
+      - name: turbo-volume
+        configMap:
+          name: global-properties-{{ .Release.Name }}
+          optional: true
       - name: mediation-actionscript-tmpfs0
         emptyDir: {}
   selector:

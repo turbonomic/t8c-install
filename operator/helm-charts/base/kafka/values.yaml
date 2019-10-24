@@ -27,6 +27,9 @@ env:
   - name: ZOOKEEPER_HOSTS
     value: zookeeper:2181
 
+persistence:
+  size: 50Gi
+
 resources:
   limits:
     memory: 4Gi

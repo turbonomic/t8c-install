@@ -237,6 +237,12 @@ datasources:
       url: http://prometheus-server:9090
       access: proxy
       isDefault: true
+    - name: InfluxDB
+      type: influxdb
+      url: http://influxdb:8086
+      access: proxy
+      database: metron
+      isDefault: false
 
 ## Configure grafana dashboard providers
 ## ref: http://docs.grafana.org/administration/provisioning/#dashboards

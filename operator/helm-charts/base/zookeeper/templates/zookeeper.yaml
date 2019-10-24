@@ -1,3 +1,5 @@
+{{ if .Values.global }}
+  {{ if (not .Values.global.externalKafka) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -37,9 +39,11 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "image" . }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        imagePullPolicy: {{ template "pullPolicy" . }}
         env:
 {{ toYaml .Values.env | indent 8 -}}
+        ports:
+          - containerPort: 2181
         readinessProbe:
           exec:
             command:
@@ -94,3 +98,5 @@ spec:
   selector:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+  {{ end }}
+{{ end }}

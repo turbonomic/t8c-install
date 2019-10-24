@@ -47,3 +47,16 @@ rules:
   - '*'
   verbs:
   - '*'
+- apiGroups:
+    - networking.istio.io
+  resources:
+    - gateways
+    - virtualservices
+  verbs:
+    - '*'
+- apiGroups:
+    - certmanager.k8s.io
+  resources:
+    - certificates
+  verbs:
+    - '*'

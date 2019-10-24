@@ -43,10 +43,33 @@ but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else l
 Also, we can't use a single if because lazy evaluation is not an option
 */}}
 {{- if .Values.global }}
-    {{- if .Values.global.repository }}
+    {{- if and .Values.global.repository .Values.global.tag (eq $repositoryName "turbonomic") (eq $tag "latest") }}
         {{- printf "%s/com.vmturbo.mediation.netapp.component:%s" .Values.global.repository .Values.global.tag -}}
+    {{- else -}}
+        {{- printf "%s/com.vmturbo.mediation.netapp.component:%s" $repositoryName $tag -}}
     {{- end -}}
 {{- else -}}
     {{- printf "%s/com.vmturbo.mediation.netapp.component:%s" $repositoryName $tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the pullPolicy
+*/}}
+{{- define "pullPolicy" -}}
+{{- $pullPolicy := .Values.image.pullPolicy -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else logic.
+Also, we can't use a single if because lazy evaluation is not an option
+*/}}
+{{- if .Values.global }}
+    {{- if and .Values.global.pullPolicy (eq $pullPolicy "IfNotPresent") }}
+        {{- printf "%s" .Values.global.pullPolicy -}}
+    {{- else -}}
+        {{- printf "%s" $pullPolicy -}}
+    {{- end -}}
+{{- else -}}
+    {{- printf "%s" $pullPolicy -}}
 {{- end -}}
 {{- end -}}

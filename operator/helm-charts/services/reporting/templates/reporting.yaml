@@ -37,7 +37,7 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "reports_image" . }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        imagePullPolicy: {{ template "pullPolicy" . }}
         env:
         - name: JAVA_OPTS
 {{- if .Values.global }}
@@ -50,6 +50,9 @@ spec:
           value: {{ .Values.java.options }}
 {{- end }}
 {{ toYaml .Values.env | indent 8 -}}
+        ports:
+          - containerPort: 8080
+          - containerPort: 9001
         readinessProbe:
           httpGet:
             port: 8080
@@ -64,6 +67,9 @@ spec:
         volumeMounts:
         - mountPath: /home/turbonomic/data
           name: reporting
+        - mountPath: /etc/turbonomic
+          name: turbo-volume
+          readOnly: true
         - mountPath: /tmp
           name: reporting-tmpfs0
 {{- if .Values.global }}
@@ -79,6 +85,10 @@ spec:
       - name: reporting
         persistentVolumeClaim:
           claimName: {{ .Chart.Name }}
+      - name: turbo-volume
+        configMap:
+          name: global-properties-{{ .Release.Name }}
+          optional: true
       - name: reporting-tmpfs0
         emptyDir: {}
   selector:

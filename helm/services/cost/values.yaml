@@ -40,13 +40,10 @@ env:
         fieldPath: status.podIP
   - name: kafkaServers
     value: kafka:9092
-  # Enables the realtime topology listener. Should be "true" for cloud support.
-  - name: enableTopologyListener
-    value: "false"
 
 resources:
   limits:
-    memory: 1024Mi
+    memory: 2Gi
   requests:
     memory: 384Mi
 

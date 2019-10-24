@@ -13,6 +13,9 @@ env:
   - name: DB_MEM_PCT_FOR_BUFFER_POOL
     value: "80"
 
+persistence:
+  size: 500Gi
+
 resources:
   limits:
     memory: 4Gi

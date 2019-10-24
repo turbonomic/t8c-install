@@ -25,13 +25,15 @@ fi
 source /opt/local/etc/turbo.conf
 
 # Update the yaml files to run offline
-/opt/local/bin/offlineUpdate.sh
+#/opt/local/bin/offlineUpdate.sh
 
 # Create the ssh keys to run with
-if [ ! -f ~/.ssh/authorized_keys ]
+if [ ! -f ~/.ssh/id_rsa.pub ]
 then
   ssh-keygen -f ~/.ssh/id_rsa -t rsa -N ''
-  cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
+  cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+  # Make sure authorized_keys has the appropriate permissions, otherwise sshd does not allow
+  # passwordless ssh.
   chmod 600 ~/.ssh/authorized_keys
 fi
 
@@ -84,6 +86,13 @@ then
 fi
 
 
+# Setup the node keys for communication
+if (( ${tLen} > 1 ))
+then
+  echo "Setup nodes to communicate using keys"
+  /opt/local/bin/multi-node-keygen.sh
+fi
+
 # List the master nodes:
 echo
 echo
@@ -128,14 +137,11 @@ cp ${kubesprayPath}/roles/container-engine/docker/defaults/main.yml ${kubesprayP
 dns_strict="docker_dns_servers_strict: true"
 dns_not_strick="docker_dns_servers_strict: false"
 dns_not_strick_group="#docker_dns_servers_strict: false"
-helm_enabled="helm_enabled: false"
-helm_enabled_group="helm_enabled: true"
 sed -i "s/${dns_strict}/${dns_not_strick}/g" ${kubesprayPath}/roles/container-engine/docker/defaults/main.yml
 sed -i "s/${dns_strict}/${dns_not_strick_group}/g" ${inventoryPath}/group_vars/all/all.yml
-sed -i "s/${helm_enabled}/${helm_enabled_group}/g" ${inventoryPath}/group_vars/k8s-cluster/addons.yml
 
 # Run ansible kubespray install
-/usr/bin/ansible-playbook -i inventory/turbocluster/hosts.yml -b --become-user=root cluster.yml
+/usr/bin/ansible-playbook --flush-cache -i inventory/turbocluster/hosts.yml -b --become-user=root cluster.yml
 # Check on ansible status and exit out if there are any failures.
 ansibleStatus=$?
 # Reset the kubespray yaml back to the original source
@@ -248,12 +254,15 @@ cp "${glusterStorageJson}.template" "${glusterStorageJson}"
 sed -i '/nodes/r /tmp/topology.json' "${glusterStorageJson}"
 rm -rf /tmp/topology.json
 
+# Set the heketi admin key (used also in the turboEnv.sh script
+export ADMIN_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
 # Run the heketi/gluster setup
 pushd ${glusterStorage}/deploy > /dev/null
 if (( ${tLen} >= 1 ))
 then
   # This is for a single node setup.
-  /opt/gluster-kubernetes/deploy/gk-deploy --single-node -gyv
+  /opt/gluster-kubernetes/deploy/gk-deploy --single-node -gyv --admin-key ${ADMIN_KEY}
   heketiStatus=$?
   if [ "X${heketiStatus}" == "X0" ]
   then
@@ -276,7 +285,7 @@ then
     exit 0
   fi
 else
-  /opt/gluster-kubernetes/deploy/gk-deploy -gyv
+  /opt/gluster-kubernetes/deploy/gk-deploy -gyv --admin-key ${ADMIN_KEY}
   heketiStatus=$?
   if [ "X${heketiStatus}" == "X0" ]
   then
@@ -330,6 +339,30 @@ then
   echo "######################################################################"
   echo "                   Operator Installation                              "
   echo "######################################################################"
+  # See if the operator has an external ip
+  sed -i "s/tag:.*/tag: ${turboVersion}/g" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
+  grep -r "externalIP:" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
+  result="$?"
+  if [ $result -ne 0 ]; then
+    sed -i "/tag:/a\
+\    externalIP: ${node}\n" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
+  fi
+
+  # Setup mariadb before brining up XL components
+  #./mariadb_storage_setup.sh
+  # Check to see if an external db is being used.  If so, do not run mariadb locally
+  egrep "externalDBName" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
+  externalDB=$(echo $?)
+  if [ X${externalDB} = X0 ]
+  then
+    externalDB=$(egrep "externalDBName" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml)
+    echo "The database is external from thise server"
+    echo "${externalDB}"
+  else
+    /opt/local/bin/configure_mariadb.sh
+  fi
+
+  # Create the operator  
   kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/service_account.yaml -n turbonomic
   kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/role.yaml -n turbonomic
   kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/role_binding.yaml -n turbonomic

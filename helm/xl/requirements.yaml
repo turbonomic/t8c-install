@@ -16,6 +16,10 @@ dependencies:
     repository: file://../base/influxdb
     version: 0.1.0
     condition: metron.enabled
+  - name: postgresql
+    repository: file://../base/postgresql
+    version: 6.3.2
+    condition: timescaledb.enabled
   - name: kafka
     repository: file://../base/kafka
     version: 0.1.0
@@ -23,7 +27,7 @@ dependencies:
   - name: nginx
     repository: file://../base/nginx
     version: 0.1.0
-    condition: ui.enabled
+    condition: nginxingress.enabled
   - name: rsyslog
     repository: file://../base/rsyslog
     version: 0.1.0
@@ -72,7 +76,7 @@ dependencies:
   - name: ml-training
     repository: file://../services/ml-training
     version: 0.1.0
-    condition: metron.enabled
+    condition: training.enabled
   - name: plan-orchestrator
     repository: file://../services/plan-orchestrator
     version: 0.1.0
@@ -104,7 +108,7 @@ dependencies:
     version: 1.7.0
     condition: global.elk
 
-  # Monitoring dependencies
+# Monitoring dependencies
   - name: prometheus
     repository: file://../base/prometheus
     version: 8.9.1
@@ -113,6 +117,28 @@ dependencies:
     repository: file://../base/grafana
     version: 3.0.1
     condition: grafana.enabled
+  - name: kubeturbo
+    repository: file://../base/kubeturbo
+    version: 0.1.0
+    condition: kubeturbo.enabled
+  - name: chronograf
+    repository: file://../base/chronograf
+    version: 1.1.0
+    condition: chronograf.enabled
+
+# Tracing dependencies
+  - name: jaeger
+    repository: file://../base/jaeger
+    version: 0.13.0
+    condition: jaeger.enabled
+  - name: cassandra
+    version: ^0.13.1
+    repository: file://../base/cassandra
+    condition: jaeger.provisionDataStore.cassandra
+  - name: elasticsearch
+    version: ^1.19.1
+    repository: file://../base/elasticsearch
+    condition: jaeger.provisionDataStore.elasticsearch
 
 # Mediation dependencies
   - name: mediation-actionscript
@@ -127,6 +153,10 @@ dependencies:
     repository: file://../probes/mediation-appdynamics
     version: 0.1.0
     condition: appdynamics.enabled
+  - name: mediation-appinsights
+    repository: file://../probes/mediation-appinsights
+    version: 0.1.0
+    condition: appinsights.enabled
   - name: mediation-aws
     repository: file://../probes/mediation-aws
     version: 0.1.0
@@ -139,6 +169,10 @@ dependencies:
     repository: file://../probes/mediation-awscost
     version: 0.1.0
     condition: aws.enabled
+  - name: mediation-baremetal
+    repository: file://../probes/mediation-baremetal
+    version: 0.1.0
+    condition: baremetal.enabled
   - name: mediation-datadog
     repository: file://../probes/mediation-datadog
     version: 0.1.0
@@ -153,6 +187,14 @@ dependencies:
     condition: azure.enabled
   - name: mediation-azurecost
     repository: file://../probes/mediation-azurecost
+    version: 0.1.0
+    condition: azure.enabled
+  - name: mediation-azureea
+    repository: file://../probes/mediation-azureea
+    version: 0.1.0
+    condition: azure.enabled
+  - name: mediation-azuresp
+    repository: file://../probes/mediation-azuresp
     version: 0.1.0
     condition: azure.enabled
   - name: mediation-azurevolumes
@@ -211,6 +253,10 @@ dependencies:
     repository: file://../probes/mediation-netflow
     version: 0.1.0
     condition: netflow.enabled
+  - name: mediation-newrelic
+    repository: file://../probes/mediation-newrelic
+    version: 0.1.0
+    condition: newrelic.enabled
   - name: mediation-mssql
     repository: file://../probes/mediation-mssql
     version: 0.1.0
@@ -243,6 +289,10 @@ dependencies:
     repository: file://../probes/mediation-snmp
     version: 0.1.0
     condition: snmp.enabled
+  - name: mediation-terraform
+    repository: file://../probes/mediation-terraform
+    version: 0.1.0
+    condition: terraform.enabled
   - name: mediation-tetration
     repository: file://../probes/mediation-tetration
     version: 0.1.0

@@ -1,0 +1,294 @@
+{{- if .Values.istioingress.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+    name: t8c-gateway
+spec:
+    selector:
+        istio: t8c-ingressgateway-{{ .Release.Name }}
+    servers:
+        - hosts:
+              - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
+          port:
+              number: 80
+              name: http
+              protocol: HTTP
+          tls:
+              httpsRedirect: true
+        - hosts:
+              - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
+          port:
+              number: 443
+              name: https
+              protocol: HTTPS
+          tls:
+              mode: SIMPLE
+              serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+              privateKey: /etc/istio/ingressgateway-certs/tls.key
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+    name: ui
+spec:
+    gateways:
+        - t8c-gateway
+    hosts:
+        - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
+    http:
+        - match:
+              - uri:
+                    prefix: /apidoc
+              - uri:
+                    prefix: /swagger
+          rewrite:
+              uri: /swagger/external/index.html;
+          route:
+              - destination:
+                    host: api.{{ .Release.Namespace }}.svc.cluster.local
+                    port:
+                        number: 8080
+        - match:
+              - uri:
+                    exact: /
+              - uri:
+                    prefix: /api
+              - uri:
+                    prefix: /app
+              - uri:
+                    prefix: /assets
+              - uri:
+                    prefix: /doc
+              - uri:
+                    prefix: /swagger/external/index.html
+              - uri:
+                    prefix: /vmturbo/rest
+              - uri:
+                    prefix: /vmturbo/saml
+          headers:
+              response:
+                  set:
+                      X-Frame-Options: SAMEORIGIN
+          route:
+              - destination:
+                    host: api.{{ .Release.Namespace }}.svc.cluster.local
+                    port:
+                        number: 8080
+        - match:
+              - uri:
+                    prefix: /vmturbo/messages
+          route:
+              - destination:
+                    host: api.{{ .Release.Namespace }}.svc.cluster.local
+                    port:
+                        number: 8080
+          websocketUpgrade: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: t8c-istio-ingressgateway
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    istio: t8c-ingressgateway-{{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      istio: t8c-ingressgateway-{{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        istio: t8c-ingressgateway-{{ .Release.Name }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+        - name: istio-proxy
+          image: "docker.io/istio/proxyv2:1.2.3"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 15020
+            - containerPort: 80
+            - containerPort: 443
+            - containerPort: 31400
+            - containerPort: 15029
+            - containerPort: 15030
+            - containerPort: 15031
+            - containerPort: 15032
+            - containerPort: 15443
+            - containerPort: 15090
+              protocol: TCP
+              name: http-envoy-prom
+          args:
+            - proxy
+            - router
+            - --domain
+            - $(POD_NAMESPACE).svc.cluster.local
+            - --log_output_level=default:info
+            - --drainDuration
+            - '45s' #drainDuration
+            - --parentShutdownDuration
+            - '1m0s' #parentShutdownDuration
+            - --connectTimeout
+            - '10s' #connectTimeout
+            - --serviceCluster
+            - t8c-istio-ingressgateway
+            - --zipkinAddress
+            - zipkin:9411
+            - --proxyAdminPort
+            - "15000"
+            - --statusPort
+            - "15020"
+            - --controlPlaneAuthPolicy
+            - MUTUAL_TLS
+            - --discoveryAddress
+            - istio-pilot.istio-system.svc.cluster.local:15011
+          readinessProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /healthz/ready
+              port: 15020
+              scheme: HTTP
+            initialDelaySeconds: 1
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 1024Mi
+            requests:
+              cpu: 10m
+              memory: 40Mi
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: INSTANCE_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.hostIP
+            - name: ISTIO_META_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: ISTIO_META_CONFIG_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: ISTIO_META_ROUTER_MODE
+              value: sni-dnat
+          volumeMounts:
+            - name: istio-certs
+              mountPath: /etc/certs
+              readOnly: true
+            - name: ingressgateway-certs
+              mountPath: "/etc/istio/ingressgateway-certs"
+              readOnly: true
+            - name: ingressgateway-ca-certs
+              mountPath: "/etc/istio/ingressgateway-ca-certs"
+              readOnly: true
+      volumes:
+        - name: istio-certs
+          secret:
+            secretName: istio.default
+            optional: true
+        - name: ingressgateway-certs
+          secret:
+            secretName: "istio-ingressgateway-certs"
+            optional: true
+        - name: ingressgateway-ca-certs
+          secret:
+            secretName: "istio-ingressgateway-ca-certs"
+            optional: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: t8c-istio-ingressgateway
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    istio: t8c-ingressgateway-{{ .Release.Name }}
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    istio: t8c-ingressgateway-{{ .Release.Name }}
+  ports:
+    - name: status-port
+      port: 15020
+    - name: http2
+      port: 80
+    - name: https
+      port: 443
+    - name: tls
+      port: 15443
+---
+{{- end }}
+{{- if .Values.global.certmanager }}
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+    name: t8c-istio-gateway
+spec:
+    secretName: istio-ingressgateway-certs
+    issuerRef:
+        name: letsencrypt-prod
+    commonName: {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
+    acme:
+        config:
+            - dns01:
+                  provider: cloud-dns
+              domains:
+                  - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
+
+---
+{{ else }}
+  {{- if .Values.global }}
+    {{- range .Values.global.ingress.secrets }}
+apiVersion: v1
+kind: Secret
+metadata:
+    name: {{ .name }}
+    labels:
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+type: kubernetes.io/tls
+data:
+    tls.crt: {{ .certificate | b64enc }}
+    tls.key: {{ .key | b64enc }}
+---
+    {{- end }}
+  {{- end }}
+{{- end }}

@@ -14,7 +14,7 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 30Gi
+      storage: {{ .Values.persistence.auditsize }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -30,7 +30,7 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 30Gi
+      storage: {{ .Values.persistence.logsize }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -55,9 +55,14 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "syslog_image" . }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        imagePullPolicy: {{ template "pullPolicy" . }}
+{{ if .Values.env }}
+        env:
+{{ toYaml .Values.env | indent 8 -}}
+{{ end }}
         ports:
         - containerPort: 2514
+        - containerPort: 8080
         readinessProbe:
           tcpSocket:
             port: 2514

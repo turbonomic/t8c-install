@@ -13,7 +13,9 @@ env:
   - name: ZOO_MY_ID
     value: "1"
   - name: ZOO_SERVERS
-    value: zoo
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
 
 resources:
   limits:

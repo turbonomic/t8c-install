@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: turbo-config-{{ .Release.Name }}
+data:
+  turbo.config: |-
+    {
+      "communicationConfig": {
+        "serverMeta": {
+        {{- if .Values.global }}
+          {{- if and .Values.global.tag .Values.global.externalIP }}
+          "version": "{{ .Values.global.tag }}",
+          "turboServer": "https://{{ .Values.global.externalIP }}"
+          {{- else }}
+          "version": "{{ .Values.serverMeta.version }}",
+          "turboServer": "{{ .Values.serverMeta.turboServer }}"
+          {{- end }}
+        {{- end }}
+        },
+        "restAPIConfig": {
+          "opsManagerUserName": "{{ .Values.restAPIConfig.opsManagerUserName }}",
+          "opsManagerPassword": "{{ .Values.restAPIConfig.opsManagerPassword }}"
+        }
+      },
+      "HANodeConfig": {
+        "nodeRoles": [{{ .Values.HANodeConfig.nodeRoles }}]
+      {{- if .Values.targetConfig }}
+        {{- if .Values.targetConfig.targetName }}
+      },
+      "targetConfig": {
+        "targetName": "{{ .Values.targetConfig.targetName }}"
+        {{- end }}
+      {{- end }}
+      {{- if .Values.daemonPodDetectors }}
+      },
+      "daemonPodDetectors": {
+        "namespaces": ["{{ .Values.daemonPodDetectors.daemonPodNamespaces1 }}", "{{ .Values.daemonPodDetectors.daemonPodNamespaces2 }}"],
+        "podNamePatterns": ["{{ .Values.daemonPodDetectors.daemonPodNamePatterns }}"]
+      {{- end }}
+      }
+    }

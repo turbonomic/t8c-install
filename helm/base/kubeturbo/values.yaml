@@ -1,0 +1,54 @@
+# Default values for kubeturbo.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Replace the image with desired version
+image:
+  repository: turbonomic/kubeturbo
+  tag: 6.4.3
+  pullPolicy: IfNotPresent
+
+#nameOverride: ""
+#fullnameOverride: ""
+
+# Specify custom turbo-cluster-reader or turbo-cluster-admin role instead of the default cluster-admin role
+roleName: "cluster-admin"
+
+# Turbo server version and address
+serverMeta:
+  version: 7.21
+  turboServer: https://Turbo_server_URL
+
+# Turbo server api user and password
+# The opsManagerUserName requires Turbo administrator role
+restAPIConfig:
+  opsManagerUserName: administrator
+  opsManagerPassword: administrator
+
+# Enabling targetConfig and providing a value will give a name to your cluster
+targetConfig:
+  targetName: xl-k8s
+
+# In kubeturbo 6.4.3+, you can define what nodes should stay high-available based on the node role
+# Master nodes are by default populated by --set HANodeConfig.nodeRoles="\"foo\"\,\"bar\""
+HANodeConfig:
+  nodeRoles: "\"master\""
+
+# In kubeturbo 6.3+, you can define how daemon pods are identified. Use either or both
+# Note if you do not enable daemonPodDetectors, the default is to identify all pods running as kind = daemonSet
+# Any entry for daemonPodDetectors would overwrite default. Recommend you do not use this parameter.
+#daemonPodDetectors:
+#   daemonPodNamespaces1: kube-system
+#   daemonPodNamespaces2: OpenShift
+#   daemonPodNamePatterns: .*ignorePod.*
+
+args:
+  # logging level
+  logginglevel: 2
+  # If running on k8s 1.10.x or older, set https to false and change port 10255 for kubelet
+  kubelethttps: true
+  kubeletport: 10250
+  # set to false if using IP for stitching
+  stitchuuid: true
+  # if Kubernetes version is older than 1.6, then add another arg for move/resize action
+  pre16k8sVersion: false
