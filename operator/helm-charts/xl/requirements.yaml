@@ -134,11 +134,11 @@ dependencies:
   - name: cassandra
     version: ^0.13.1
     repository: file://../base/cassandra
-    condition: jaeger.provisionDataStore.cassandra
+    condition: jaeger.enabled, jaeger.provisionDataStore.cassandra
   - name: elasticsearch
     version: ^1.19.1
     repository: file://../base/elasticsearch
-    condition: jaeger.provisionDataStore.elasticsearch
+    condition: jaeger.enabled, jaeger.provisionDataStore.elasticsearch
 
 # Mediation dependencies
   - name: mediation-actionscript
