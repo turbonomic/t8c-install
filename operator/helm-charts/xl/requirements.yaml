@@ -111,11 +111,11 @@ dependencies:
 # Monitoring dependencies
   - name: prometheus
     repository: file://../base/prometheus
-    version: 8.9.1
+    version: 9.2.0
     condition: prometheus.enabled
   - name: grafana
     repository: file://../base/grafana
-    version: 3.0.1
+    version: 4.0.0
     condition: grafana.enabled
   - name: kubeturbo
     repository: file://../base/kubeturbo

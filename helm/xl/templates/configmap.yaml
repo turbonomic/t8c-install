@@ -48,8 +48,6 @@ data:
                 serverAddress: ws://topology-processor:8080/remoteMediation
                 silentRetryTime: 0
                 connRetryIntervalSeconds: 10
-                userName: vmtRemoteMediation
-                userPassword: vmtRemoteMediation
                 websocket.pong.timeout: 30000
                 # Remote iterator consumers - 10 minutes max wait for next chunk
                 com.vmturbo.communication.remote.iterator.timeout: 600000
@@ -121,6 +119,9 @@ data:
                 # instance_type_hourly_by_week table.
                 # Value range from [0.0, 1.0]
                 preferredCurrentWeight : 0.6
+                # RI buy hour data points value range from 1 to 168 inclusive
+                # which is one week of data.
+                riMinimumDataPoints : 168
                 # Number of records to commit in one batch.
                 statsRecordsCommitBatchSize : 5000
                 # Number of results to return when fetching lazily.

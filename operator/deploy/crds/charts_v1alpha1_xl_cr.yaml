@@ -18,35 +18,35 @@ spec:
   #  imagePassword: turbopassword
     repository: turbonomic
     tag: 7.21.0
-    externalIP: 10.0.2.15
-    externalDbIP: 10.0.2.15
+    #externalIP: 10.0.2.15
+    #externalDbIP: 10.0.2.15
 
   # Component selector - Probes
-  actionscript:
-    enabled: true
-  appdynamics:
-    enabled: true
-  aws:
-    enabled: true
-  azure:
-    enabled: true
-  dynatrace:
-    enabled: true
-  hpe3par:
-    enabled: true
-  hyperv:
-    enabled: true
-  netapp:
-    enabled: true
-  oneview:
-    enabled: true
-  pure:
-    enabled: true
-  ucs:
-    enabled: true
-  vcenter:
-    enabled: true
-  vmax:
-    enabled: true
-  vmm:
-    enabled: true
+#  actionscript:
+#    enabled: true
+#  appdynamics:
+#    enabled: true
+#  aws:
+#    enabled: true
+#  azure:
+#    enabled: true
+#  dynatrace:
+#    enabled: true
+#  hpe3par:
+#    enabled: true
+#  hyperv:
+#    enabled: true
+#  netapp:
+#    enabled: true
+#  oneview:
+#    enabled: true
+#  pure:
+#    enabled: true
+#  ucs:
+#    enabled: true
+#  vcenter:
+#    enabled: true
+#  vmax:
+#    enabled: true
+#  vmm:
+#    enabled: true

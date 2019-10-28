@@ -83,6 +83,9 @@ spec:
                     port:
                         number: 8080
           websocketUpgrade: true
+{{- if .Values.istioingress.routes }}
+{{ toYaml .Values.istioingress.routes | indent 8 }}
+{{- end }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -244,6 +247,11 @@ spec:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     istio: t8c-ingressgateway-{{ .Release.Name }}
+  {{- if .Values.global }}
+    {{- if .Values.global.externalIP }}
+  externalIPs:
+  - {{ .Values.global.externalIP }}
+    {{ end }}
   ports:
     - name: status-port
       port: 15020
@@ -254,8 +262,8 @@ spec:
     - name: tls
       port: 15443
 ---
-{{- end }}
-{{- if .Values.global.certmanager }}
+  {{- end }}
+  {{- if .Values.global.certmanager }}
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
@@ -273,9 +281,9 @@ spec:
                   - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
 
 ---
-{{ else }}
-  {{- if .Values.global }}
-    {{- range .Values.global.ingress.secrets }}
+  {{ else }}
+    {{- if .Values.global }}
+      {{- range .Values.global.ingress.secrets }}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -285,6 +293,7 @@ data:
   tls.crt: {{ .certificate | b64enc }}
   tls.key: {{ .key | b64enc }}
 ---
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
