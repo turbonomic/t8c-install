@@ -10,5 +10,5 @@ kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/maste
 
 Create or modify the Turbonomic custom resource, to deploy an instance of Turbonomic within the namespace
 ````
-kubectl apply -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml.yaml
+kubectl apply -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
 ````
