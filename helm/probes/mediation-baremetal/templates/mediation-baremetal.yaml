@@ -1,35 +1,3 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ .Chart.Name }}
-  labels:
-    zone: secure
-    app.kubernetes.io/name: {{ .Chart.Name }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 128Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ .Chart.Name }}-dump
-  labels:
-    zone: secure
-    app.kubernetes.io/name: {{ .Chart.Name }}-dump
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -52,13 +20,26 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: {{ template "image" . }}
+        image: {{ template "baremetal_image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
+        - name: JAVA_OPTS
+{{- if .Values.global }}
+  {{- if .Values.global.debug }}
+          value: {{ .Values.global.dev_options }} {{ .Values.java.options }}
+  {{- else }}
+          value: {{ .Values.java.options }}
+  {{- end }}
+{{- else }}
+          value: {{ .Values.java.options }}
+{{- end }}
 {{ toYaml .Values.env | indent 8 -}}
+        ports:
+          - containerPort: 8080
         readinessProbe:
-          tcpSocket:
-            port: 8086
+          httpGet:
+            port: 8080
+            path: /health
         resources:
 {{ toYaml .Values.resources | indent 12 }}
         securityContext:
@@ -67,12 +48,8 @@ spec:
             drop:
             - ALL
         volumeMounts:
-        - mountPath: /var/lib/influxdb
-          name: influxdb
-        - mountPath: /home/influxdb/influxdb-dump
-          name: influxdb-dump
         - mountPath: /tmp
-          name: influxdb-tmpfs0
+          name: mediation-baremetal-tmpfs0
 {{- if .Values.global }}
   {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
       imagePullSecrets:
@@ -80,16 +57,8 @@ spec:
   {{- end -}}
 {{- end }}
       restartPolicy: Always
-      securityContext:
-        fsGroup: 2000
       volumes:
-      - name: influxdb
-        persistentVolumeClaim:
-          claimName: {{ .Chart.Name }}
-      - name: influxdb-dump
-        persistentVolumeClaim:
-          claimName: {{ .Chart.Name }}-dump
-      - name: influxdb-tmpfs0
+      - name: mediation-baremetal-tmpfs0
         emptyDir: {}
   selector:
     matchLabels:
@@ -107,10 +76,14 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
-  - name: http-influxdb
-    port: 8086
-  - name: rpc-influxdb-dump
-    port: 8088
+  - name: http-mediation-baremetal
+    port: 8080
+{{- if .Values.global }}
+  {{- if .Values.global.debug }}
+  - name: tcp-mediation-baremetal-debug
+    port: 8000
+  {{- end -}}
+{{- end }}
   selector:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}

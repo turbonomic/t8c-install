@@ -139,6 +139,10 @@ dependencies:
     repository: file://../probes/mediation-awscost
     version: 0.1.0
     condition: aws.enabled
+  - name: mediation-baremetal
+    repository: file://../probes/mediation-baremetal
+    version: 0.1.0
+    condition: baremetal.enabled
   - name: mediation-datadog
     repository: file://../probes/mediation-datadog
     version: 0.1.0

@@ -19,7 +19,9 @@ kind: PersistentVolumeClaim
 metadata:
   labels:
     zone: secure
-    io.kompose.service: arangodb-apps
+    app.kubernetes.io/name: {{ .Chart.Name }}-apps
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
   name: {{ .Chart.Name }}-apps
 spec:
   accessModes:
