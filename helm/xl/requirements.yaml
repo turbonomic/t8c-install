@@ -77,10 +77,6 @@ dependencies:
     repository: file://../services/plan-orchestrator
     version: 0.1.0
     condition: platform.enabled
-  - name: reporting
-    repository: file://../services/reporting
-    version: 0.1.0
-    condition: platform.enabled
   - name: repository
     repository: file://../services/repository
     version: 0.1.0
