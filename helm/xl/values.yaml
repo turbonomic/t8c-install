@@ -6,6 +6,7 @@ replicaCount: 1
 
 global:
 #  registry: index.docker.io
+#  imagePullSecret: turbocred
 #  imageUsername: turbouser
 #  imagePassword: turbopassword
   repository: turbonomic

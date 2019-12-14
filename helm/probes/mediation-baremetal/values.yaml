@@ -39,7 +39,7 @@ env:
   - name: serverGrpcPort
     value: "9001"
   - name: component_type
-    value: mediation-dynatrace
+    value: mediation-baremetal
   - name: instance_id
     valueFrom:
       fieldRef:

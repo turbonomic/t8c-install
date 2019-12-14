@@ -45,6 +45,13 @@ spec:
         env:
         - name: CONSUL_BIND_INTERFACE
           value: eth0
+        ports:
+          - containerPort: 8301
+          - containerPort: 8302
+          - containerPort: 8303
+          - containerPort: 8400
+          - containerPort: 8500
+          - containerPort: 8600
         readinessProbe:
           httpGet:
             port: 8500
@@ -62,9 +69,16 @@ spec:
         - mountPath: /tmp
           name: consul-tmpfs0
 {{- if .Values.global }}
-  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
       imagePullSecrets:
       - name: turbocred
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
 {{- end }}
       restartPolicy: Always

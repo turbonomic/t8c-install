@@ -50,6 +50,8 @@ spec:
           value: {{ .Values.java.options }}
 {{- end }}
 {{ toYaml .Values.env | indent 8 -}}
+        ports:
+          - containerPort: 8080
         readinessProbe:
           httpGet:
             port: 8080
@@ -67,9 +69,16 @@ spec:
         - mountPath: /tmp
           name: reporting-tmpfs0
 {{- if .Values.global }}
-  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
       imagePullSecrets:
       - name: turbocred
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
 {{- end }}
       restartPolicy: Always
