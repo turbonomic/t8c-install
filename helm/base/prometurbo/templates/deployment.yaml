@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "prometurbo.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "prometurbo.name" . }}
+    helm.sh/chart: {{ include "prometurbo.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "prometurbo.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+{{- if .Values.global }}
+  {{- if or .Values.annotations .Values.global.annotations }}
+      annotations:
+    {{- with .Values.annotations }}
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+      labels:
+        app.kubernetes.io/name: {{ include "prometurbo.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.promerepository }}:{{ .Values.image.prometag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --keepStandalone={{ .Values.prometurboTargetConfig.keepStandalone }}
+            - --createProxyVM={{ .Values.prometurboTargetConfig.createProxyVM }}
+            - --v={{ .Values.args.logginglevel }}
+          volumeMounts:
+            - name: prometurbo-config
+              mountPath: /etc/prometurbo
+              readOnly: true
+            - name: turbonomic-credentials-volume
+              mountPath: /etc/turbonomic-credentials
+              readOnly: true
+            - name: varlog
+              mountPath: /var/log
+        - name: appmetric
+          image: {{ .Values.image.apprepository }}:{{ .Values.image.apptag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --v={{ .Values.args.logginglevel }}
+          ports:
+            - containerPort: 8081
+      volumes:
+      - name: prometurbo-config
+        configMap:
+          name: prometurbo-config-{{ .Release.Name }}
+      - name: turbonomic-credentials-volume
+        secret:
+          defaultMode: 420
+          optional: true
+          secretName: {{ .Values.restAPIConfig.turbonomicCredentialsSecretName | quote }}
+      - name: varlog
+        emptyDir: {}
+      restartPolicy: Always

@@ -2,29 +2,43 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
-
 global:
 #  registry: index.docker.io
+#  imagePullSecret: turbocred
 #  imageUsername: turbouser
 #  imagePassword: turbopassword
   repository: turbonomic
-  tag: 7.21.0
+  tag: 7.21.2
 #  pullPolicy: IfNotPresent
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  annotations: {}
+  # setting these to be more tolerant than the k8s defaults, since we run in some pretty resource
+  # constrained environments where the readiness probe failures don't really fix anything. We should
+  # adjust these back down when we have a horizontally-scaled environment.
+  readinessPeriodSecs: 20
+  readinessTimeoutSecs: 10
 #  externalIP: 10.233.0.3 # byo k8s DNS
 #              10.100.0.10 # eks DNS
 #              10.0.0.10 # aks DNS
 #              10.23.240.10 # gke DNS
-#  externalArangodDBName: xl-influxdb.us-east-1.elb.amazonaws.com
+#  externalArangoDBName: xl-influxdb.us-east-1.elb.amazonaws.com
 #  externalConsul: xl-consul.ca-central-1.rds.amazonaws.com
 #  externalDBName: xl-hackaton.cmachd0izjog.ca-central-1.rds.amazonaws.com
 #  externalInfluxDBName: xl-influxdb.us-east-1.elb.amazonaws.com
 #  externalKafka: xl-kafka.us-east-1.elb.amazonaws.com
-  elk: false
 #  externalSyslog: a608c38591a9f11e9ad190efbcf8c7e5-1236730884.us-east-1.elb.amazonaws.com
+  elk: false
 #  debug: true
   dev_options: "-agentlib:jdwp=transport=dt_socket,address=0.0.0.0:8000,server=y,suspend=n"
-  certmanager: false
+#  storageClassName: default
+#  storageSelector: true
+  securityContext:
+    fsGroup: 2000
+  certmanager:
+    enabled: false
+    certissuer: letsencrypt-prod
   ingress:
     # domain: *.turbonomic.com
     secrets:
@@ -41,15 +55,26 @@ nginxingress:
   enabled: true
 istioingress:
   enabled: false
+  mtls: true
 platform:
+  enabled: true
+control:
   enabled: true
 metron:
   enabled: false
 kubeturbo:
   enabled: false
+prometurbo:
+  enabled: false
 training:
   enabled: false
 
+loki:
+  enabled: false
+promtail:
+  enabled: false
+fluent-bit:
+  enabled: false
 prometheus:
   enabled: false
 grafana:
@@ -78,6 +103,8 @@ jaeger:
   cassandra:
     config:
       dc_name: dc1
+datacloud:
+  enabled: false
 
 # Enable mediation
 actionscript:
@@ -102,6 +129,8 @@ cloudfoundry:
   enabled: false
 compellent:
   enabled: false
+customdata:
+  enabled: false
 dynatrace:
   enabled: false
 gcp:
@@ -116,6 +145,8 @@ hyperflex:
   enabled: false
 hyperv:
   enabled: false
+intersight:
+  enabled: false
 istio:
   enabled: false
 mssql:
@@ -125,6 +156,8 @@ netapp:
 netflow:
   enabled: false
 newrelic:
+  enabled: false
+nutanix:
   enabled: false
 oneview:
   enabled: false
@@ -162,27 +195,3 @@ wmi:
   enabled: false
 xtremio:
   enabled: false
-
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #  cpu: 100m
-  #  memory: 128Mi
-  # requests:
-  #  cpu: 100m
-  #  memory: 128Mi
-
-#properties:
-  # global:
-  #   realtimeTopologyContextId : 666666
-  # topology_processor:
-  #   broadcast_interval: 1min
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}

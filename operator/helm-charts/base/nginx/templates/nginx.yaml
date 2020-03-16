@@ -13,10 +13,22 @@ spec:
     type: Recreate
   template:
     metadata:
+{{- if .Values.global }}
+  {{- if or .Values.annotations .Values.global.annotations }}
+      annotations:
+    {{- with .Values.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
       labels:
         zone: public
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
@@ -27,15 +39,22 @@ spec:
           value: api.{{ .Release.Namespace }}.svc.cluster.local
         - name: TOPOLOGY
           value: topology-processor.{{ .Release.Namespace }}.svc.cluster.local
-{{ toYaml .Values.env | indent 8 -}}
+{{ toYaml .Values.env | indent 8 }}
         ports:
           - containerPort: 8000
           - containerPort: 8443
+        livenessProbe:
+          httpGet:
+            path: "/healthz/ready"
+            port: 8443
+            scheme: HTTPS
+{{- include "common.getLivenessThresholds" . | indent 10 }}
         readinessProbe:
           httpGet:
             path: "/healthz/ready"
             port: 8443
             scheme: HTTPS
+{{- include "common.getReadinessThresholds" . | indent 10 }}
         securityContext:
           readOnlyRootFilesystem: true
           capabilities:
@@ -53,14 +72,35 @@ spec:
         - mountPath: /tmp
           name: nginx-tmpfs0
 {{- if .Values.global }}
-  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
       imagePullSecrets:
       - name: turbocred
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
+  {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.affinity }}
+      affinity:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.tolerations }}
+      tolerations:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.securityContext }}
+      securityContext:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
 {{- end }}
       restartPolicy: Always
-      securityContext:
-        fsGroup: 2000
       volumes:
       - name: nginx-certs
         secret:
@@ -88,6 +128,12 @@ metadata:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- if .Values.global }}
+  {{- with .Values.global.ingress.annotations }}
+  annotations:
+{{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Local
@@ -102,27 +148,27 @@ spec:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Values.global }}
-    {{- if .Values.global.externalIP }}
+  {{- if .Values.global.externalIP }}
   externalIPs:
-    - {{ .Values.global.externalIP }}
+  - {{ .Values.global.externalIP }}
   {{ end }}
 ---
-  {{- if .Values.global.certmanager }}
-apiVersion: certmanager.k8s.io/v1alpha1
+  {{- if .Values.global.certmanager.enabled }}
+apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
   name: t8c-nginx-gateway
 spec:
   secretName: nginx-ingressgateway-certs
   issuerRef:
-    name: letsencrypt-prod
+    name: {{ .Values.global.certmanager.issuer }}
   commonName: {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
   acme:
     config:
-      - dns01:
-          provider: cloud-dns
-        domains:
-          - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
+    - dns01:
+        provider: cloud-dns
+      domains:
+        - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
 ---
   {{ else }}
     {{- if .Values.global }}

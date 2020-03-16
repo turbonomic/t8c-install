@@ -1,0 +1,39 @@
+# Default values for kubeturbo.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Replace the image with desired version
+image:
+  promerepository: turbonomic/prometurbo
+  prometag: 7.21.0
+  apprepository: turbonomic/appmetric
+  apptag: 7.21.0
+  pullPolicy: IfNotPresent
+
+#nameOverride: ""
+fullnameOverride: prometurbo
+
+# Turbo server version and address
+serverMeta:
+  version: 7.21
+  turboServer: https://Turbo_server_URL
+
+# Turbo server api user and password
+# The opsManagerUserName requires Turbo administrator role
+restAPIConfig:
+  turbonomicCredentialsSecretName: turbonomic-credentials
+  opsManagerUserName: administrator
+  opsManagerPassword: administrator
+
+# Enabling targetConfig and providing a value will give a name to your cluster
+prometurboTargetConfig:
+  targetAddress: xl-prometheus
+  keepStandalone: false
+  createProxyVM: false
+  scope: prometheus
+
+targetTypeSuffix: ""
+
+args:
+  # logging level
+  logginglevel: 2

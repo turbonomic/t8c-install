@@ -1,0 +1,139 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    zone: public
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+{{- if .Values.global }}
+  {{- if or .Values.annotations .Values.global.annotations }}
+      annotations:
+    {{- with .Values.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+      labels:
+        zone: public
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ template "image" . }}
+        imagePullPolicy: {{ template "pullPolicy" . }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.sevone.transport.sevone_auth_secret | quote }}
+            optional: true
+        env:
+        - name: TURBO_KAFKA_HOSTS
+          value: "{{ .Values.collector.kafka.host }}:{{ .Values.collector.kafka.port }}"
+        - name: TURBO_KAFKA_VERSION
+          value: {{ .Values.collector.kafka.version | quote }}
+        - name: TURBO_KAFKA_TOPOLOGY_TOPIC
+          value: "{{ .Release.Namespace }}.{{ .Values.collector.kafka.topics.topology }}"
+        - name: TURBO_ENABLE_ACTION_LOGS
+          value: {{ .Values.collector.api.action.enable | quote }}
+        - name: TURBONOMIC_ACTION_GRPC_ADDRESS
+          value: "{{ .Values.collector.api.action.host }}:{{ .Values.collector.api.action.port }}"
+        - name: TURBONOMIC_GROUP_GRPC_ADDRESS
+          value: "{{ .Values.collector.api.group.host }}:{{ .Values.collector.api.group.port }}"
+        - name: TURBONOMIC_CONSUMER_GROUP_ID
+          value: {{ .Values.collector.kafka.client_id | quote }}
+        {{- range $name, $value := .Values.sevone.transport.settings }}
+        - name: "SEVONE_{{ $name }}"
+          value: {{ $value | quote }}
+        {{- end }}
+{{- if .Values.sevone.tls_cert_secret_name }}
+        - name: SEVONE_GRPC_CERT
+          value: "/usr/share/pki/sevone/tls.crt"
+{{- end }}
+        ports:
+          - containerPort: 2112
+        readinessProbe:
+          httpGet:
+            port: 2112
+            path: /metrics
+          initialDelaySeconds: 2
+          timeoutSeconds: 2
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            port: 2112
+            path: /metrics
+          initialDelaySeconds: 2
+          timeoutSeconds: 3
+          failureThreshold: 4
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+            - name: persist-data
+              mountPath: /data
+            {{- if .Values.sevone.tls_cert_secret_name }}
+            - name: sevone-tls
+              mountPath: /usr/share/pki/sevone
+            {{- end }}
+{{- if .Values.global }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
+      imagePullSecrets:
+      - name: turbocred
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.affinity }}
+      affinity:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.tolerations }}
+      tolerations:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.securityContext }}
+      securityContext:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+{{- end }}
+      restartPolicy: Always
+      volumes:
+      - name: persist-data
+{{ toYaml .Values.sevone.data_volume | indent 8 }}
+{{- if .Values.sevone.tls_cert_secret_name }}
+      - name: sevone-tls
+        secret:
+          secretName: {{ .Values.sevone.tls_cert_secret_name | quote }}
+          optional: true
+          items:
+          - key: {{ .Values.sevone.tls_cert_secret_key }}
+            path: tls.crt
+{{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}

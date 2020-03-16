@@ -1,0 +1,45 @@
+# Default values for consul.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+annotations: {}
+
+image:
+  repository: turbonomic
+  tag: 7.21
+  pullPolicy: IfNotPresent
+
+resources: {}
+
+sevone:
+  transport:
+    # Should have SEVONE_GRPC_TOKEN as the key. Can be obtained from your profile page on cloud.sevone.com
+    # kubectl create secret generic collector-auth-secret --from-literal=SEVONE_GRPC_TOKEN=<apikey>
+    sevone_auth_secret: collector-auth-secret
+    settings:
+      DE_HOST: cloud.sevone.com
+      GRPC_PORT: 443
+      PERSIST: none
+      TRANSPORT: de-grpc
+  tls_cert_secret_name:
+  tls_cert_secret_key: "tls.crt"
+  data_volume:
+    emptyDir: {}
+
+collector:
+  kafka:
+    host: kafka
+    port: 9092
+    version: "1.1.0"
+    topics:
+      topology: tp-live-topologies
+    client_id: sevone
+  api:
+    action:
+      enable: "true"
+      host: action-orchestrator
+      port: 9001
+    group:
+      host: group
+      port: 9001
+

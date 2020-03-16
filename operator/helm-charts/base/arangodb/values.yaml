@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+annotations: {}
 
 image:
   repository: turbonomic
@@ -16,16 +16,12 @@ env:
     value: root
 
 persistence:
-  size: 100Gi
+  arangodb: 100Gi
+  apps: 2Gi
+  dump: 2Gi
 
 resources:
   limits:
     memory: 2Gi
   requests:
     memory: 512Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}

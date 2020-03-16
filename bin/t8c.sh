@@ -348,6 +348,11 @@ then
 \    externalIP: ${node}\n" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
   fi
 
+  # Enable services for gluster
+  sudo sed -i '/^After=.*/i Before=gfsck.service' /etc/systemd/system/kubelet.service
+  sudo systemctl enable gfsck.service
+  sudo systemctl daemon-reload
+
   # Setup mariadb before brining up XL components
   #./mariadb_storage_setup.sh
   # Check to see if an external db is being used.  If so, do not run mariadb locally

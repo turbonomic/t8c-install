@@ -3,7 +3,7 @@ dependencies:
   - name: arangodb
     repository: file://../base/arangodb
     version: 0.1.0
-    condition: platform.enabled
+    condition: control.enabled,platform.enabled
   - name: consul
     repository: file://../base/consul
     version: 0.1.0
@@ -48,7 +48,7 @@ dependencies:
   - name: action-orchestrator
     repository: file://../services/action-orchestrator
     version: 0.1.0
-    condition: platform.enabled
+    condition: control.enabled,platform.enabled
   - name: clustermgr
     repository: file://../services/clustermgr
     version: 0.1.0
@@ -56,7 +56,7 @@ dependencies:
   - name: cost
     repository: file://../services/cost
     version: 0.1.0
-    condition: platform.enabled
+    condition: control.enabled,platform.enabled
   - name: group
     repository: file://../services/group
     version: 0.1.0
@@ -64,11 +64,11 @@ dependencies:
   - name: history
     repository: file://../services/history
     version: 0.1.0
-    condition: platform.enabled
+    condition: control.enabled,platform.enabled
   - name: market
     repository: file://../services/market
     version: 0.1.0
-    condition: platform.enabled
+    condition: control.enabled,platform.enabled
   - name: ml-datastore
     repository: file://../services/ml-datastore
     version: 0.1.0
@@ -80,11 +80,7 @@ dependencies:
   - name: plan-orchestrator
     repository: file://../services/plan-orchestrator
     version: 0.1.0
-    condition: platform.enabled
-  - name: reporting
-    repository: file://../services/reporting
-    version: 0.1.0
-    condition: platform.enabled
+    condition: control.enabled,platform.enabled
   - name: repository
     repository: file://../services/repository
     version: 0.1.0
@@ -107,24 +103,44 @@ dependencies:
     repository: file://../base/logstash
     version: 1.7.0
     condition: global.elk
+  - name: loki
+    repository: file://../base/loki
+    version: "^0.20.0"
+    condition: loki.enabled
+  - name: promtail
+    repository: file://../base/promtail
+    version: "^0.15.0"
+    condition: promtail.enabled
+  - name: fluent-bit
+    repository: file://../base/fluent-bit
+    version: "^0.0.2"
+    condition: fluent-bit.enabled
 
 # Monitoring dependencies
   - name: prometheus
     repository: file://../base/prometheus
-    version: 9.2.0
+    version: 9.5.0
     condition: prometheus.enabled
   - name: grafana
     repository: file://../base/grafana
-    version: 4.0.0
+    version: 4.1.2
     condition: grafana.enabled
   - name: kubeturbo
     repository: file://../base/kubeturbo
     version: 0.1.0
     condition: kubeturbo.enabled
+  - name: prometurbo
+    repository: file://../base/prometurbo
+    version: 0.1.0
+    condition: prometurbo.enabled
   - name: chronograf
     repository: file://../base/chronograf
     version: 1.1.0
     condition: chronograf.enabled
+  - name: datacloud
+    repository: file://../base/datacloud
+    version: 0.1.0
+    condition: datacloud.enabled
 
 # Tracing dependencies
   - name: jaeger
@@ -135,10 +151,10 @@ dependencies:
     version: ^0.13.1
     repository: file://../base/cassandra
     condition: jaeger.enabled, jaeger.provisionDataStore.cassandra
-  - name: elasticsearch
-    version: ^1.19.1
-    repository: file://../base/elasticsearch
-    condition: jaeger.enabled, jaeger.provisionDataStore.elasticsearch
+#  - name: elasticsearch
+#    version: ^1.24.1
+#    repository: file://../base/elasticsearch
+#    condition: jaeger.enabled, jaeger.provisionDataStore.elasticsearch
 
 # Mediation dependencies
   - name: mediation-actionscript
@@ -209,6 +225,10 @@ dependencies:
     repository: file://../probes/mediation-compellent
     version: 0.1.0
     condition: compellent.enabled
+  - name: mediation-customdata
+    repository: file://../probes/mediation-customdata
+    version: 0.1.0
+    condition: customdata.enabled
   - name: mediation-dynatrace
     repository: file://../probes/mediation-dynatrace
     version: 0.1.0
@@ -241,6 +261,18 @@ dependencies:
     repository: file://../probes/mediation-hyperv
     version: 0.1.0
     condition: hyperv.enabled
+  - name: mediation-intersight
+    repository: file://../probes/mediation-intersight
+    version: 0.1.0
+    condition: intersight.enabled
+  - name: mediation-intersighthyperflex
+    repository: file://../probes/mediation-intersighthyperflex
+    version: 0.1.0
+    condition: intersight.enabled
+  - name: mediation-intersightucs
+    repository: file://../probes/mediation-intersightucs
+    version: 0.1.0
+    condition: intersight.enabled
   - name: mediation-istio
     repository: file://../probes/mediation-istio
     version: 0.1.0
@@ -257,6 +289,10 @@ dependencies:
     repository: file://../probes/mediation-newrelic
     version: 0.1.0
     condition: newrelic.enabled
+  - name: mediation-nutanix
+    repository: file://../probes/mediation-nutanix
+    version: 0.1.0
+    condition: nutanix.enabled
   - name: mediation-mssql
     repository: file://../probes/mediation-mssql
     version: 0.1.0

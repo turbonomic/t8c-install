@@ -5,11 +5,14 @@
 # Replace the image with desired version
 image:
   repository: turbonomic/kubeturbo
-  tag: 6.4.3
+  tag: 7.21.1
   pullPolicy: IfNotPresent
 
+annotations:
+  kubeturbo.io/controllable: "false"
+
 #nameOverride: ""
-#fullnameOverride: ""
+fullnameOverride: kubeturbo
 
 # Specify custom turbo-cluster-reader or turbo-cluster-admin role instead of the default cluster-admin role
 roleName: "cluster-admin"
@@ -18,10 +21,12 @@ roleName: "cluster-admin"
 serverMeta:
   version: 7.21
   turboServer: https://Turbo_server_URL
+  #proxy: http://username:password@proxyserver:proxyport
 
-# Turbo server api user and password
+# Turbo server api user and password stored in a secret or optionally specified as username and password
 # The opsManagerUserName requires Turbo administrator role
 restAPIConfig:
+  turbonomicCredentialsSecretName: turbonomic-credentials
   opsManagerUserName: administrator
   opsManagerPassword: administrator
 

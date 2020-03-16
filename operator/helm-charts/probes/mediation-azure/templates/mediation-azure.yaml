@@ -13,29 +13,38 @@ spec:
     type: Recreate
   template:
     metadata:
+{{- if .Values.global }}
+  {{- if or .Values.annotations .Values.global.annotations }}
+      annotations:
+    {{- with .Values.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
       labels:
         zone: secure
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "azure_image" . }}
         imagePullPolicy: {{ template "pullPolicy" . }}
         env:
-        - name: JAVA_OPTS
-{{- if .Values.global }}
-  {{- if .Values.global.debug }}
-          value: {{ .Values.global.dev_options }} {{ .Values.java.options }}
-  {{- else }}
-          value: {{ .Values.java.options }}
-  {{- end }}
-{{- else }}
-          value: {{ .Values.java.options }}
-{{- end }}
-{{ toYaml .Values.env | indent 8 -}}
+{{ template "java.setJVMEnvironmentOptions" . }}
+{{ toYaml .Values.env | indent 8 }}
         ports:
           - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            port: 8080
+            path: /health
+          periodSeconds: 60
+          failureThreshold: 60
         readinessProbe:
           httpGet:
             port: 8080
@@ -53,11 +62,33 @@ spec:
           readOnly: true
         - mountPath: /tmp
           name: mediation-azure-tmpfs0
+        - mountPath: /etc/targets
+          name: azure-secrets
+          readOnly: true
 {{- if .Values.global }}
-  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
       imagePullSecrets:
       - name: turbocred
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
+  {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.affinity }}
+      affinity:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.tolerations }}
+      tolerations:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
 {{- end }}
       restartPolicy: Always
       volumes:
@@ -67,6 +98,10 @@ spec:
           optional: true
       - name: mediation-azure-tmpfs0
         emptyDir: {}
+      - name: azure-secrets
+        secret:
+          secretName: "azure"
+          optional: true
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}
@@ -86,7 +121,7 @@ spec:
   - name: http-mediation-azure
     port: 8080
 {{- if .Values.global }}
-  {{- if .Values.global.debug }}
+  {{- if or .Values.debug .Values.global.debug }}
   - name: tcp-mediation-azure-debug
     port: 8000
   {{- end -}}

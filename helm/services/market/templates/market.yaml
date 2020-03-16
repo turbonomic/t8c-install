@@ -13,34 +13,43 @@ spec:
     type: Recreate
   template:
     metadata:
+{{- if .Values.global }}
+  {{- if or .Values.annotations .Values.global.annotations }}
+      annotations:
+    {{- with .Values.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
       labels:
         zone: internal
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "market_image" . }}
         imagePullPolicy: {{ template "pullPolicy" . }}
         env:
-        - name: JAVA_OPTS
-{{- if .Values.global }}
-  {{- if .Values.global.debug }}
-          value: {{ .Values.global.dev_options }} {{ .Values.java.options }}
-  {{- else }}
-          value: {{ .Values.java.options }}
-  {{- end }}
-{{- else }}
-          value: {{ .Values.java.options }}
-{{- end }}
-{{ toYaml .Values.env | indent 8 -}}
+{{ template "java.setJVMEnvironmentOptions" . }}
+{{ toYaml .Values.env | indent 8 }}
         ports:
           - containerPort: 8080
           - containerPort: 9001
+        livenessProbe:
+          httpGet:
+            port: 8080
+            path: /health
+{{- include "common.getLivenessThresholds" . | indent 10 }}
         readinessProbe:
           httpGet:
             port: 8080
             path: /health
+{{- include "common.getReadinessThresholds" . | indent 10 }}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
         securityContext:
@@ -55,10 +64,29 @@ spec:
         - mountPath: /tmp
           name: market-tmpfs0
 {{- if .Values.global }}
-  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
       imagePullSecrets:
       - name: turbocred
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
+  {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.affinity }}
+      affinity:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.tolerations }}
+      tolerations:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
 {{- end }}
       restartPolicy: Always
       volumes:
@@ -87,7 +115,7 @@ spec:
   - name: http-market
     port: 8080
 {{- if .Values.global }}
-  {{- if .Values.global.debug }}
+  {{- if or .Values.debug .Values.global.debug }}
   - name: tcp-market-debug
     port: 8000
   {{- end -}}

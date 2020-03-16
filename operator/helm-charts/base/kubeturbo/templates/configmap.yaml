@@ -15,6 +15,9 @@ data:
           "version": "{{ .Values.serverMeta.version }}",
           "turboServer": "{{ .Values.serverMeta.turboServer }}"
           {{- end }}
+          {{- if .Values.serverMeta.proxy }}
+          "proxy": "{{ .Values.serverMeta.proxy }}"
+          {{- end }}
         {{- end }}
         },
         "restAPIConfig": {

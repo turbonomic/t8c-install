@@ -12,6 +12,16 @@ metadata:
 spec:
   accessModes:
   - ReadWriteOnce
+{{- if .Values.global }}
+  {{- if .Values.global.storageSelector }}
+  selector:
+    matchLabels:
+      partition: {{ .Release.Namespace }}-mysql-data
+  {{- end }}
+  {{- if .Values.global.storageClassName }}
+  storageClassName: {{ .Values.global.storageClassName }}
+  {{- end }}
+{{- end }}
   resources:
     requests:
       storage: {{ .Values.persistence.size }}
@@ -31,26 +41,46 @@ spec:
     type: Recreate
   template:
     metadata:
+{{- if .Values.global }}
+  {{- if or .Values.annotations .Values.global.annotations }}
+      annotations:
+    {{- with .Values.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
       labels:
         zone: secure
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "image" . }}
         imagePullPolicy: {{ template "pullPolicy" . }}
         env:
-{{ toYaml .Values.env | indent 8 -}}
+{{ toYaml .Values.env | indent 8 }}
         ports:
           - containerPort: 3306
+        livenessProbe:
+          tcpSocket:
+            port: 3306
+{{- include "common.getLivenessThresholds" . | indent 10 }}
         readinessProbe:
           tcpSocket:
             port: 3306
+{{- include "common.getReadinessThresholds" . | indent 10 }}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
         securityContext:
           readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
         volumeMounts:
         - mountPath: /var/lib/mysql
           name: mysql-data
@@ -63,14 +93,35 @@ spec:
         - mountPath: /tmp
           name: db-tmpfs0
 {{- if .Values.global }}
-  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
       imagePullSecrets:
       - name: turbocred
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
+  {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.affinity }}
+      affinity:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.tolerations }}
+      tolerations:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.securityContext }}
+      securityContext:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
 {{- end }}
       restartPolicy: Always
-      securityContext:
-        runAsUser: 0
       volumes:
       - name: mysql-data
         persistentVolumeClaim:
@@ -102,7 +153,7 @@ metadata:
 spec:
   ports:
   - name: mysql-db
-    port: 3306
+    port: {{ .Values.global.externalDbPort | default 3306 }}
 {{- if .Values.global }}
   {{- if .Values.global.externalDBName }}
   type: ExternalName

@@ -10,6 +10,16 @@ metadata:
 spec:
   accessModes:
   - ReadWriteOnce
+{{- if .Values.global }}
+  {{- if .Values.global.storageSelector }}
+  selector:
+    matchLabels:
+      partition: {{ .Release.Namespace }}-api
+  {{- end }}
+  {{- if .Values.global.storageClassName }}
+  storageClassName: {{ .Values.global.storageClassName }}
+  {{- end }}
+{{- end }}
   resources:
     requests:
       storage: 1Gi
@@ -26,6 +36,16 @@ metadata:
 spec:
   accessModes:
   - ReadWriteOnce
+{{- if .Values.global }}
+  {{- if .Values.global.storageSelector }}
+  selector:
+    matchLabels:
+      partition: {{ .Release.Namespace }}-api-certs
+  {{- end }}
+  {{- if .Values.global.storageClassName }}
+  storageClassName: {{ .Values.global.storageClassName }}
+  {{- end }}
+{{- end }}
   resources:
     requests:
       storage: 1Gi
@@ -40,39 +60,48 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
   strategy:
     type: Recreate
   template:
     metadata:
+{{- if .Values.global }}
+  {{- if or .Values.annotations .Values.global.annotations }}
+      annotations:
+    {{- with .Values.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
       labels:
         zone: dmz
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "api_image" . }}
         imagePullPolicy: {{ template "pullPolicy" . }}
         env:
-        - name: JAVA_OPTS
-{{- if .Values.global }}
-  {{- if .Values.global.debug }}
-          value: {{ .Values.global.dev_options }} {{ .Values.java.options }}
-  {{- else }}
-          value: {{ .Values.java.options }}
-  {{- end }}
-{{- else }}
-          value: {{ .Values.java.options }}
-{{- end }}
-{{ toYaml .Values.env | indent 8 -}}
+{{ template "java.setJVMEnvironmentOptions" . }}
+{{ toYaml .Values.env | indent 8 }}
         ports:
           - containerPort: 8080
           - containerPort: 9001
+        livenessProbe:
+          httpGet:
+            port: 8080
+            path: /health
+{{- include "common.getLivenessThresholds" . | indent 10 }}
         readinessProbe:
           httpGet:
             port: 8080
             path: /health
+{{- include "common.getReadinessThresholds" . | indent 10 }}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
         securityContext:
@@ -91,14 +120,35 @@ spec:
         - mountPath: /tmp
           name: api-tmpfs0
 {{- if .Values.global }}
-  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
       imagePullSecrets:
       - name: turbocred
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
+  {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.affinity }}
+      affinity:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.tolerations }}
+      tolerations:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.securityContext }}
+      securityContext:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
 {{- end }}
       restartPolicy: Always
-      securityContext:
-        fsGroup: 2000
       volumes:
       - name: api
         persistentVolumeClaim:
@@ -133,7 +183,7 @@ spec:
   - name: https-api
     port: 9443
 {{- if .Values.global }}
-  {{- if .Values.global.debug }}
+  {{- if or .Values.debug .Values.global.debug }}
   - name: tcp-api-debug
     port: 8000
   {{- end -}}

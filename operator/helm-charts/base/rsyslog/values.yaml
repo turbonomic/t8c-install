@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+annotations: {}
+
 replicaCount: 1
 
 image:
@@ -18,9 +20,3 @@ persistence:
   auditsize: 30Gi
 
 resources: {}
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}

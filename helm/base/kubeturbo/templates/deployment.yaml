@@ -15,11 +15,21 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
+{{- if .Values.global }}
+  {{- if or .Values.annotations .Values.global.annotations }}
       annotations:
-        kubeturbo.io/controllable: "false"
+    {{- with .Values.annotations }}
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
       labels:
         app.kubernetes.io/name: {{ include "kubeturbo.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
       serviceAccount: turbo-user
       containers:
@@ -43,12 +53,20 @@ spec:
           - name: turbo-volume
             mountPath: /etc/kubeturbo
             readOnly: true
+          - name: turbonomic-credentials-volume
+            mountPath: /etc/turbonomic-credentials
+            readOnly: true
           - name: varlog
             mountPath: /var/log
       volumes:
       - name: turbo-volume
         configMap:
           name: turbo-config-{{ .Release.Name }}
+      - name: turbonomic-credentials-volume
+        secret:
+          defaultMode: 420
+          optional: true
+          secretName: {{ .Values.restAPIConfig.turbonomicCredentialsSecretName | quote }}
       - name: varlog
         emptyDir: {}
       restartPolicy: Always

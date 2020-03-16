@@ -13,6 +13,9 @@ pushd /etc/; for i in `sudo grep -lr 10.0.2.15 *`; do sudo sed -i "s/10.0.2.15/$
 sudo rm -rf /root/.kube > /dev/null 2>&1
 sudo rm -rf /opt/turbonomic/.kube > /dev/null 2>&1
 
+cp /opt/kubespray/roles/container-engine/docker/templates/rh_docker.repo.j2 /opt/kubespray/roles/container-engine/docker/templates/rh_docker.repo.j2.orig
+sed -i '/docker-engine/,+8d' /opt/kubespray/roles/container-engine/docker/templates/rh_docker.repo.j2
+
 cp /opt/kubespray/roles/download/tasks/download_container.yml /opt/kubespray/roles/download/tasks/download_container.yml.online
 sed -i '/- facts/a\
   ignore_errors: yes' /opt/kubespray/roles/download/tasks/download_container.yml

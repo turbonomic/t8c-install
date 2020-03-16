@@ -20,8 +20,15 @@ rules:
   - apps
   resources:
   - deployments
+  - replicasets
   verbs:
   - '*'
+- apiGroups:
+  - apps
+  resources:
+  - deployments/finalizers
+  verbs:
+  - update
 - apiGroups:
   - extensions
   resources:
@@ -48,15 +55,15 @@ rules:
   verbs:
   - '*'
 - apiGroups:
-    - networking.istio.io
+  - networking.istio.io
   resources:
-    - gateways
-    - virtualservices
+  - gateways
+  - virtualservices
   verbs:
-    - '*'
+  - '*'
 - apiGroups:
-    - certmanager.k8s.io
+  - cert-manager.io
   resources:
-    - certificates
+  - certificates
   verbs:
-    - '*'
+  - '*'

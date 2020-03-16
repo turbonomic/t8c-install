@@ -112,6 +112,7 @@ Parameter | Description | Default
 `alertmanager.ingress.annotations` | alertmanager Ingress annotations | `{}`
 `alertmanager.ingress.extraLabels` | alertmanager Ingress additional labels | `{}`
 `alertmanager.ingress.hosts` | alertmanager Ingress hostnames | `[]`
+`alertmanager.ingress.extraPaths` | Ingress extra paths to prepend to every alertmanager host configuration. Useful when configuring [custom actions with AWS ALB Ingress Controller](https://kubernetes-sigs.github.io/aws-alb-ingress-controller/guide/ingress/annotation/#actions) | `[]`
 `alertmanager.ingress.tls` | alertmanager Ingress TLS configuration (YAML) | `[]`
 `alertmanager.nodeSelector` | node labels for alertmanager pod assignment | `{}`
 `alertmanager.tolerations` | node taints to tolerate (requires Kubernetes >=1.6) | `[]`
@@ -218,6 +219,7 @@ Parameter | Description | Default
 `pushgateway.ingress.enabled` | If true, pushgateway Ingress will be created | `false`
 `pushgateway.ingress.annotations` | pushgateway Ingress annotations | `{}`
 `pushgateway.ingress.hosts` | pushgateway Ingress hostnames | `[]`
+`pushgateway.ingress.extraPaths` | Ingress extra paths to prepend to every pushgateway host configuration. Useful when configuring [custom actions with AWS ALB Ingress Controller](https://kubernetes-sigs.github.io/aws-alb-ingress-controller/guide/ingress/annotation/#actions) | `[]`
 `pushgateway.ingress.tls` | pushgateway Ingress TLS configuration (YAML) | `[]`
 `pushgateway.nodeSelector` | node labels for pushgateway pod assignment | `{}`
 `pushgateway.podAnnotations` | annotations to be added to pushgateway pods | `{}`
@@ -242,6 +244,7 @@ Parameter | Description | Default
 `pushgateway.service.loadBalancerSourceRanges` | list of IP CIDRs allowed access to load balancer (if supported) | `[]`
 `pushgateway.service.servicePort` | pushgateway service port | `9091`
 `pushgateway.service.type` | type of pushgateway service to create | `ClusterIP`
+`pushgateway.strategy.type` | Deployment strategy | `{ "type": "RollingUpdate" }`
 `rbac.create` | If true, create & use RBAC resources | `true`
 `server.enabled` | If false, Prometheus server will not be created | `true`
 `server.name` | Prometheus server container name | `server`
@@ -269,6 +272,7 @@ Parameter | Description | Default
 `server.ingress.annotations` | Prometheus server Ingress annotations | `[]`
 `server.ingress.extraLabels` | Prometheus server Ingress additional labels | `{}`
 `server.ingress.hosts` | Prometheus server Ingress hostnames | `[]`
+`server.ingress.extraPaths` | Ingress extra paths to prepend to every Prometheus server host configuration. Useful when configuring [custom actions with AWS ALB Ingress Controller](https://kubernetes-sigs.github.io/aws-alb-ingress-controller/guide/ingress/annotation/#actions) | `[]`
 `server.ingress.tls` | Prometheus server Ingress TLS configuration (YAML) | `[]`
 `server.nodeSelector` | node labels for Prometheus server pod assignment | `{}`
 `server.tolerations` | node taints to tolerate (requires Kubernetes >=1.6) | `[]`
@@ -340,6 +344,31 @@ $ helm install stable/prometheus --name my-release -f values.yaml
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
+
+Note that you have multiple yaml files. This is particularly useful when you have alerts belonging to multiple services in the cluster. For example,
+
+```yaml
+# values.yaml
+# ...
+
+# service1-alert.yaml
+serverFiles:
+  alerts:
+    service1:
+      - alert: anAlert
+      # ...
+
+# service2-alert.yaml
+serverFiles:
+  alerts:
+    service2:
+      - alert: anAlert
+      # ...
+```
+
+```console
+$ helm install stable/prometheus --name my-release -f values.yaml -f service1-alert.yaml -f service2-alert.yaml
+```
 
 ### RBAC Configuration
 Roles and RoleBindings resources will be created automatically for `server` and `kubeStateMetrics` services.

@@ -12,6 +12,16 @@ metadata:
 spec:
   accessModes:
   - ReadWriteOnce
+{{- if .Values.global }}
+  {{- if .Values.global.storageSelector }}
+  selector:
+    matchLabels:
+      partition: {{ .Release.Namespace }}-rsyslog-auditlogdata
+  {{- end }}
+  {{- if .Values.global.storageClassName }}
+  storageClassName: {{ .Values.global.storageClassName }}
+  {{- end }}
+{{- end }}
   resources:
     requests:
       storage: {{ .Values.persistence.auditsize }}
@@ -28,6 +38,16 @@ metadata:
 spec:
   accessModes:
   - ReadWriteOnce
+{{- if .Values.global }}
+  {{- if .Values.global.storageSelector }}
+  selector:
+    matchLabels:
+      partition: {{ .Release.Namespace }}-rsyslog-syslogdata
+  {{- end }}
+  {{- if .Values.global.storageClassName }}
+  storageClassName: {{ .Values.global.storageClassName }}
+  {{- end }}
+{{- end }}
   resources:
     requests:
       storage: {{ .Values.persistence.logsize }}
@@ -35,22 +55,34 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ .Chart.Name }}
   labels:
     zone: internal
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  name: {{ .Chart.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
     metadata:
+{{- if .Values.global }}
+  {{- if or .Values.annotations .Values.global.annotations }}
+      annotations:
+    {{- with .Values.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
       labels:
         zone: internal
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
@@ -58,14 +90,19 @@ spec:
         imagePullPolicy: {{ template "pullPolicy" . }}
 {{ if .Values.env }}
         env:
-{{ toYaml .Values.env | indent 8 -}}
+{{ toYaml .Values.env | indent 8 }}
 {{ end }}
         ports:
         - containerPort: 2514
         - containerPort: 8080
+        livenessProbe:
+          tcpSocket:
+            port: 2514
+{{- include "common.getLivenessThresholds" . | indent 10 }}
         readinessProbe:
           tcpSocket:
             port: 2514
+{{- include "common.getReadinessThresholds" . | indent 10 }}
         securityContext:
           readOnlyRootFilesystem: true
           capabilities:
@@ -79,14 +116,35 @@ spec:
         - mountPath: /tmp
           name: rsyslog-tmpfs0
 {{- if .Values.global }}
-  {{- if and .Values.global.registry .Values.global.imageUsername .Values.global.imagePassword }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
       imagePullSecrets:
       - name: turbocred
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
+  {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.affinity }}
+      affinity:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.tolerations }}
+      tolerations:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.securityContext }}
+      securityContext:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
 {{- end }}
       restartPolicy: Always
-      securityContext:
-        fsGroup: 1000
       volumes:
       - name: rsyslog-syslogdata
         persistentVolumeClaim:

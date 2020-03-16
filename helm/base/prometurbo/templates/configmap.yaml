@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometurbo-config-{{ .Release.Name }}
+data:
+  turbo.config: |-
+    {
+      "communicationConfig": {
+        "serverMeta": {
+        {{- if .Values.global }}
+          {{- if and .Values.global.tag .Values.global.externalIP }}
+          "version": "{{ .Values.global.tag }}",
+          "turboServer": "https://{{ .Values.global.externalIP }}"
+          {{- else }}
+          "version": "{{ .Values.serverMeta.version }}",
+          "turboServer": "{{ .Values.serverMeta.turboServer }}"
+          {{- end }}
+        {{- end }}
+        },
+        "restAPIConfig": {
+          "opsManagerUserName": "{{ .Values.restAPIConfig.opsManagerUserName }}",
+          "opsManagerPassword": "{{ .Values.restAPIConfig.opsManagerPassword }}"
+        }
+      },
+      "prometurboTargetConfig": {
+        "targetAddress": "{{ .Values.prometurboTargetConfig.targetAddress }}",
+        {{- if .Values.prometurboTargetConfig.scope }}
+        "scope": "{{ .Values.prometurboTargetConfig.scope }}"
+        {{- end }}
+      {{- if .Values.targetTypeSuffix }}
+      },
+      "targetTypeSuffix": "{{ .Values.targetTypeSuffix }}"
+      {{- else }}
+      }
+      {{- end }}
+    }

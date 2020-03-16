@@ -2,6 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: t8c-operator
+  labels:
+    app.kubernetes.io/name: t8c-operator
+    app.kubernetes.io/instance: t8c-operator
+    app.kubernetes.io/managed-by: operator-life
+
 spec:
   replicas: 1
   selector:
@@ -14,18 +19,28 @@ spec:
     spec:
       serviceAccountName: t8c-operator
       containers:
-        - name: t8c-operator
-          # Replace this with the built image name
-          image: turbonomic/t8c-operator:7.21
-          imagePullPolicy: Always
-          env:
-            - name: WATCH_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: OPERATOR_NAME
-              value: "t8c-operator"
+      - name: t8c-operator
+        image: turbonomic/t8c-operator:7.21
+        imagePullPolicy: Always
+        env:
+        - name: WATCH_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: OPERATOR_NAME
+          value: "t8c-operator"
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+        volumeMounts:
+        - mountPath: /tmp
+          name: operator-tmpfs0
+      volumes:
+      - name: operator-tmpfs0
+        emptyDir: {}

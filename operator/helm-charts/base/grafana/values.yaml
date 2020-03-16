@@ -22,7 +22,7 @@ replicas: 1
 ## See `kubectl explain poddisruptionbudget.spec` for more
 ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 podDisruptionBudget: {}
-#  minAvailble: 1
+#  minAvailable: 1
 #  maxUnavailable: 1
 
 ## See `kubectl explain deployment.spec.strategy` for more
@@ -50,7 +50,7 @@ livenessProbe:
 
 image:
   repository: grafana/grafana
-  tag: 6.4.2
+  tag: 6.5.0
   pullPolicy: IfNotPresent
 
   ## Optionally specify an array of imagePullSecrets.
@@ -298,6 +298,12 @@ datasources:
       access: proxy
       database: metron
       isDefault: false
+    - name: Loki
+      type: loki
+      url: http://loki:3100
+      access: proxy
+      database: metron
+      isDefault: false
 
 ## Configure notifiers
 ## ref: http://docs.grafana.org/administration/provisioning/#alert-notification-channels
@@ -365,6 +371,22 @@ dashboards:
       file: dashboards/System Latencies.json
     Topology-Processor-Dashboard:
       file: dashboards/Topology Processor Dashboard.json
+    Top-10-Container-Dashboard:
+      file: dashboards/top-10-container.json
+    Top-10-ContainerPod-Dashboard:
+      file: dashboards/top-10-containerpod.json
+    Top-10-Namespace:
+      file: dashboards/top-10-namespace.json
+    Kubernetes-Node-Resource-Consumption:
+      file: dashboards/kubernetes-node-resource-consumption_rev3.json
+    Kubernetes-Node-Resource-Consumption-Individual:
+      file: dashboards/kubernetes-node-resource-consumption_individual.json
+    Kubernetes-Pods-Individual:
+      file: dashboards/kubernetes-pods_individual.json
+    Namespace-Monitoring-Individual:
+      file: dashboards/namespace-monitoring_individual.json
+    Kubernetes-Dashboard-Lemur:
+      file: dashboards/Kubernetes Cluster Lemur.json
 #    prometheus-stats:
 #      gnetId: 2
 #      revision: 2
@@ -455,6 +477,7 @@ sidecar:
   # skipTlsVerify: true
   dashboards:
     enabled: false
+    SCProvider: true
     # label that the configmaps with dashboards are marked with
     label: grafana_dashboard
     # folder in the pod that should hold the collected dashboards (unless `defaultFolderName` is set)
