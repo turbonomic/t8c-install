@@ -32,8 +32,14 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
+{{- if .Values.global }}
+  {{- if .Values.global.customImageNames }}
         image: {{ template "wmi_image" . }}
+  {{- else }}
+        image: {{ template "image" . }}
+  {{- end }}
         imagePullPolicy: {{ template "pullPolicy" . }}
+{{- end }}
         env:
 {{ template "java.setJVMEnvironmentOptions" . }}
 {{ toYaml .Values.env | indent 8 }}

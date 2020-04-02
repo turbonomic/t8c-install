@@ -121,6 +121,10 @@ dependencies:
     repository: file://../base/prometheus
     version: 9.5.0
     condition: prometheus.enabled
+  - name: prometheus-mysql-exporter
+    repository: file://../base/prometheus-mysql-exporter
+    version: 0.5.2
+    condition: prometheus-mysql-exporter.enabled
   - name: grafana
     repository: file://../base/grafana
     version: 4.1.2
@@ -155,6 +159,12 @@ dependencies:
 #    version: ^1.24.1
 #    repository: file://../base/elasticsearch
 #    condition: jaeger.enabled, jaeger.provisionDataStore.elasticsearch
+
+# Integration dependencies
+  - name: intersight-integration
+    repository: file://../services/intersight-integration
+    version: 0.1.0
+    condition: intersight-integration.enabled
 
 # Mediation dependencies
   - name: mediation-actionscript

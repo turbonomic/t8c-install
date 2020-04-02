@@ -8,15 +8,15 @@ data:
       "communicationConfig": {
         "serverMeta": {
         {{- if .Values.global }}
+          {{- if .Values.serverMeta.proxy }}
+          "proxy": "{{ .Values.serverMeta.proxy }}",
+          {{- end }}
           {{- if and .Values.global.tag .Values.global.externalIP }}
           "version": "{{ .Values.global.tag }}",
           "turboServer": "https://{{ .Values.global.externalIP }}"
           {{- else }}
           "version": "{{ .Values.serverMeta.version }}",
           "turboServer": "{{ .Values.serverMeta.turboServer }}"
-          {{- end }}
-          {{- if .Values.serverMeta.proxy }}
-          "proxy": "{{ .Values.serverMeta.proxy }}"
           {{- end }}
         {{- end }}
         },
@@ -28,10 +28,17 @@ data:
       "HANodeConfig": {
         "nodeRoles": [{{ .Values.HANodeConfig.nodeRoles }}]
       {{- if .Values.targetConfig }}
-        {{- if .Values.targetConfig.targetName }}
+        {{- if or .Values.targetConfig.targetName .Values.targetConfig.targetType }}
       },
       "targetConfig": {
+          {{- if and .Values.targetConfig.targetName .Values.targetConfig.targetType }}
+        "targetName": "{{ .Values.targetConfig.targetName }}",
+        "targetType": "{{ .Values.targetConfig.targetType }}"
+          {{- else if .Values.targetConfig.targetName }}
         "targetName": "{{ .Values.targetConfig.targetName }}"
+          {{- else }}
+        "targetType": "{{ .Values.targetConfig.targetType }}"
+          {{- end}}
         {{- end }}
       {{- end }}
       {{- if .Values.daemonPodDetectors }}

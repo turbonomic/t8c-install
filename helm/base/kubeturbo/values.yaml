@@ -5,7 +5,7 @@
 # Replace the image with desired version
 image:
   repository: turbonomic/kubeturbo
-  tag: 7.21.1
+  tag: 7.21.2
   pullPolicy: IfNotPresent
 
 annotations:
@@ -20,19 +20,21 @@ roleName: "cluster-admin"
 # Turbo server version and address
 serverMeta:
   version: 7.21
-  turboServer: https://Turbo_server_URL
+  turboServer: https://nginx
   #proxy: http://username:password@proxyserver:proxyport
 
 # Turbo server api user and password stored in a secret or optionally specified as username and password
 # The opsManagerUserName requires Turbo administrator role
+# The UserName and Password are only needed when a targetName is configured in targetConfig
 restAPIConfig:
   turbonomicCredentialsSecretName: turbonomic-credentials
   opsManagerUserName: administrator
   opsManagerPassword: administrator
 
-# Enabling targetConfig and providing a value will give a name to your cluster
+# Enabling targetConfig
 targetConfig:
-  targetName: xl-k8s
+  # Enable the kubeturbo probe without adding a target
+  targetType: turbonomic
 
 # In kubeturbo 6.4.3+, you can define what nodes should stay high-available based on the node role
 # Master nodes are by default populated by --set HANodeConfig.nodeRoles="\"foo\"\,\"bar\""

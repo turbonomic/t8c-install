@@ -32,6 +32,49 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Return the proper image name
+*/}}
+{{- define "image" -}}
+{{- $repositoryName := .Values.image.repository -}}
+{{- $tag := .Values.image.tag | toString -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else logic.
+Also, we can't use a single if because lazy evaluation is not an option
+*/}}
+{{- if .Values.global }}
+    {{- if and .Values.global.repository .Values.global.tag (eq $repositoryName "turbonomic") (eq $tag "latest") }}
+        {{- printf "%s/%s:%s" .Values.global.repository .Chart.Name .Values.global.tag -}}
+    {{- else -}}
+        {{- printf "%s/%s:%s" $repositoryName .Chart.Name $tag -}}
+    {{- end -}}
+{{- else -}}
+    {{- printf "%s/%s:%s" $repositoryName .Chart.Name $tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the pullPolicy
+*/}}
+{{- define "pullPolicy" -}}
+{{- $pullPolicy := .Values.image.pullPolicy -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else logic.
+Also, we can't use a single if because lazy evaluation is not an option
+*/}}
+{{- if .Values.global }}
+    {{- if and .Values.global.pullPolicy (eq $pullPolicy "IfNotPresent") }}
+        {{- printf "%s" .Values.global.pullPolicy -}}
+    {{- else -}}
+        {{- printf "%s" $pullPolicy -}}
+    {{- end -}}
+{{- else -}}
+    {{- printf "%s" $pullPolicy -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
   Set the XL component JVM environment params, based on any custom settings from the custom resource file.
   * If .Values.debug or .Values.global.debug are set, then JAVA_DEBUG="true" will be set in the env vars.
   (the java component will interpret this as a signal that the debugging runtime options should be added

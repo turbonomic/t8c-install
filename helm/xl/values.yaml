@@ -8,8 +8,9 @@ global:
 #  imageUsername: turbouser
 #  imagePassword: turbopassword
   repository: turbonomic
-  tag: 7.21.2
+  tag: 7.21.3
 #  pullPolicy: IfNotPresent
+  customImageNames: true
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -77,6 +78,8 @@ fluent-bit:
   enabled: false
 prometheus:
   enabled: false
+prometheus-mysql-exporter:
+  enabled: false
 grafana:
   enabled: false
 chronograf:
@@ -104,6 +107,8 @@ jaeger:
     config:
       dc_name: dc1
 datacloud:
+  enabled: false
+intersight-integration:
   enabled: false
 
 # Enable mediation

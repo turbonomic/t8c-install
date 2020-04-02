@@ -52,6 +52,7 @@ spec:
           image: {{ .Values.image.apprepository }}:{{ .Values.image.apptag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
+            - --promUrl={{ .Values.prometurboTargetConfig.targetAddress }}
             - --v={{ .Values.args.logginglevel }}
           ports:
             - containerPort: 8081

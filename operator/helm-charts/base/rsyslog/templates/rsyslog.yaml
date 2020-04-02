@@ -86,8 +86,14 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
+{{- if .Values.global }}
+  {{- if .Values.global.customImageNames }}
         image: {{ template "syslog_image" . }}
+  {{- else }}
+        image: {{ template "image" . }}
+  {{- end }}
         imagePullPolicy: {{ template "pullPolicy" . }}
+{{- end }}
 {{ if .Values.env }}
         env:
 {{ toYaml .Values.env | indent 8 }}

@@ -1,0 +1,13 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: t8c-operator
+subjects:
+- kind: ServiceAccount
+  name: t8c-operator
+  # Replace the following if Turbonomic is deployed in a different namespace
+  namespace: turbonomic
+roleRef:
+  kind: ClusterRole
+  name: t8c-operator
+  apiGroup: rbac.authorization.k8s.io
