@@ -11,16 +11,24 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      name: t8c-operator
+      app.kubernetes.io/name: t8c-operator
+      app.kubernetes.io/instance: t8c-operator
+      app.kubernetes.io/managed-by: operator-life
   template:
     metadata:
       labels:
-        name: t8c-operator
+        app.kubernetes.io/name: t8c-operator
+        app.kubernetes.io/instance: t8c-operator
+        app.kubernetes.io/managed-by: operator-life
+      annotations:
+        productName: Turbonomic Application Resource Management Platform
+        productID: TurbonomicPlatform_7.21.0
+        productVersion: 7.21.0
     spec:
       serviceAccountName: t8c-operator
       containers:
       - name: t8c-operator
-        image: turbonomic/t8c-operator:7.21
+        image: registry.connect.redhat.com/turbonomic/t8c-operator-offline:7.21
         imagePullPolicy: Always
         env:
         - name: WATCH_NAMESPACE
@@ -33,6 +41,15 @@ spec:
               fieldPath: metadata.name
         - name: OPERATOR_NAME
           value: "t8c-operator"
+        - name: RELATED_IMAGE_GLOBAL_REPOSITORY
+          value: registry.connect.redhat.com/turbonomic
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 128Mi
         securityContext:
           readOnlyRootFilesystem: true
           capabilities:
@@ -44,3 +61,12 @@ spec:
       volumes:
       - name: operator-tmpfs0
         emptyDir: {}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: beta.kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64

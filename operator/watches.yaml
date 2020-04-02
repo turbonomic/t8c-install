@@ -3,3 +3,5 @@
   group: charts.helm.k8s.io
   kind: Xl
   chart: /opt/helm/helm-charts/xl
+  overrideValues:
+    global.repository: $RELATED_IMAGE_GLOBAL_REPOSITORY

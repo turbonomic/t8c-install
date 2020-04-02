@@ -2,6 +2,10 @@ apiVersion: charts.helm.k8s.io/v1alpha1
 kind: Xl
 metadata:
   name: xl-release
+  labels:
+    app.kubernetes.io/name: t8c-operator
+    app.kubernetes.io/instance: t8c-operator
+    app.kubernetes.io/managed-by: operator-life
 spec:
   # Default values copied from <project_dir>/helm-charts/xl/values.yaml
 
@@ -18,33 +22,70 @@ spec:
   #  imagePassword: turbopassword
     repository: turbonomic
     tag: 7.21.3
+#    externalDBName: t8c-ibm.chlurvxzsi3a.us-east-1.rds.amazonaws.com
+    securityContext: {}
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                  - amd64
+    annotations:
+      productName: Turbonomic Application Resource Management Platform
+      productID: TurbonomicPlatform_7.21.0
+      productVersion: 7.21.0
+#  api:
+#    resources:
+#      limits:
+#        cpu: 1000m
+#        memory: 6Gi
+#      requests:
+#        cpu: 100m
+#        memory: 128Mi
+#  market:
+#    resources:
+#      limits:
+#        cpu: 1000m
+#        memory: 6Gi
+#      requests:
+#        cpu: 100m
+#        memory: 128Mi
+#  clustermgr:
+#    image:
+#      pullPolicy: Always
 
-# Component selector - Probes
-#  actionscript:
-#    enabled: true
-#  appdynamics:
-#    enabled: true
-#  aws:
-#    enabled: true
-#  azure:
-#    enabled: true
-#  dynatrace:
-#    enabled: true
-#  hpe3par:
-#    enabled: true
-#  hyperv:
-#    enabled: true
-#  netapp:
-#    enabled: true
-#  oneview:
-#    enabled: true
-#  pure:
-#    enabled: true
-#  ucs:
-#    enabled: true
-#  vcenter:
-#    enabled: true
-#  vmax:
-#    enabled: true
-#  vmm:
-#    enabled: true
+  nginxingress:
+    enabled: false
+
+ # Component selector - Probes
+  actionscript:
+    enabled: true
+  appdynamics:
+    enabled: true
+  aws:
+    enabled: true
+  azure:
+    enabled: true
+  dynatrace:
+    enabled: true
+  hpe3par:
+    enabled: true
+  hyperv:
+    enabled: true
+  netapp:
+    enabled: true
+  oneview:
+    enabled: true
+  pure:
+    enabled: true
+  ucs:
+    enabled: true
+  vcenter:
+    enabled: true
+  vmax:
+    enabled: true
+  vmm:
+    enabled: true
