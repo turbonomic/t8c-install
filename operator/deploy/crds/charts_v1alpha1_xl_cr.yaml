@@ -21,7 +21,7 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 7.21.3
+    tag: 7.21.4
 #    externalDBName: t8c-ibm.chlurvxzsi3a.us-east-1.rds.amazonaws.com
     securityContext: {}
     affinity:
