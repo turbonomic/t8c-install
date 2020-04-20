@@ -2,7 +2,7 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   annotations:
-    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1alpha1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"repository":"turbonomic","tag":"7.21.0"}}}]'
+    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1alpha1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"repository":"registry.connect.redhat.com/turbonomic"},{"tag":"7.21.4"}}}}]'
     capabilities: Basic Install
     categories: Monitoring
     certified: "false"
@@ -47,7 +47,6 @@ spec:
             selector:
               matchLabels:
                 name: t8c-operator
-            strategy: {}
             template:
               metadata:
                 labels:
@@ -68,12 +67,11 @@ spec:
                     image: registry.connect.redhat.com/turbonomic/t8c-operator:7.21
                     imagePullPolicy: Always
                     name: t8c-operator
-                    resources: {}
-              serviceAccountName: t8c-operator
+                serviceAccountName: t8c-operator
       permissions:
         - rules:
             - apiGroups:
-                - ''
+                - ""
               resources:
                 - pods
                 - services
@@ -88,21 +86,27 @@ spec:
                 - apps
               resources:
                 - deployments
+                - replicasets
               verbs:
                 - '*'
             - apiGroups:
-                - ''
+                - apps
+              resources:
+                - deployments/finalizers
+              verbs:
+                - update
+            - apiGroups:
+                - extensions
+              resources:
+                - deployments
+              verbs:
+                - '*'
+            - apiGroups:
+                - ""
               resources:
                 - namespaces
               verbs:
                 - get
-            - apiGroups:
-                - ''
-              resources:
-                - configmaps
-                - secrets
-              verbs:
-                - '*'
             - apiGroups:
                 - charts.helm.k8s.io
               resources:
@@ -117,7 +121,7 @@ spec:
               verbs:
                 - '*'
             - apiGroups:
-                - certmanager.k8s.io
+                - cert-manager.io
               resources:
                 - certificates
               verbs:
