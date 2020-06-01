@@ -23,7 +23,7 @@ variable "history" {
 }
 
 variable "reporting" {
-  default = true
+  default = false
 }
 
 variable "metron" {

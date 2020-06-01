@@ -6,7 +6,7 @@ annotations: {}
 
 image:
   repository: turbonomic
-  tag: 7.21
+  tag: latest
   pullPolicy: IfNotPresent
 
 resources: {}

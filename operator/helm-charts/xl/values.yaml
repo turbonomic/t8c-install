@@ -8,7 +8,7 @@ global:
 #  imageUsername: turbouser
 #  imagePassword: turbopassword
   repository: turbonomic
-  tag: 7.21.3
+  tag: 7.22.0
 #  pullPolicy: IfNotPresent
   customImageNames: true
   nodeSelector: {}
@@ -61,6 +61,8 @@ platform:
   enabled: true
 control:
   enabled: true
+reporting:
+  enabled: false
 metron:
   enabled: false
 kubeturbo:
@@ -81,7 +83,21 @@ prometheus:
 prometheus-mysql-exporter:
   enabled: false
 grafana:
-  enabled: false
+  adminPassword: admin
+  grafana.ini:
+    database:
+      # TODO - Use postgres instead of sqlite.
+      type: sqlite3
+    users:
+      # Disallow explicit user creation.
+      allow_sign_up: false
+      auto_assign_org_role: "Editor"
+    auth.proxy:
+      enabled: true
+    server:
+      # This needs to be in sync with the UI, and the NGINX configuration.
+      root_url: "https://%(domain)s/reports"
+      serve_from_sub_path: true
 chronograf:
   enabled: false
 timescaledb:
@@ -109,6 +125,8 @@ jaeger:
 datacloud:
   enabled: false
 intersight-integration:
+  enabled: false
+extractor:
   enabled: false
 
 # Enable mediation
@@ -175,6 +193,8 @@ pure:
 rhv:
   enabled: false
 scaleio:
+  enabled: false
+servicenow:
   enabled: false
 snmp:
   enabled: false

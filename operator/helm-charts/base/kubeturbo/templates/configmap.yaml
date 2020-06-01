@@ -7,18 +7,17 @@ data:
     {
       "communicationConfig": {
         "serverMeta": {
-        {{- if .Values.global }}
           {{- if .Values.serverMeta.proxy }}
           "proxy": "{{ .Values.serverMeta.proxy }}",
           {{- end }}
-          {{- if and .Values.global.tag .Values.global.externalIP }}
+          {{- if .Values.global }}
+            {{- if .Values.global.tag }}
           "version": "{{ .Values.global.tag }}",
-          "turboServer": "https://{{ .Values.global.externalIP }}"
+            {{- end }}
           {{- else }}
           "version": "{{ .Values.serverMeta.version }}",
-          "turboServer": "{{ .Values.serverMeta.turboServer }}"
           {{- end }}
-        {{- end }}
+          "turboServer": "{{ .Values.serverMeta.turboServer }}"
         },
         "restAPIConfig": {
           "opsManagerUserName": "{{ .Values.restAPIConfig.opsManagerUserName }}",

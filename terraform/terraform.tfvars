@@ -1,4 +1,4 @@
-tag = "7.21.0"
+tag = "7.22.0"
 externalIP = "10.0.2.15"
 
 # Mediation

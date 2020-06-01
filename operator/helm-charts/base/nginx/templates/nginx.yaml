@@ -39,6 +39,8 @@ spec:
           value: api.{{ .Release.Namespace }}.svc.cluster.local
         - name: TOPOLOGY
           value: topology-processor.{{ .Release.Namespace }}.svc.cluster.local
+        - name: GRAFANA
+          value: grafana.{{ .Release.Namespace }}.svc.cluster.local
 {{ toYaml .Values.env | indent 8 }}
         ports:
           - containerPort: 8000

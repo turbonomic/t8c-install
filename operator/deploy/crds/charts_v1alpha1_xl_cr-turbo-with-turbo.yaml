@@ -1,0 +1,46 @@
+apiVersion: charts.helm.k8s.io/v1
+kind: Xl
+metadata:
+  name: xl-release
+spec:
+  # This configuration file is used as an example on how to enable monitoring Turbonomic with Turbonomic.
+  #
+  # Monitor Turbonomic with Turbonomic is achieved by enabling the following components:
+  # - kubeturbo
+  # - prometurbo, which packages the turbodif probe by default
+  # - prometheus
+  # - prometheus-mysql-exporter
+  #
+  # Please make sure to:
+  # - Apply the cluster-role.yaml and the cluster-role-binding.yaml. This is needed for the
+  #   t8c-operator to create clusterroles and clusterrolebindings required by prometheus and kubeturbo.
+  # - For appliance install ONLY: Enable prometheus-mysql-exporter, and set mysql.user and mysql.pass
+  #   in order for prometheus-mysql-exporter to login to the database.
+
+  # Global settings
+  global:
+    repository: turbonomic
+    tag: 7.22.0
+    externalIP: 10.10.2.15
+    externalDbIP: 10.10.2.15
+
+  # Kubeturbo probe
+  kubeturbo:
+    enabled: true
+
+  # Prometurbo metric server and Turbodif probe
+  prometurbo:
+    enabled: true
+
+  # Prometheus mysql exporter
+  prometheus-mysql-exporter:
+    # ONLY enable for appliance install
+    enabled: true
+    # Configure the username and password to login to Turbonomic db
+    mysql:
+      user: turbodbuser
+      pass: turbodbpassword
+
+  # Prometheus server and built-in exporters
+  prometheus:
+    enabled: true

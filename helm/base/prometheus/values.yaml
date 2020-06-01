@@ -1415,21 +1415,36 @@ serverFiles:
 # adds additional scrape configs to prometheus.yml
 # must be a string so you have to add a | after extraScrapeConfigs:
 # example adds prometheus-blackbox-exporter scrape config
-extraScrapeConfigs:
-  # - job_name: 'prometheus-blackbox-exporter'
-  #   metrics_path: /probe
-  #   params:
-  #     module: [http_2xx]
-  #   static_configs:
-  #     - targets:
-  #       - https://example.com
-  #   relabel_configs:
-  #     - source_labels: [__address__]
-  #       target_label: __param_target
-  #     - source_labels: [__param_target]
-  #       target_label: instance
-  #     - target_label: __address__
-  #       replacement: prometheus-blackbox-exporter:9115
+extraScrapeConfigs: |
+  - job_name: 'xl-mysql'
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels:
+          - __meta_kubernetes_pod_label_app
+        regex: prometheus-mysql-exporter
+        action: keep
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      - source_labels:
+          - __meta_kubernetes_pod_host_ip
+        action: replace
+        target_label: host_ip
+      - source_labels:
+          - __meta_kubernetes_pod_label_app
+        regex: prometheus-mysql-exporter
+        action: replace
+        replacement: "xl"
+        target_label: job
+      - source_labels:
+          - __meta_kubernetes_pod_label_app
+        regex: prometheus-mysql-exporter
+        action: replace
+        replacement: "db"
+        target_label: service
 
 # Adds option to add alert_relabel_configs to avoid duplicate alerts in alertmanager
 # useful in H/A prometheus with different external labels but the same alerts

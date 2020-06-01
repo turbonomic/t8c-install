@@ -79,6 +79,7 @@ Also, we can't use a single if because lazy evaluation is not an option
   * If .Values.debug or .Values.global.debug are set, then JAVA_DEBUG="true" will be set in the env vars.
   (the java component will interpret this as a signal that the debugging runtime options should be added
   to the command line)
+  * .Values.jvmType or .Values.global.jvmType will be passed as JVM_TYPE
   * .Values.javaDebugOptions or .Values.global.javaDebugOptions will be passed as JAVA_DEBUG_OPTS
   * .Values.javaMaxRAMPercentage or .Values.global.javaMaxRAMPercentage will be passed as JAVA_MAX_RAM_PCT
   * .Values.javaComponentOptions will be passed as JAVA_COMPONENT_OPTS
@@ -87,6 +88,10 @@ Also, we can't use a single if because lazy evaluation is not an option
   runtime options.
 */}}
 {{- define "java.setJVMEnvironmentOptions" }}
+    {{- if or .Values.global.jvmType .Values.jvmType }}
+        - name: JVM_TYPE
+          value: {{ coalesce .Values.jvmType .Values.global.jvmType "" }}
+    {{- end }}
     {{- if or .Values.global.debug .Values.debug }}
         - name: JAVA_DEBUG
           value: "true"

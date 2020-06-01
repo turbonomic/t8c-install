@@ -87,7 +87,9 @@ spec:
     - uri:
         prefix: /vmturbo/rest
     - uri:
-        prefix: /vmturbo/saml
+        prefix: /vmturbo/saml2
+    - uri:
+        prefix: /vmturbo/oauth2
     route:
     - destination:
         host: api.{{ .Release.Namespace }}.svc.cluster.local

@@ -1,39 +1,119 @@
-# Default values for kubeturbo.
+# Default values for prometurbo.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 # Replace the image with desired version
 image:
-  promerepository: turbonomic/prometurbo
-  prometag: 7.21.0
-  apprepository: turbonomic/appmetric
-  apptag: 7.21.0
+  prometurboRepository: turbonomic/prometurbo
+  prometurboTag: 7.22.0
+  turbodifRepository: turbonomic/turbodif
+  turbodifTag: 7.22.0
   pullPolicy: IfNotPresent
 
 #nameOverride: ""
 fullnameOverride: prometurbo
 
-# Turbo server version and address
+# Turbonomic server version and address
 serverMeta:
-  version: 7.21
-  turboServer: https://Turbo_server_URL
+  version: 7.22
+  turboServer: http://topology-processor:8080
+  #proxy: http://username:password@proxyserver:proxyport
 
-# Turbo server api user and password
+# Turbo server api user and password stored in a secret or optionally specified as username and password
 # The opsManagerUserName requires Turbo administrator role
+# The UserName and Password are only needed when a targetName is configured in targetConfig
 restAPIConfig:
   turbonomicCredentialsSecretName: turbonomic-credentials
   opsManagerUserName: administrator
   opsManagerPassword: administrator
 
-# Enabling targetConfig and providing a value will give a name to your cluster
-prometurboTargetConfig:
-  targetAddress: xl-prometheus
-  keepStandalone: false
-  createProxyVM: false
-  scope: prometheus
+# Specify a unique target name
+targetName: Prometheus-Turbonomic
+# Specify metric endpoint from Prometurbo
+targetAddress: http://localhost:8081/metrics
 
-targetTypeSuffix: ""
+# Specify a unique suffix to the DataIngestionFramework target type
+# The Target Type will appear as DataIngestionFramework-<targetTypeSuffix> on the UI
+# Do not specify Turbonomic as the targetTypeSuffix, it is reserved for internal use
+targetTypeSuffix: Turbonomic
 
 args:
   # logging level
   logginglevel: 2
+
+# Prometheus servers and metrics to scrape
+prometheusServers: |
+  server1:
+    # The URL of the prometheus server
+    url: http://prometheus-server:9090
+    # The list of supported exporters for the above prometheus server
+    exporters:
+      - turbonomic
+
+# Configure extra prometheus exporters here
+extraPrometheusExporters:
+
+# Configure business applications here
+# [Schema]
+# businessApplications: [ businessApplication ]
+# businessApplication:
+#   name: string                   # The name of the business application. Required.
+#   from: string                   # The discovering source (target URL) of the business application. Required.
+#   transactions: [ transaction ]  # A list of business transactions. Optional.
+#   services: [ string ]           # A list of services that the business application depends on. Required.
+# transaction:
+#   name: string                   # The display name of the transaction. Optional.
+#   path: string                   # The request path of a business transaction. Required.
+#   dependOn: [ string ]           # The list of services that the business transaction depends on. Required.
+businessApplications: |
+  - name: Turbonomic
+    from: http://prometheus-server:9090
+    transactions:
+      - name: supplychains
+        path: /supplychains
+        dependOn:
+          - repository
+          - topology-processor
+      - path: /plan
+        dependOn:
+          - plan-orchestrator
+          - topology-processor
+          - group
+          - market
+          - cost
+          - action-orchestrator
+          - history
+          - repository
+      - name: status
+        path: /stats/{statistic_Uuid}
+        dependOn:
+          - history
+          - plan-orchestrator
+          - group
+    services:
+      - action-orchestrator
+      - api
+      - auth
+      - cost
+      - db
+      - group
+      - history
+      - market
+      - mediation-aws
+      - mediation-actionscript
+      - mediation-appdynamics
+      - mediation-appinsights
+      - mediation-aws
+      - mediation-awsbilling
+      - mediation-awscost
+      - mediation-azure
+      - mediation-azurecost
+      - mediation-azureea
+      - mediation-azuresp
+      - mediation-azurevolumes
+      - mediation-vcenter
+      - mediation-vcenterbrowsing
+      - plan-orchestrator
+      - repository
+      - topology-processor
+

@@ -32,6 +32,6 @@ env:
 
 resources:
   limits:
-    memory: 2048Mi
+    memory: 4Gi
   requests:
     memory: 384Mi

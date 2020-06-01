@@ -89,6 +89,10 @@ dependencies:
     repository: file://../services/topology-processor
     version: 0.1.0
     condition: platform.enabled
+  - name: extractor
+    repository: file://../services/extractor
+    version: 0.1.0
+    condition: extractor.enabled # todo: change to platform.enabled once XLR/search is ready
 
 # Logging dependencies
   - name: elasticsearch
@@ -127,8 +131,8 @@ dependencies:
     condition: prometheus-mysql-exporter.enabled
   - name: grafana
     repository: file://../base/grafana
-    version: 4.1.2
-    condition: grafana.enabled
+    version: 5.1.25
+    condition: grafana.enabled,reporting.enabled
   - name: kubeturbo
     repository: file://../base/kubeturbo
     version: 0.1.0
@@ -331,6 +335,10 @@ dependencies:
     repository: file://../probes/mediation-scaleio
     version: 0.1.0
     condition: scaleio.enabled
+  - name: mediation-servicenow
+    repository: file://../probes/mediation-servicenow
+    version: 0.1.0
+    condition: servicenow.enabled
   - name: mediation-snmp
     repository: file://../probes/mediation-snmp
     version: 0.1.0

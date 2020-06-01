@@ -103,18 +103,16 @@ data:
         externalApiFileSystemBase: file:/swagger/
         cpuInfoCacheLifetimeHours: 8
         sessionTimeoutSeconds: 1800
+        enableReporting: {{ .Values.reporting.enabled }}
       auth:
         dbSchemaName: auth
         identityGeneratorPrefix: 7
-        numBeforeLicenseExpirationDays: 2
       cost:
         identityGeneratorPrefix: 10
         turbonomic.ratecards.persistent.path: /home/turbonomic/data/
         # The normal interval to trigger buy RI analysis after first time run.
         normalBuyRIAnalysisIntervalHours: 336
         # the cost component will receive some large messages over grpc, so we will increase the max
-        # message size beyond the 4mb default.
-        server.grpcMaxMessageBytes: 12000000
         # DB properties
         dbSchemaName: cost
         persistEntityCostChunkSize: 1000
@@ -183,44 +181,6 @@ data:
         # 5-minutes timeout to send big data through GRPC procedure calls
         grpcReadingTimeoutMs: 300000
 
-        # number of BulkInserter batch inserts that can run concurrently
-        bulk.parallelBatchInserts: 8
-        # default insert batch size
-        bulk.batchSize: 1000
-        # maximum number of retry attempts for a failed batch insert, before abandoning it as a lost batch
-        bulk.maxBatchRetries: 10
-        # backoff period before final retry attempt; backoffs for prior retries are computed from this
-        bulk.maxRetryBackoffMsec: 60000
-        # maximum number of batches that can be submitted for execution at the same time by a single writer
-        bulk.maxPendingBatches: 8
-
-        # whether to commit DB operations at chunk boundaries when processing topologies
-        ingest.perChunkCommit: false
-
-        # how long to keep processing status in topology coordinator (4 hours = 14400 seconds)
-        ingest.topologyStatusRetentionSecs: 14400
-
-        # how long a received topology can sit around waiting to be processed before the listener
-        # times out and skips the topology
-        ingest.ingestionTimeoutSecs: 1200
-
-        # how long to wait for a snapshot to become eligible for hourly rollup processing, before
-        # the associated ingestions are forced into a resolved status to permit the rollups to
-        # proceed
-        ingest.hourlyRollupTimeoutSecs: 3600
-
-        # how long we can go without repartitioning the stats tables. The longer this doesn't happen,
-        # the higher the risk of running out of space on the database server.
-        # Normally this happens as a side-effect of daily/monthly rollups, but this is here as a safety
-        # valve
-        ingest.repartitioningTimeoutSecs: 7200
-
-        # max time processing loop will wait before checking for more work
-        ingest.processingLoopMaxSleepSecs: 60
-
-        # default max time allowed for a single writer to process a single chunk
-        ingest.defaultChunkTimeLimitMsec: 60000
-
         # timeouts for various execution "styles" used in HistorydbIO
         # 20 seconds
         executeTimeoutMsec.IMMEDIATE: 20000
@@ -274,7 +234,7 @@ data:
         defaultCommodityWhitelist:
             BALLOONING,
             BUFFER_COMMODITY,
-            COLLECTION_TIME,
+            REMAINING_GC_CAPACITY,
             CONNECTION,
             COOLING,
             COUPON,
@@ -344,19 +304,11 @@ data:
         identityGeneratorPrefix: 3
         templateSpecFile: defaultTemplateSpec.json
         defaultTemplatesFile: defaultTemplates.json
-        # Config parameter to control the time out minutes for running plan.
-        planTimeoutMins: 60
         # Time-out for the CPU Info cache; this cache is updated very infrequently.
         cpuInfoCacheLifetimeHours: 8
         # If true, calculate headroom for all clusters in one plan instance.
         # If false, calculate headroom for restricted number of clusters in multiple plan instances.
         headroomCalculationForAllClusters: true
-      reporting:
-        dbSchemaName: vmtdb
-        identityGeneratorPrefix: 8
-        scheduledReportsGenerationTime: 1
-        maxConnectRetryCount: 60
-        retryDelayInMilliSec: 10000
       repository:
         repositorySearchPaginationDefaultLimit: 100
         repositorySearchPaginationMaxLimit: 500
@@ -368,11 +320,6 @@ data:
         repositoryRealtimeTopologyDropDelaySecs: 30
         numberOfExpectedRealtimeSourceDB: 2
         numberOfExpectedRealtimeProjectedDB: 2
-        # we are defaulting to 5 entities per chunk. Serialized entities were in the 1 ~ 5k
-        # range in a quick anecdotal test, and this would put the message chunk size at 25 - 125k range.
-        # This overlaps reasonably with the rumored optimal message size seems to be 16-64k as per
-        # https://github.com/grpc/grpc.github.io/issues/371
-        repositoryMaxEntitiesPerChunk: 5
       topology-processor:
         # suppress inspection "UnusedProperty" for whole file
         identityGeneratorPrefix: 1
@@ -393,8 +340,6 @@ data:
         minimumAccountExpensesUploadIntervalMins: 60
         minimumRIDataUploadIntervalMins: 5
         actionTimeoutSeconds: 30
-        # Max number of concurrent target discoveries per probe.
-        maxConcurrentTargetDiscoveriesPerProbeCount: 5
         # Urgent metrics are collected every 10 minutes, the offline every 3 days
         collectionIntervalUrgentSec: 600
         collectionIntervalOfflineSec: 259200
@@ -473,26 +418,13 @@ data:
         historyAggregationLoadingChunkSize: 1000
         # The chunk size for a task of aggregating commodity history values
         historyAggregationCalculationChunkSize: 2000
-        # The percentile buckets distribution per commodity type, should cover the range from 0 to 100.
-        # Currently allowed: VCPU VMEM IMAGE_CPU IMAGE_MEM IMAGE_STORAGE
-        # If not configured, 101 one-percent buckets will be used.
-        #historyAggregation.percentileBuckets.VCPU: 0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,91,92,93,84,95,96,97,98,99,100
         # How often to checkpoint the percentile cache in the persistence store
         historyAggregation.percentileMaintenanceWindowHours: 24
-        # The maximum message size for serializing percentile blobs
-        # Typical size for 10 millions of commodities is 120mb
-        historyAggregation.grpcChannelMaxMessageSizeKb: 204800
         # Whether to enable consistent scaling
         consistentScalingEnabled: true
-        # How many timeslot-related commodities trigger background history loading vs synchronous
-        historyAggregation.backgroundLoadingThreshold: 5000
-        # How many background history loading retries are tolerated before stopping and sending up a notification
-        historyAggregation.backgroundLoadingRetries: 3
-        # How long a single background loading attempt is allowed to take before failing
-        historyAggregation.backgroundLoadingTimeoutMin: 60
-        # How often to expire the timeslot cached data going out of observation window
-        historyAggregation.timeslotMaintenanceWindowHours: 23
-        fullAzureEARIDiscovery: false
+      extractor:
+        dbHost: timescaledb
+        dbPort: 5432
 {{- if .Values.properties }}
     customProperties:
 {{ toYaml .Values.properties | indent 12 }}

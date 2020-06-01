@@ -1,4 +1,4 @@
-apiVersion: charts.helm.k8s.io/v1alpha1
+apiVersion: charts.helm.k8s.io/v1
 kind: Xl
 metadata:
   name: xl-release
@@ -17,7 +17,7 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 7.21.3
+    tag: 7.22.0
 
 # Component selector - Probes
 #  actionscript:

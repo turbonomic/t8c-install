@@ -15,51 +15,43 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
-{{- if .Values.global }}
-  {{- if or .Values.annotations .Values.global.annotations }}
-      annotations:
-    {{- with .Values.annotations }}
-{{- toYaml . | nindent 8 }}
-  {{- end }}
-    {{- with .Values.global.annotations }}
-{{- toYaml . | nindent 8 }}
-    {{- end }}
-  {{- end }}
-{{- end }}
       labels:
         app.kubernetes.io/name: {{ include "prometurbo.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ .Values.image.promerepository }}:{{ .Values.image.prometag }}
+          image: {{ .Values.image.prometurboRepository }}:{{ .Values.image.prometurboTag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            - --keepStandalone={{ .Values.prometurboTargetConfig.keepStandalone }}
-            - --createProxyVM={{ .Values.prometurboTargetConfig.createProxyVM }}
             - --v={{ .Values.args.logginglevel }}
+          ports:
+            - containerPort: 8081
           volumeMounts:
             - name: prometurbo-config
               mountPath: /etc/prometurbo
               readOnly: true
-            - name: turbonomic-credentials-volume
-              mountPath: /etc/turbonomic-credentials
-              readOnly: true
-            - name: varlog
-              mountPath: /var/log
-        - name: appmetric
-          image: {{ .Values.image.apprepository }}:{{ .Values.image.apptag }}
+        - name: turbodif
+          image: {{ .Values.image.turbodifRepository }}:{{ .Values.image.turbodifTag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            - --promUrl={{ .Values.prometurboTargetConfig.targetAddress }}
             - --v={{ .Values.args.logginglevel }}
-          ports:
-            - containerPort: 8081
+          volumeMounts:
+          - name: turbodif-config
+            mountPath: /etc/turbodif
+            readOnly: true
+          - name: turbonomic-credentials-volume
+            mountPath: /etc/turbonomic-credentials
+            readOnly: true
+          - name: varlog
+            mountPath: /var/log
       volumes:
       - name: prometurbo-config
         configMap:
           name: prometurbo-config-{{ .Release.Name }}
+      - name: turbodif-config
+        configMap:
+          name: turbodif-config-{{ .Release.Name }}
       - name: turbonomic-credentials-volume
         secret:
           defaultMode: 420

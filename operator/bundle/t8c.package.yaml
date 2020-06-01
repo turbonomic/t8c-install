@@ -1,4 +1,4 @@
 channels:
-  - currentCSV: t8c-operator.v7.21.0
+  - currentCSV: t8c-operator.v7.22.0
     name: alpha
 packageName: t8c

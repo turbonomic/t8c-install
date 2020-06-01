@@ -5,7 +5,7 @@
 # Replace the image with desired version
 image:
   repository: turbonomic/kubeturbo
-  tag: 7.21.2
+  tag: 7.22.0
   pullPolicy: IfNotPresent
 
 annotations:
@@ -19,8 +19,8 @@ roleName: "cluster-admin"
 
 # Turbo server version and address
 serverMeta:
-  version: 7.21
-  turboServer: https://nginx
+  version: 7.22
+  turboServer: http://topology-processor:8080
   #proxy: http://username:password@proxyserver:proxyport
 
 # Turbo server api user and password stored in a secret or optionally specified as username and password
@@ -33,8 +33,7 @@ restAPIConfig:
 
 # Enabling targetConfig
 targetConfig:
-  # Enable the kubeturbo probe without adding a target
-  targetType: turbonomic
+  targetName: Turbonomic
 
 # In kubeturbo 6.4.3+, you can define what nodes should stay high-available based on the node role
 # Master nodes are by default populated by --set HANodeConfig.nodeRoles="\"foo\"\,\"bar\""
