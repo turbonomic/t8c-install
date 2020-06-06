@@ -323,11 +323,11 @@ Helm 2.11 supports the assignment of a value to a variable defined in a differen
 but Helm 2.9 and 2.10 does not support it, so we need to implement this if-else logic.
 */}}
 {{- if .Values.global -}}
-    {{- if .Values.global.storageClass -}}
-        {{- if (eq "-" .Values.global.storageClass) -}}
+    {{- if .Values.global.storageClassName -}}
+        {{- if (eq "-" .Values.global.storageClassName) -}}
             {{- printf "storageClassName: \"\"" -}}
         {{- else }}
-            {{- printf "storageClassName: %s" .Values.global.storageClass -}}
+            {{- printf "storageClassName: %s" .Values.global.storageClassName -}}
         {{- end -}}
     {{- else -}}
         {{- if .Values.persistence.storageClass -}}

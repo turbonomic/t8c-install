@@ -1,13 +1,13 @@
 {{- if .Values.replication.enabled }}
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: "{{ template "postgresql.fullname" . }}-slave"
   labels:
-    app: {{ template "postgresql.name" . }}
-    chart: {{ template "postgresql.chart" . }}
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+    zone: secure
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   serviceName: {{ template "postgresql.fullname" . }}-headless
   replicas: {{ .Values.replication.slaveReplicas }}
@@ -20,17 +20,24 @@ spec:
     metadata:
       name: {{ template "postgresql.fullname" . }}
       labels:
-        app: {{ template "postgresql.name" . }}
-        chart: {{ template "postgresql.chart" . }}
-        release: {{ .Release.Name | quote }}
-        heritage: {{ .Release.Service | quote }}
+        zone: secure
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
         role: slave
 {{- with .Values.slave.podLabels }}
 {{ toYaml . | indent 8 }}
 {{- end }}
-{{- with .Values.slave.podAnnotations }}
+{{- if .Values.global }}
+  {{- if or .Values.master.podAnnotations .Values.global.annotations }}
       annotations:
-{{ toYaml . | indent 8 }}
+    {{- with .Values.master.podAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
 {{- end }}
     spec:
       {{- if .Values.schedulerName }}
@@ -54,7 +61,7 @@ spec:
       {{- end }}
       {{- if .Values.securityContext.enabled }}
       securityContext:
-        fsGroup: {{ .Values.securityContext.fsGroup }}
+        fsGroup: {{ .Values.global.securityContext.fsGroup }}
       {{- end }}
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ default (include "postgresql.fullname" . ) .Values.serviceAccount.name}}
@@ -67,13 +74,13 @@ spec:
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         command:
-          - sh
+          - /bin/sh
           - -c
           - |
             mkdir -p {{ .Values.persistence.mountPath }}/data
             chmod 700 {{ .Values.persistence.mountPath }}/data
             find {{ .Values.persistence.mountPath }} -mindepth 1 -maxdepth 1 -not -name ".snapshot" -not -name "lost+found" | \
-              xargs chown -R {{ .Values.securityContext.runAsUser }}:{{ .Values.securityContext.fsGroup }}
+              xargs chown -R {{ .Values.securityContext.runAsUser }}:{{ .Values.global.securityContext.fsGroup }}
         securityContext:
           runAsUser: {{ .Values.volumePermissions.securityContext.runAsUser }}
         volumeMounts:
@@ -94,10 +101,10 @@ spec:
         env:
         - name: BITNAMI_DEBUG
           value: {{ ternary "true" "false" .Values.image.debug | quote }}
-        - name: POSTGRESQL_VOLUME_DIR
-          value: "{{ .Values.persistence.mountPath }}"
         - name: POSTGRESQL_PORT_NUMBER
           value: "{{ template "postgresql.port" . }}"
+        - name: POSTGRESQL_VOLUME_DIR
+          value: "{{ .Values.persistence.mountPath }}"
         {{- if .Values.persistence.mountPath }}
         - name: PGDATA
           value: {{ .Values.postgresqlDataDir | quote }}
@@ -133,19 +140,19 @@ spec:
               key: postgresql-password
         {{- end }}
         ports:
-        - name: postgresql
+        - name: tcp-postgresql
           containerPort: {{ template "postgresql.port" . }}
         {{- if .Values.livenessProbe.enabled }}
         livenessProbe:
           exec:
             command:
-            - sh
+            - /bin/sh
             - -c
-           {{- if (include "postgresql.database" .) }}
+          {{- if (include "postgresql.database" .) }}
             - exec pg_isready -U {{ include "postgresql.username" . | quote }} -d {{ (include "postgresql.database" .) | quote }} -h 127.0.0.1 -p {{ template "postgresql.port" . }}
-           {{- else }}
+          {{- else }}
             - exec pg_isready -U {{ include "postgresql.username" . | quote }} -h 127.0.0.1 -p {{ template "postgresql.port" . }}
-           {{- end }}
+          {{- end }}
           initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
@@ -156,7 +163,7 @@ spec:
         readinessProbe:
           exec:
             command:
-            - sh
+            - /bin/sh
             - -c
             {{- include "postgresql.readinessProbeCommand" . | nindent 12 }}
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
@@ -207,13 +214,10 @@ spec:
         emptyDir: {}
       {{- end }}
       {{- if .Values.slave.extraVolumes }}
-      {{- toYaml .Values.slave.extraVolumes | nindent 6}}
+      {{- toYaml .Values.slave.extraVolumes | nindent 8 }}
       {{- end }}
   updateStrategy:
     type: {{ .Values.updateStrategy.type }}
-    {{- if (eq "Recreate" .Values.updateStrategy.type) }}
-    rollingUpdate: null
-    {{- end }}
 {{- if .Values.persistence.enabled }}
   volumeClaimTemplates:
     - metadata:

@@ -404,7 +404,7 @@ then
     /opt/local/bin/configure_mariadb.sh
   fi
 
-  # Create the operator  
+  # Create the operator
   kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/service_account.yaml -n turbonomic
   kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/role.yaml -n turbonomic
   kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/role_binding.yaml -n turbonomic

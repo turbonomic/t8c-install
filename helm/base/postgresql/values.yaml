@@ -14,8 +14,8 @@ global:
 ##
 image:
   registry: docker.io
-  repository: bitnami/postgresql
-  tag: 11.5.0-debian-9-r1
+  repository: timescale/timescaledb
+  tag: latest-pg12
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -39,18 +39,18 @@ image:
 
 ## String to fully override postgresql.fullname template
 ##
-# fullnameOverride:
+fullnameOverride: timescaledb
 
 ##
 ## Init containers parameters:
 ## volumePermissions: Change the owner of the persist volume mountpoint to RunAsUser:fsGroup
 ##
 volumePermissions:
-  enabled: true
+  enabled: false
   image:
     registry: docker.io
     repository: bitnami/minideb
-    tag: latest
+    tag: buster
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -64,7 +64,7 @@ volumePermissions:
     #   - myRegistryKeySecretName
   ## Init container Security Context
   securityContext:
-    runAsUser: 0
+    runAsUser: 70
 
 ## Use an alternate scheduler, e.g. "stork".
 ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
@@ -76,8 +76,7 @@ volumePermissions:
 ##
 securityContext:
   enabled: true
-  fsGroup: 1001
-  runAsUser: 1001
+  runAsUser: 70
 
 ## Pod Service Account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
@@ -100,14 +99,14 @@ replication:
   ## Replication Cluster application name. Useful for defining multiple replication policies
   applicationName: my_application
 
-## PostgreSQL admin user
+## PostgreSQL user (has superuser privileges if username is `postgres`)
 ## ref: https://github.com/bitnami/bitnami-docker-postgresql/blob/master/README.md#setting-the-root-password-on-first-run
 postgresqlUsername: postgres
 
 ## PostgreSQL password
 ## ref: https://github.com/bitnami/bitnami-docker-postgresql/blob/master/README.md#setting-the-root-password-on-first-run
 ##
-# postgresqlPassword:
+postgresqlPassword: vmturbo
 
 ## PostgreSQL password using existing secret
 ## existingSecret: secret
@@ -118,7 +117,7 @@ postgresqlUsername: postgres
 ## Create a database
 ## ref: https://github.com/bitnami/bitnami-docker-postgresql/blob/master/README.md#creating-a-database-on-first-run
 ##
-# postgresqlDatabase:
+postgresqlDatabase: postgres
 
 ## PostgreSQL data dir
 ## ref: https://github.com/bitnami/bitnami-docker-postgresql/blob/master/README.md
@@ -347,7 +346,7 @@ metrics:
   image:
     registry: docker.io
     repository: bitnami/postgres-exporter
-    tag: 0.5.1-debian-9-r17
+    tag: 0.8.0-debian-10-r106
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -360,7 +359,7 @@ metrics:
   ##
   securityContext:
     enabled: false
-    runAsUser: 1001
+    runAsUser: 70
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
   ## Configure extra options for liveness and readiness probes
   livenessProbe:

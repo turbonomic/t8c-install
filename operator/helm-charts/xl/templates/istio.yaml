@@ -98,6 +98,8 @@ spec:
   - match:
     - uri:
         prefix: /vmturbo/messages
+    - uri:
+        prefix: /ws/messages
     route:
     - destination:
         host: api.{{ .Release.Namespace }}.svc.cluster.local

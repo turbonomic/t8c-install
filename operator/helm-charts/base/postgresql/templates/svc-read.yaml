@@ -4,10 +4,10 @@ kind: Service
 metadata:
   name: {{ template "postgresql.fullname" . }}-read
   labels:
-    app: {{ template "postgresql.name" . }}
-    chart: {{ template "postgresql.chart" . }}
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+    zone: secure
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- with .Values.service.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
@@ -18,14 +18,14 @@ spec:
   loadBalancerIP: {{ .Values.service.loadBalancerIP }}
   {{- end }}
   ports:
-  - name: postgresql
+  - name: tcp-postgresql
     port:  {{ template "postgresql.port" . }}
-    targetPort: postgresql
+    targetPort: tcp-postgresql
     {{- if .Values.service.nodePort }}
     nodePort: {{ .Values.service.nodePort }}
     {{- end }}
   selector:
-    app: {{ template "postgresql.name" . }}
-    release: {{ .Release.Name | quote }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
     role: slave
 {{- end }}

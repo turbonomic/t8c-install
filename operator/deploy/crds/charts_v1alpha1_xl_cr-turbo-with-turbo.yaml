@@ -20,9 +20,10 @@ spec:
   # Global settings
   global:
     repository: turbonomic
-    tag: 7.22.0
-    externalIP: 10.10.2.15
-    externalDbIP: 10.10.2.15
+    tag: 7.22.1
+    externalIP: 10.0.2.15
+    externalDbIP: 10.0.2.15
+    externalTimescaleDBIP: 10.0.2.15
 
   # Kubeturbo probe
   kubeturbo:

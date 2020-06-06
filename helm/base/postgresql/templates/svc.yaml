@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: {{ template "postgresql.fullname" . }}
   labels:
-    app: {{ template "postgresql.name" . }}
-    chart: {{ template "postgresql.chart" . }}
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+    zone: secure
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- with .Values.service.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
@@ -32,13 +32,34 @@ spec:
   {{- end }}
   {{- end }}
   ports:
-  - name: postgresql
+  - name: tcp-postgresql
     port: {{ template "postgresql.port" . }}
-    targetPort: postgresql
+    targetPort: tcp-postgresql
     {{- if .Values.service.nodePort }}
     nodePort: {{ .Values.service.nodePort }}
     {{- end }}
+{{- if .Values.global }}
+  {{- if .Values.global.externalTimescaleDBName }}
+  type: ExternalName
+  externalName: {{ .Values.global.externalTimescaleDBName }}
+  {{- end -}}
+  {{- if and (not .Values.global.externalTimescaleDBName) (not .Values.global.externalTimescaleDBIP)}}
   selector:
-    app: {{ template "postgresql.name" . }}
-    release: {{ .Release.Name | quote }}
     role: master
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  {{- end -}}
+  {{- if and (.Values.global.externalTimescaleDBIP) (not .Values.global.externalTimescaleDBName)}}
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{ template "postgresql.fullname" . }}
+subsets:
+  - addresses:
+    - ip: {{ .Values.global.externalTimescaleDBIP | quote }}
+    ports:
+    - name: tcp-postgresql
+      port: {{ .Values.global.externalTimescaleDBPort | default 5432 }}
+  {{- end -}}
+{{- end }}

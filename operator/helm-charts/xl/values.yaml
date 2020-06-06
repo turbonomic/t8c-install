@@ -102,18 +102,6 @@ chronograf:
   enabled: false
 timescaledb:
   enabled: false
-postgresql:
-  fullnameOverride: timescaledb
-  image:
-    repository: timescale/timescaledb
-    tag: latest-pg11
-  postgresqlPassword: password
-  postgresqlDatabase: postgres
-  securityContext:
-    fsGroup: 70
-    runAsUser: 70
-  metrics:
-    enabled: true
 jaeger:
   enabled: false
   provisionDataStore:

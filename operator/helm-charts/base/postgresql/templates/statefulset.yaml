@@ -1,40 +1,46 @@
-apiVersion: apps/v1beta2
+{{ if .Values.global }}
+  {{ if and (not .Values.global.externalTimescaleDBName) (not .Values.global.externalTimescaleDBIP) }}
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ template "postgresql.master.fullname" . }}
   labels:
-    app: {{ template "postgresql.name" . }}
-    chart: {{ template "postgresql.chart" . }}
-    release: {{ .Release.Name | quote }}
-    heritage: {{ .Release.Service | quote }}
+    zone: secure
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   serviceName: {{ template "postgresql.fullname" . }}-headless
   replicas: 1
   updateStrategy:
     type: {{ .Values.updateStrategy.type }}
-    {{- if (eq "Recreate" .Values.updateStrategy.type) }}
-    rollingUpdate: null
-    {{- end }}
   selector:
     matchLabels:
-      app: {{ template "postgresql.name" . }}
-      release: {{ .Release.Name | quote }}
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
       role: master
   template:
     metadata:
       name: {{ template "postgresql.fullname" . }}
       labels:
-        app: {{ template "postgresql.name" . }}
-        chart: {{ template "postgresql.chart" . }}
-        release: {{ .Release.Name | quote }}
-        heritage: {{ .Release.Service | quote }}
+        zone: secure
+        app.kubernetes.io/name: {{ .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
         role: master
 {{- with .Values.master.podLabels }}
 {{ toYaml . | indent 8 }}
 {{- end }}
-{{- with .Values.master.podAnnotations }}
+{{- if .Values.global }}
+  {{- if or .Values.master.podAnnotations .Values.global.annotations }}
       annotations:
-{{ toYaml . | indent 8 }}
+    {{- with .Values.master.podAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
 {{- end }}
     spec:
       {{- if .Values.schedulerName }}
@@ -58,7 +64,7 @@ spec:
       {{- end }}
       {{- if .Values.securityContext.enabled }}
       securityContext:
-        fsGroup: {{ .Values.securityContext.fsGroup }}
+        fsGroup: {{ .Values.global.securityContext.fsGroup }}
       {{- end }}
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ default (include "postgresql.fullname" . ) .Values.serviceAccount.name }}
@@ -71,13 +77,13 @@ spec:
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         command:
-          - sh
+          - /bin/sh
           - -c
           - |
             mkdir -p {{ .Values.persistence.mountPath }}/data
             chmod 700 {{ .Values.persistence.mountPath }}/data
             find {{ .Values.persistence.mountPath }} -mindepth 1 -maxdepth 1 -not -name ".snapshot" -not -name "lost+found" | \
-              xargs chown -R {{ .Values.securityContext.runAsUser }}:{{ .Values.securityContext.fsGroup }}
+              xargs chown -R {{ .Values.securityContext.runAsUser }}:{{ .Values.global.securityContext.fsGroup }}
         securityContext:
           runAsUser: {{ .Values.volumePermissions.securityContext.runAsUser }}
         volumeMounts:
@@ -158,13 +164,13 @@ spec:
 {{ tpl (toYaml .Values.extraEnv) $ | indent 8 }}
 {{- end }}
         ports:
-        - name: postgresql
+        - name: tcp-postgresql
           containerPort: {{ template "postgresql.port" . }}
         {{- if .Values.livenessProbe.enabled }}
         livenessProbe:
           exec:
             command:
-            - sh
+            - /bin/sh
             - -c
            {{- if (include "postgresql.database" .) }}
             - exec pg_isready -U {{ include "postgresql.username" . | quote }} -d {{ (include "postgresql.database" .) | quote }} -h 127.0.0.1 -p {{ template "postgresql.port" . }}
@@ -181,7 +187,7 @@ spec:
         readinessProbe:
           exec:
             command:
-            - sh
+            - /bin/sh
             - -c
             {{- include "postgresql.readinessProbeCommand" . | nindent 12 }}
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
@@ -247,7 +253,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /
-            port: metrics
+            port: http-metrics
           initialDelaySeconds: {{ .Values.metrics.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.metrics.livenessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.metrics.livenessProbe.timeoutSeconds }}
@@ -258,7 +264,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /
-            port: metrics
+            port: http-metrics
           initialDelaySeconds: {{ .Values.metrics.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.metrics.readinessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.metrics.readinessProbe.timeoutSeconds }}
@@ -271,7 +277,7 @@ spec:
           mountPath: /opt/bitnami/postgresql/secrets/
         {{- end }}
         ports:
-        - name: metrics
+        - name: http-metrics
           containerPort: 9187
         resources:
 {{ toYaml .Values.metrics.resources | indent 10 }}
@@ -334,3 +340,5 @@ spec:
             storage: {{ .Values.persistence.size | quote }}
         {{ include "postgresql.storageClass" . }}
 {{- end }}
+  {{ end }}
+{{ end }}

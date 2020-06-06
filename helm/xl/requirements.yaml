@@ -18,7 +18,7 @@ dependencies:
     condition: metron.enabled
   - name: postgresql
     repository: file://../base/postgresql
-    version: 6.3.2
+    version: 8.9.6
     condition: timescaledb.enabled
   - name: kafka
     repository: file://../base/kafka
