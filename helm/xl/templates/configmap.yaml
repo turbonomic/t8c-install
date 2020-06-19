@@ -125,8 +125,12 @@ data:
         riMinimumDataPoints : 168
         # Number of records to commit in one batch.
         statsRecordsCommitBatchSize : 5000
+        # Number of records to update in one batch.
+        statsRecordsUpdateBatchSize : 5000
         # Number of results to return when fetching lazily.
         statsRecordsQueryBatchSize : 5000
+        # Save Allocation Demand Tables in Diags
+        saveAllocationDemandStores: true
         reservedInstanceStatCleanup.corePoolSize: 1
         # One thread per table - latest, hourly, daily, monthly for RI coverage and utilization
         reservedInstanceStatCleanup.maxPoolSize: 8

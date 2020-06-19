@@ -398,7 +398,7 @@ then
   if [ X${externalDB} = X0 ]
   then
     externalDB=$(egrep "externalDBName" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml)
-    echo "The database is external from thise server"
+    echo "The database is external from this server"
     echo "${externalDB}"
   else
     /opt/local/bin/configure_mariadb.sh
@@ -406,8 +406,8 @@ then
 
   # Create the operator
   kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/service_account.yaml -n turbonomic
-  kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/role.yaml -n turbonomic
-  kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/role_binding.yaml -n turbonomic
+  kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/cluster_role.yaml -n turbonomic
+  kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/cluster_role_binding.yaml -n turbonomic
   kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_crd.yaml -n turbonomic
   kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/operator.yaml -n turbonomic
   kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml -n turbonomic

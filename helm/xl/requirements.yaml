@@ -359,6 +359,10 @@ dependencies:
     repository: file://../probes/mediation-ucsdirector
     version: 0.1.0
     condition: ucsdirector.enabled
+  - name: mediation-udt
+    repository: file://../probes/mediation-udt
+    version: 0.1.0
+    condition: udt.enabled
   - name: mediation-vcenter
     repository: file://../probes/mediation-vcenter
     version: 0.1.0

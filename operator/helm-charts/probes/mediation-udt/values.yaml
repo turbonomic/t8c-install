@@ -1,0 +1,41 @@
+# Default values for mediation-udt.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+annotations: {}
+
+replicaCount: 1
+
+image:
+  repository: turbonomic
+  tag: latest
+  pullPolicy: IfNotPresent
+
+javaComponentOptions: "-Djaxws.client.SSLSocketFactory=com.sun.xml.ws.transport.https.client.SSLSocketFactory
+            -Djaxws.client.HostnameVerifier=com.sun.xml.ws.transport.https.client.hostname.verifier
+            -Djaxws.ConnectTimeout=com.sun.xml.ws.connect.timeout
+            -Djaxws.RequestTimeout=com.sun.xml.ws.request.timeout
+            -Dorg.eclipse.jetty.websocket.jsr356.ssl-trust-all=true
+            -DLog4jContextSelector=com.vmturbo.mediation.common.context.ThreadGroupPrefixContextSelector"
+
+env:
+  - name: component_type
+    value: mediation-udt
+  - name: instance_id
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: instance_ip
+    valueFrom:
+      fieldRef:
+        fieldPath: status.podIP
+  - name: clustermgr_host
+    value: clustermgr
+  - name: clustermgr_port
+    value: "8080"
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    memory: 384Mi
