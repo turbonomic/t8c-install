@@ -35,7 +35,6 @@ sslverify=1
 sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 metadata_expire=300
 EOL
-sudo yum update -y
 
 # Now install appropriate package for PG version
 sudo yum install -y timescaledb-postgresql-12
