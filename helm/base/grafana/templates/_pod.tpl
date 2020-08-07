@@ -32,6 +32,12 @@ initContainers:
         subPath: {{ .Values.persistence.subPath }}
 {{- end }}
 {{- end }}
+{{/*
+
+Commenting this out, because we don't use the download-dashboards functionality,
+and we don't want to have to ship another required image dependency - especially
+for offline installs.
+
 {{- if .Values.dashboards }}
   - name: download-dashboards
     image: "{{ .Values.downloadDashboardsImage.repository }}:{{ .Values.downloadDashboardsImage.tag }}"
@@ -58,6 +64,7 @@ initContainers:
         readOnly: {{ .readOnly }}
     {{- end }}
 {{- end }}
+*/}}
 {{- if .Values.sidecar.datasources.enabled }}
   - name: {{ template "grafana.name" . }}-sc-datasources
     image: "{{ .Values.sidecar.image }}"
@@ -121,7 +128,7 @@ containers:
         mountPath: {{ .Values.sidecar.dashboards.folder | quote }}
 {{- end}}
   - name: {{ .Chart.Name }}
-    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+    image: {{ template "grafana_image" . }}
     imagePullPolicy: {{ .Values.image.pullPolicy }}
   {{- if .Values.command }}
     command:
@@ -217,6 +224,28 @@ containers:
         containerPort: 3000
         protocol: TCP
     env:
+{{/*
+We manually set the instance_id variable for rsyslog integration. See the grafana entrypoint.sh
+script.
+*/}}
+      - name: instance_id
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+{{/*
+We inject the database password as an environment variable from the secret, because specifying it in
+the configmap (which maps to the /etc/grafana/grafana.ini file) doesn't work reliably for passwords
+with special characters.
+*/}}
+      {{- if not .Values.env.GF_DATABASE_PASSWORD }}
+      {{- if eq (index .Values "grafana.ini" "database" "type") "postgres"}}
+      - name: GF_DATABASE_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.admin.existingSecret | default (include "grafana.fullname" .) }}
+            key: {{ .Values.admin.dbPasswordKey | default "db-password" }}
+      {{- end }}
+      {{- end }}
       {{- if not .Values.env.GF_SECURITY_ADMIN_USER }}
       - name: GF_SECURITY_ADMIN_USER
         valueFrom:
@@ -360,3 +389,25 @@ volumes:
     emptyDir: {}
 {{- end -}}
 {{- end }}
+
+{{/*
+Return the proper image name
+*/}}
+{{- define "grafana_image" -}}
+{{- $repositoryName := .Values.image.repository -}}
+{{- $tag := .Values.image.tag | toString -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else logic.
+Also, we can't use a single if because lazy evaluation is not an option
+*/}}
+{{- if .Values.global }}
+    {{- if and .Values.global.repository .Values.global.tag (eq $repositoryName "turbonomic") (eq $tag "latest") }}
+        {{- printf "%s/grafana:%s" .Values.global.repository .Values.global.tag -}}
+    {{- else -}}
+        {{- printf "%s/grafana:%s" $repositoryName $tag -}}
+    {{- end -}}
+{{- else -}}
+    {{- printf "%s/grafana:%s" $repositoryName $tag -}}
+{{- end -}}
+{{- end -}}

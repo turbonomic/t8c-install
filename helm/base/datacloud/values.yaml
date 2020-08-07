@@ -13,11 +13,11 @@ resources: {}
 
 sevone:
   transport:
-    # Should have SEVONE_GRPC_TOKEN as the key. Can be obtained from your profile page on cloud.sevone.com
+    # Should have SEVONE_GRPC_TOKEN as the key. Can be obtained from your profile page on datacloud.turbonomic.io.
     # kubectl create secret generic collector-auth-secret --from-literal=SEVONE_GRPC_TOKEN=<apikey>
     sevone_auth_secret: collector-auth-secret
     settings:
-      DE_HOST: cloud.sevone.com
+      DE_HOST: datacloud.turbonomic.io
       GRPC_PORT: 443
       PERSIST: none
       TRANSPORT: de-grpc
@@ -25,6 +25,10 @@ sevone:
   tls_cert_secret_key: "tls.crt"
   data_volume:
     emptyDir: {}
+  # A service account can be used instead of an API key. Once credentials for the service account are obtained, create a secret with those credentials using the following command:
+  # kubectl create secret generic datacloud-service-account-credentials --from-file=credentials.json=<path to service account credentials json file>
+  # and set service_account_credentials_secret to the name of the secret you created
+  service_account_credentials_secret: #datacloud-service-account-credentials
 
 collector:
   kafka:

@@ -1,0 +1,37 @@
+{{- if .Values.openshiftingress.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: api
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  to:
+    kind: Service
+    name: api
+  port:
+    targetPort: http-api
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: topology-processor
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  to:
+    kind: Service
+    name: topology-processor
+  port:
+    targetPort: http-topology-processor
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+{{- end }}

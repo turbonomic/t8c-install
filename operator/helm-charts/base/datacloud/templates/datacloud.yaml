@@ -61,6 +61,10 @@ spec:
         - name: SEVONE_GRPC_CERT
           value: "/usr/share/pki/sevone/tls.crt"
 {{- end }}
+{{- if .Values.sevone.service_account_credentials_secret }}
+        - name: COLLECTOR_SERVICE_ACCOUNT_CREDENTIALS_FILE
+          value: "/credentials.json"
+{{- end }}
         ports:
           - containerPort: 2112
         readinessProbe:
@@ -90,6 +94,11 @@ spec:
             {{- if .Values.sevone.tls_cert_secret_name }}
             - name: sevone-tls
               mountPath: /usr/share/pki/sevone
+            {{- end }}
+            {{- if .Values.sevone.service_account_credentials_secret }}
+            - name: service-account-credentials
+              mountPath: /credentials.json
+              subPath: credentials.json
             {{- end }}
 {{- if .Values.global }}
   {{- if .Values.global.registry }}
@@ -132,6 +141,11 @@ spec:
           items:
           - key: {{ .Values.sevone.tls_cert_secret_key }}
             path: tls.crt
+{{- end }}
+{{- if .Values.sevone.service_account_credentials_secret }}
+      - name: service-account-credentials
+        secret:
+          secretName: {{ .Values.sevone.service_account_credentials_secret }}
 {{- end }}
   selector:
     matchLabels:

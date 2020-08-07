@@ -166,6 +166,12 @@ spec:
                   description: Enable nginx ingress
                   type: boolean
               type: object
+            openshiftingress:
+              properties:
+                enabled:
+                  description: Enable Openshift routes
+                  type: boolean
+              type: object
             istioingress:
               properties:
                 enabled:
@@ -648,6 +654,12 @@ spec:
               properties:
                 enabled:
                   description: Enable Microsoft SQL Server mediation
+                  type: boolean
+              type: object
+            mysql:
+              properties:
+                enabled:
+                  description: Enable MySQL Server mediation
                   type: boolean
               type: object
             netapp:
@@ -2298,6 +2310,78 @@ spec:
                       type: object
                   type: object
               type: object
+            mediation-mysql:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                javaComponentOptions:
+                  description: component additional java options
+                  type: string
+                debug:
+                  description: component debug
+                  type: boolean
+                resources:
+                  description: component resource configuration
+                  properties:
+                    limits:
+                      description: component limits
+                      properties:
+                        memory:
+                          description: component memory limits
+                          type: string
+                      type: object
+                  type: object
+              type: object
+            mediation-tomcat:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                javaComponentOptions:
+                  description: component additional java options
+                  type: string
+                debug:
+                  description: component debug
+                  type: boolean
+                resources:
+                  description: component resource configuration
+                  properties:
+                    limits:
+                      description: component limits
+                      properties:
+                        memory:
+                          description: component memory limits
+                          type: string
+                      type: object
+                  type: object
+              type: object
             mediation-netapp:
               properties:
                 annotations:
@@ -3143,6 +3227,10 @@ spec:
                   type: object
                 action-orchestrator:
                   description: action-orchestrator property overrides
+                  properties:
+                    riskPropagationEnabled:
+                      description: Enable risk propagation
+                      type: boolean
                   type: object
                 api:
                   description: api property overrides
@@ -3213,6 +3301,13 @@ spec:
                   type: object
                 topology-processor:
                   description: topology-processor property overrides
+                  type: object
+                repository:
+                  description: repository property overrides
+                  properties:
+                    showGuestLoad:
+                      description: Show GuestLoad entities
+                      type: boolean
                   type: object
               type: object
           type: object

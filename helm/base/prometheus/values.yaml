@@ -1445,6 +1445,10 @@ extraScrapeConfigs: |
         action: replace
         replacement: "db"
         target_label: service
+      - source_labels:
+          - __meta_kubernetes_namespace
+        action: replace
+        target_label: namespace
 
 # Adds option to add alert_relabel_configs to avoid duplicate alerts in alertmanager
 # useful in H/A prometheus with different external labels but the same alerts

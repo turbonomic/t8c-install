@@ -5,9 +5,9 @@
 # Replace the image with desired version
 image:
   prometurboRepository: turbonomic/prometurbo
-  prometurboTag: 7.22.4
+  prometurboTag: 7.22.6
   turbodifRepository: turbonomic/turbodif
-  turbodifTag: 7.22.4
+  turbodifTag: 7.22.6
   pullPolicy: IfNotPresent
 
 #nameOverride: ""
@@ -95,15 +95,18 @@ businessApplications: |
       - api
       - auth
       - cost
-      - db
       - group
       - history
       - market
+      - plan-orchestrator
+      - repository
+      - topology-processor
+    optionalServices:
+      - db
       - mediation-aws
       - mediation-actionscript
       - mediation-appdynamics
       - mediation-appinsights
-      - mediation-aws
       - mediation-awsbilling
       - mediation-awscost
       - mediation-azure
@@ -111,9 +114,8 @@ businessApplications: |
       - mediation-azureea
       - mediation-azuresp
       - mediation-azurevolumes
+      - mediation-gcp
+      - mediation-gcpcost
       - mediation-vcenter
       - mediation-vcenterbrowsing
-      - plan-orchestrator
-      - repository
-      - topology-processor
 

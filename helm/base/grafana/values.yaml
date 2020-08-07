@@ -48,9 +48,11 @@ livenessProbe:
 ##
 # schedulerName: "default-scheduler"
 
+# We have our own grafana image.
+# The "latest" default tag is overriden to whatever the global tag is set to (see _pod.tpl).
 image:
-  repository: grafana/grafana
-  tag: 7.0.0
+  repository: turbonomic
+  tag: latest
   pullPolicy: IfNotPresent
 
   ## Optionally specify an array of imagePullSecrets.
@@ -334,7 +336,7 @@ dashboardProviders:
     providers:
     - name: 'default'
       orgId: 1
-      folder: ''
+      folder: 'System'
       type: file
       disableDeletion: false
       editable: true

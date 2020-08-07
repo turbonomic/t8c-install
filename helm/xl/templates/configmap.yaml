@@ -16,7 +16,6 @@ data:
         kafkaServers : kafka:9092
         kafkaNamespace : {{ .Release.Namespace }}
         deadlockCheckIntervalSecs: 900
-        maxHealthyUsedMemoryRatio: 0.95
         scheduledMetricsIntervalMs: 60000
         grpcPingIntervalSeconds: 300
         realtimeTopologyContextId: 777777
@@ -50,6 +49,7 @@ data:
         dbUsername: root
         sqlDialect: MARIADB
         mariadbHealthCheckIntervalSeconds: 60
+        histEntityRiCoverageRecordsRollingWindowDays: 60
         # Mediation Component Common
         serverAddress: ws://topology-processor:8080/remoteMediation
         silentRetryTime: 0
@@ -391,7 +391,7 @@ data:
         #
         # Even if this parameter is turned to false the journal can be manually collected
         # using the /topology-processor/stitchingJournal REST endpoint.
-        stitchingJournalEnabled: true
+        stitchingJournalEnabled: false
         # Control parameters for tuning how frequently and how many entities we trace
         # through the stitching journal. Tracking more changes in the journal introduces
         # a greater performance hit but also provides greater debugging information.
@@ -429,6 +429,12 @@ data:
       extractor:
         dbHost: timescaledb
         dbPort: 5432
+        enableReporting: {{ .Values.reporting.enabled }}
+        grafanaAdminPassword: {{ .Values.grafana.adminPassword }}
+{{- if eq (index .Values "grafana" "grafana.ini" "database" "type") "postgres"}}
+        grafanaDb:
+{{ toYaml (index .Values "grafana" "grafana.ini" "database") | indent 12 }}
+{{- end }}
 {{- if .Values.properties }}
     customProperties:
 {{ toYaml .Values.properties | indent 12 }}

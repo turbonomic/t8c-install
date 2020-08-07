@@ -8,7 +8,7 @@ global:
 #  imageUsername: turbouser
 #  imagePassword: turbopassword
   repository: turbonomic
-  tag: 7.22.0
+  tag: 7.22.6
 #  pullPolicy: IfNotPresent
   customImageNames: true
   nodeSelector: {}
@@ -54,6 +54,8 @@ global:
 
 nginxingress:
   enabled: true
+openshiftingress:
+  enabled: false
 istioingress:
   enabled: false
   mtls: true
@@ -83,33 +85,38 @@ prometheus:
 prometheus-mysql-exporter:
   enabled: false
 grafana:
-  adminPassword: admin
+  # We expect the grafana admin password to be set in the CR file, like:
+  # grafana:
+  #   adminPassword: somePassword
   grafana.ini:
-    database:
-      # TODO - Use postgres instead of sqlite.
-      type: sqlite3
     users:
       # Disallow explicit user creation.
       allow_sign_up: false
-      auto_assign_org_role: "Editor"
-    auth.proxy:
-      enabled: true
+      auto_assign_org_role: Editor
+      default_theme: light
     server:
       # This needs to be in sync with the UI, and the NGINX configuration.
       root_url: "https://%(domain)s/reports"
       serve_from_sub_path: true
+    auth.proxy:
+      enabled: true
+    database:
+      # SQLite by default, overridable to postgres.
+      type: sqlite3
+
+      # The following fields are configured for postgres, and pretty much ignored when the type
+      # is SQLite. We also expect the password to use for the grafana user to be set in the CR file.
+      # In order for the user to configure the postgres backend for Grafana, we need:
+      # grafana:
+      #   grafana.ini:
+      #     database:
+      #       type: postgres
+      #       password: somePassword
+      host: timescaledb
+      name: grafana
+      user: grafana_backend
 chronograf:
   enabled: false
-timescaledb:
-  enabled: false
-jaeger:
-  enabled: false
-  provisionDataStore:
-    cassandra: true
-    elasticsearch: false
-  cassandra:
-    config:
-      dc_name: dc1
 datacloud:
   enabled: false
 intersight-integration:
@@ -161,6 +168,10 @@ intersight:
 istio:
   enabled: false
 mssql:
+  enabled: false
+mysql:
+  enabled: false
+tomcat:
   enabled: false
 netapp:
   enabled: false

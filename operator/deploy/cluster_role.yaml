@@ -92,3 +92,9 @@ rules:
   - certificates
   verbs:
   - '*'
+- apiGroups:
+    - route.openshift.io
+  resources:
+    - routes
+  verbs:
+    - '*'

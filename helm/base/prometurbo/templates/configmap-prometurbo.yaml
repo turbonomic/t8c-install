@@ -17,21 +17,29 @@ data:
             metrics:
               - type: responseTime
                 queries:
-                  used: 'rate(istio_request_duration_milliseconds_sum{response_code="200",reporter="destination"}[3m])/rate(istio_request_duration_milliseconds_count{response_code="200",reporter="destination"}[3m]) >= 0'
+                  used: 'rate(istio_request_duration_milliseconds_sum{request_protocol="http",response_code="200",reporter="destination"}[1m])/rate(istio_request_duration_milliseconds_count{}[1m]) >= 0'
               - type: transaction
                 queries:
-                  used: 'rate(istio_requests_total{response_code="200",reporter="destination"}[3m]) > 0'
+                  used: 'rate(istio_requests_total{request_protocol="http",response_code="200",reporter="destination"}[1m]) > 0'
+              - type: responseTime
+                queries:
+                  used: 'rate(istio_request_duration_milliseconds_sum{request_protocol="grpc",grpc_response_status="0",response_code="200",reporter="destination"}[1m])/rate(istio_request_duration_milliseconds_count{}[1m]) >= 0'
+              - type: transaction
+                queries:
+                  used: 'rate(istio_requests_total{request_protocol="grpc",grpc_response_status="0",response_code="200",reporter="destination"}[1m]) > 0'
             attributes:
               ip:
                 label: instance
                 matches: \d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??
                 isIdentifier: true
+              namespace:
+                label: destination_service_namespace
               service_ns:
                 label: destination_service_namespace
               service_name:
                 label: destination_service_name
               service:
-                label: destination_service
+                label: destination_service_name
       istio-1.4:
         entities:
           - type: application
@@ -51,6 +59,8 @@ data:
                 # Convert from "kubernetes://<podName>.<namespace>" to "<namespace>/<podName>"
                 matches: ^kubernetes://(?P<podName>[a-z0-9]([-a-z0-9]*[a-z0-9])?).(?P<namespace>[a-z0-9]([-a-z0-9]*[a-z0-9])?)$
                 as: "$namespace/$podName"
+              namespace:
+                label: destination_svc_ns
               service_ns:
                 label: destination_svc_ns
               service_name:
@@ -151,26 +161,30 @@ data:
             metrics:
               - type: transaction
                 queries:
-                  used: 'sum by (instance,job,service,uri) (rate(api_call_latency_in_seconds_count{job="xl"}[10m]))'
+                  used: 'sum by (instance,job,service,namespace,uri) (rate(api_call_latency_in_seconds_count{job="xl"}[10m]))'
               - type: responseTime
                 queries:
-                  used: 'avg by (instance,job,service,uri) ((delta(api_call_latency_in_seconds_sum{job="xl"}[10m])/delta(api_call_latency_in_seconds_count[10m])) > 0) * 1000'
+                  used: 'avg by (instance,job,service,namespace,uri) ((delta(api_call_latency_in_seconds_sum{job="xl"}[10m])/delta(api_call_latency_in_seconds_count[10m])) > 0) * 1000'
             attributes:
               id:
                 label: uri
                 isIdentifier: true
+              namespace:
+                label: namespace
           # Transaction for plan
           - type: businessTransaction
             metrics:
               - type: responseTime
                 queries:
-                  used: 'avg by (instance,job,service,status) (delta(plan_run_time_seconds_sum{status="SUCCEEDED"}[10m])/delta(plan_run_time_seconds_count[10m]) > 0) * 1000'
+                  used: 'avg by (instance,job,service,namespace,status) (delta(plan_run_time_seconds_sum{status="SUCCEEDED"}[10m])/delta(plan_run_time_seconds_count[10m]) > 0) * 1000'
             attributes:
               id:
                 label: service
                 matches: plan-orchestrator
                 as: /plan
                 isIdentifier: true
+              namespace:
+                label: namespace
           - type: application
             metrics:
               # TODO: Some of the XL services may be more relevant on kafka messages vs grpc
@@ -200,6 +214,8 @@ data:
                 label: instance
                 matches: \d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??
                 isIdentifier: true
+              namespace:
+                label: namespace
               service:
                 label: service
               service_ns:
@@ -210,6 +226,10 @@ data:
             hostedOnVM: true
             metrics:
               - type: dbMem
+                queries:
+                  used: 'mysql_global_status_innodb_buffer_pool_bytes_data{job="xl"}/1024'
+                  capacity: 'mysql_global_variables_innodb_buffer_pool_size{job="xl"}/1024'
+              - type: memory
                 queries:
                   used: 'mysql_global_status_innodb_buffer_pool_bytes_data{job="xl"}/1024'
                   capacity: 'mysql_global_variables_innodb_buffer_pool_size{job="xl"}/1024'
@@ -227,6 +247,8 @@ data:
               ip:
                 label: host_ip
                 matches: \d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??
+              namespace:
+                label: namespace
               id:
                 label: host_ip
                 matches: (?P<hostIP>\d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??)
@@ -256,4 +278,3 @@ data:
 {{- if .Values.businessApplications }}
 {{ tpl .Values.businessApplications . | indent 6 }}
 {{- end }}
-
