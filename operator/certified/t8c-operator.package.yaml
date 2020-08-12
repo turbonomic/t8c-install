@@ -1,4 +1,0 @@
-packageName: t8c-certified
-channels:
-  - name: alpha
-    currentCSV: t8c-operator.v7.22.0

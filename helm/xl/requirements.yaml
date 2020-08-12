@@ -165,6 +165,14 @@ dependencies:
     repository: file://../probes/mediation-aix
     version: 0.1.0
     condition: aix.enabled
+  - name: mediation-acims
+    repository: file://../probes/mediation-acims
+    version: 0.1.0
+    condition: acims.enabled
+  - name: mediation-apic
+    repository: file://../probes/mediation-apic
+    version: 0.1.0
+    condition: apic.enabled
   - name: mediation-appdynamics
     repository: file://../probes/mediation-appdynamics
     version: 0.1.0

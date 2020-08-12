@@ -129,6 +129,10 @@ actionscript:
   enabled: false
 aix:
   enabled: false
+acims:
+  enabled: false
+apic:
+  enabled: false
 appdynamics:
   enabled: false
 appinsights:

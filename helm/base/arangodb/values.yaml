@@ -22,6 +22,6 @@ persistence:
 
 resources:
   limits:
-    memory: 4Gi
+    memory: 6Gi
   requests:
     memory: 512Mi

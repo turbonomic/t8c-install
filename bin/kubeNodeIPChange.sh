@@ -25,6 +25,26 @@ pause()
     stty icanon
 }
 
+ProgressBar()
+{
+# Process data
+  let _progress=(${1}*100/${2}*100)/100
+  let _done=(${_progress}*4)/10
+  let _left=40-$_done
+# Build progressbar string lengths
+  _fill=$(printf "%${_done}s")
+  _empty=$(printf "%${_left}s")
+
+# Build progressbar strings and print the ProgressBar line
+# Output example:
+# Progress : [########################################] 100%
+printf "\rProgress : [${_fill// /#}${_empty// /-}] ${_progress}%%"
+}
+
+# ProgressBar Variables (2 min)
+_start=1
+_end=120
+
 # Test variables are not empty.
 [ -z "${oldIP}" ] && usage
 [ -z "${newIP}" ] && usage
@@ -126,7 +146,13 @@ do
   sleep 5
 done
 
-sleep 120
+# Show progress bar for the 2 min wait
+for number in $(seq ${_start} ${_end})
+do
+    sleep 1
+    ProgressBar ${number} ${_end}
+done
+printf '\nFinished! kubectl apply commands will follow\n'
 
 /usr/local/bin/kubectl apply -f /etc/kubernetes/calico-config.yml -n kube-system
 /usr/local/bin/kubectl apply -f /etc/kubernetes/calico-kube-controllers.yml -n kube-system

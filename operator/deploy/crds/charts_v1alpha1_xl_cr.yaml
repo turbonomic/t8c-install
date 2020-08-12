@@ -3,7 +3,6 @@ kind: Xl
 metadata:
   name: xl-release
 spec:
-  # This configuration file is used for production.
   # Default values copied from <project_dir>/helm-charts/xl/values.yaml
 
   # Default values for xl.
@@ -18,80 +17,63 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 7.22.7-SNAPSHOT
-    externalIP: 10.0.2.15
-    externalDbIP: 10.0.2.15
-    externalTimescaleDBIP: 10.0.2.15
+    tag: 7.22.6
+    #externalIP: 10.0.2.15
+    #externalDbIP: 10.0.2.15
+    #externalTimescaleDBIP: 10.0.2.15
 
-  grafana:
-    # Grafana is disabled by default. To enable it, uncomment:
-    #enabled: true
-    adminPassword: admin
-    grafana.ini:
-      database:
-        # Store data in sqlite3 (no persistence across restarts) by default. To persist, uncomment:
-        #type: postgres
-
-        # The password. TODO - figure out the correct/ideal way to deploy this without risking
-        # losing/resetting the password on upgrade.
-        # See: https://github.com/helm/charts/issues/5167
-        password: grafana
-
-  # Component selector - Probes
-  actionscript:
-    enabled: true
-  appdynamics:
-    enabled: true
-  appinsights:
-    enabled: true
-  aws:
-    enabled: true
-  azure:
-    enabled: true
-  dynatrace:
-    enabled: true
-  hpe3par:
-    enabled: true
-  hyperv:
-    enabled: true
-  kubeturbo:
-    enabled: true
-  netapp:
-    enabled: true
-  nutanix:
-    enabled: true
-  oneview:
-    enabled: true
-  prometheus-mysql-exporter:
-    enabled: true
-    mysql:
-      user: root
-      pass: vmturbo
-  prometheus:
-    enabled: true
-  prometurbo:
-    enabled: true
-  pure:
-    enabled: true
-  ucs:
-    enabled: true
-  udt:
-    enabled: true
-  vcenter:
-    enabled: true
-  vmax:
-    enabled: true
-  vmm:
-    enabled: true
-  wmi:
-    enabled: true
-  snmp:
-    enabled: true
-  mssql:
-    enabled: true
-  mysql:
-    enabled: true
-  newrelic:
-    enabled: true
-  tomcat:
-    enabled: false
+# Component selector - Probes
+#  actionscript:
+#    enabled: true
+#  appdynamics:
+#    enabled: true
+#  appinsights:
+#    enabled: true
+#  aws:
+#    enabled: true
+#  azure:
+#    enabled: true
+#  dynatrace:
+#    enabled: true
+#  hpe3par:
+#    enabled: true
+#  horizon:
+#    enabled: false
+#  hyperflex:
+#    enabled: false
+#  hyperv:
+#    enabled: true
+#  netapp:
+#    enabled: true
+#  nutanix:
+#    enabled: true
+#  oneview:
+#    enabled: true
+#  pure:
+#    enabled: true
+#  scaleio:
+#    enabled: false
+#  servicenow:
+#    enabled: false
+#  ucs:
+#    enabled: true
+#  udt:
+#    enabled: true
+#  vcenter:
+#    enabled: true
+#  vmax:
+#    enabled: true
+#  vmm:
+#    enabled: true
+#  wmi:
+#    enabled: true
+#  snmp:
+#    enabled: true
+#  mssql:
+#    enabled: true
+#  mysql:
+#    enabled: false
+#  newrelic:
+#    enabled: true
+#  tomcat:
+#    enabled: false

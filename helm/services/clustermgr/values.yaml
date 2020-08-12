@@ -33,6 +33,6 @@ env:
         fieldPath: metadata.namespace
 resources:
   limits:
-    memory: 512Mi
+    memory: 16Gi
   requests:
     memory: 384Mi
