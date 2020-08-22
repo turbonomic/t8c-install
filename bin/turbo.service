@@ -1,0 +1,12 @@
+[Unit]
+Description=Kubernetes Turbonomic Application Server start
+After=kubelet.service
+Wants=docker.socket
+
+[Service]
+User=root
+EnvironmentFile=-/etc/kubernetes/kubelet.env
+ExecStart=/opt/local/bin/storage-restore.sh
+
+[Install]
+WantedBy=multi-user.target
