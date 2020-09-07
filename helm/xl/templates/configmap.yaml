@@ -124,18 +124,13 @@ data:
         # which is one week of data.
         riMinimumDataPoints : 168
         # Number of records to commit in one batch.
-        statsRecordsCommitBatchSize : 5000
+        statsRecordsCommitBatchSize : 100
         # Number of records to update in one batch.
-        statsRecordsUpdateBatchSize : 5000
+        statsRecordsUpdateBatchSize : 100
         # Number of results to return when fetching lazily.
-        statsRecordsQueryBatchSize : 5000
+        statsRecordsQueryBatchSize : 100
         # Save Allocation Demand Tables in Diags
         saveAllocationDemandStores: true
-        reservedInstanceStatCleanup.corePoolSize: 1
-        # One thread per table - latest, hourly, daily, monthly for RI coverage and utilization
-        reservedInstanceStatCleanup.maxPoolSize: 8
-        # Schedule for the Reserved Instance tables cleanup scheduler
-        reservedInstanceStatCleanup.scheduler: 360000
         retention.updateRetentionIntervalSeconds: 10
         projectedTopologyListenerTimeOut: 3600
       group:

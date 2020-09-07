@@ -14,7 +14,7 @@ spec:
   - hosts:
     - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
     port:
-      number: 80
+      number: 8080
       name: http
       protocol: HTTP
     tls:
@@ -23,7 +23,7 @@ spec:
   - hosts:
     - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
     port:
-      number: 443
+      number: 8443
       name: https
       protocol: HTTPS
     tls:
@@ -90,12 +90,6 @@ spec:
         prefix: /vmturbo/saml2
     - uri:
         prefix: /vmturbo/oauth2
-    route:
-    - destination:
-        host: api.{{ .Release.Namespace }}.svc.cluster.local
-        port:
-          number: 8080
-  - match:
     - uri:
         prefix: /vmturbo/messages
     - uri:
@@ -105,7 +99,14 @@ spec:
         host: api.{{ .Release.Namespace }}.svc.cluster.local
         port:
           number: 8080
-    websocketUpgrade: true
+  - match:
+      - uri:
+          prefix: /reports
+    route:
+      - destination:
+          host: grafana.{{ .Release.Namespace }}.svc.cluster.local
+          port:
+            number: 3000
 {{- if .Values.istioingress.routes }}
 {{ toYaml .Values.istioingress.routes | indent 2 }}
 {{- end }}
@@ -137,41 +138,31 @@ spec:
     spec:
       containers:
       - name: istio-proxy
-        image: docker.io/istio/proxyv2:1.4.0
+        image: docker.io/istio/proxyv2:1.7.2
         imagePullPolicy: IfNotPresent
         args:
         - proxy
         - router
         - --domain
         - $(POD_NAMESPACE).svc.cluster.local
-        - --log_output_level
-        - info
-        - --drainDuration
-        - '45s' #drainDuration
-        - --parentShutdownDuration
-        - '1m0s' #parentShutdownDuration
-        - --connectTimeout
-        - '10s' #connectTimeout
+        - --proxyLogLevel=warning
+        - --proxyComponentLogLevel=misc:error
+        - --log_output_level=default:info
         - --serviceCluster
         - t8c-istio-ingressgateway
-        - --zipkinAddress
-        - zipkin:9411
-        - --proxyAdminPort
-        - "15000"
-        - --statusPort
-        - "15020"
-{{- if .Values.istioingress.mtls }}
-        - --controlPlaneAuthPolicy
-        - MUTUAL_TLS
-        - --discoveryAddress
-        - istio-pilot.istio-system.svc.cluster.local:15011
-{{ else }}
-        - --controlPlaneAuthPolicy
-        - NONE
-        - --discoveryAddress
-        - istio-pilot.istio-system.svc.cluster.local:15010
-{{- end }}
+        - --trust-domain=cluster.local
         env:
+        - name: JWT_POLICY
+          value: first-party-jwt
+        - name: PILOT_CERT_PROVIDER
+          value: istiod
+        - name: CA_ADDR
+          value: istiod.istio-system.svc:15012
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
         - name: POD_NAME
           valueFrom:
             fieldRef:
@@ -197,95 +188,111 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: spec.serviceAccountName
-        - name: ISTIO_META_POD_NAME
+        - name: CANONICAL_SERVICE
           valueFrom:
             fieldRef:
               apiVersion: v1
-              fieldPath: metadata.name
-        - name: ISTIO_META_CONFIG_NAMESPACE
+              fieldPath: metadata.labels['service.istio.io/canonical-name']
+        - name: CANONICAL_REVISION
           valueFrom:
             fieldRef:
               apiVersion: v1
-              fieldPath: metadata.namespace
-        - name: ISTIO_META_ROUTER_MODE
-          value: sni-dnat
-        - name: NODE_NAME
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: spec.nodeName
+              fieldPath: metadata.labels['service.istio.io/canonical-revision']
         - name: ISTIO_META_WORKLOAD_NAME
           value: t8c-istio-ingressgateway
         - name: ISTIO_META_OWNER
           value: kubernetes://api/apps/v1/namespaces/{{ .Release.Namespace }}/deployments/t8c-istio-ingressgateway
-        - name: ISTIO_META_USER_SDS
-          value: "false"
-        - name: SDS_ENABLED
-          value: "false"
-        - name: ISTIO_META_CLUSTER_ID
-          value: Kubernetes
-        - name: ISTIO_METAJSON_LABELS
-          value: '{"app":"{{ .Chart.Name }}","istio":"t8c-ingressgateway-{{ .Release.Name }}"}'
         - name: ISTIO_META_MESH_ID
           value: cluster.local
+        - name: ISTIO_META_ROUTER_MODE
+          value: sni-dnat
+        - name: ISTIO_META_CLUSTER_ID
+          value: Kubernetes
         ports:
-        - containerPort: 15020
-          name: status-port
-        - containerPort: 80
-          name: http2
-        - containerPort: 443
-          name: https
+        - containerPort: 15021
+        - containerPort: 8080
+        - containerPort: 8443
+        - containerPort: 31400
         - containerPort: 15443
-          name: tls
         - containerPort: 15090
           name: http-envoy-prom
         readinessProbe:
-          failureThreshold: 30
           httpGet:
             path: /healthz/ready
-            port: 15020
+            port: 15021
             scheme: HTTP
-          initialDelaySeconds: 1
-          periodSeconds: 2
-          successThreshold: 1
-          timeoutSeconds: 1
         resources:
           limits:
             cpu: "2"
             memory: 1Gi
           requests:
-            cpu: 100m
-            memory: 128Mi
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
+            cpu: 10m
+            memory: 40Mi
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
         volumeMounts:
-        - name: istio-certs
-          mountPath: /etc/certs
+        - mountPath: /etc/istio/proxy
+          name: istio-envoy
+        - mountPath: /etc/istio/config
+          name: config-volume
+        - mountPath: /var/run/secrets/istio
+          name: istiod-ca-cert
+        - mountPath: /var/run/ingress_gateway
+          name: gatewaysdsudspath
+        - mountPath: /etc/istio/pod
+          name: podinfo
+        - mountPath: /etc/istio/ingressgateway-certs
+          name: ingressgateway-certs
           readOnly: true
-        - name: ingressgateway-certs
-          mountPath: "/etc/istio/ingressgateway-certs"
+        - mountPath: /etc/istio/ingressgateway-ca-certs
+          name: ingressgateway-ca-certs
           readOnly: true
-        - name: ingressgateway-ca-certs
-          mountPath: "/etc/istio/ingressgateway-ca-certs"
-          readOnly: true
-      dnsPolicy: ClusterFirst
       restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
+      serviceAccount: t8c-operator
+      securityContext:
+        fsGroup: 1337
+        runAsGroup: 1337
+        runAsNonRoot: true
+        runAsUser: 1337
       volumes:
-      - name: istio-certs
-        secret:
-          secretName: istio.default
+      - configMap:
+          defaultMode: 420
+          name: istio-ca-root-cert
+        name: istiod-ca-cert
+      - downwardAPI:
+          defaultMode: 420
+          items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.labels
+              path: labels
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.annotations
+              path: annotations
+        name: podinfo
+      - emptyDir: {}
+        name: istio-envoy
+      - emptyDir: {}
+        name: gatewaysdsudspath
+      - configMap:
+          defaultMode: 420
+          name: istio
           optional: true
+        name: config-volume
       - name: ingressgateway-certs
         secret:
-          secretName: "istio-ingressgateway-certs"
+          defaultMode: 420
           optional: true
+          secretName: istio-ingressgateway-certs
       - name: ingressgateway-ca-certs
         secret:
-          secretName: "istio-ingressgateway-ca-certs"
+          defaultMode: 420
           optional: true
+          secretName: istio-ingressgateway-ca-certs
 ---
 apiVersion: v1
 kind: Service
@@ -316,8 +323,10 @@ spec:
     port: 15020
   - name: http2
     port: 80
+    targetPort: 8000
   - name: https
     port: 443
+    targetPort: 8443
   - name: tls
     port: 15443
 ---

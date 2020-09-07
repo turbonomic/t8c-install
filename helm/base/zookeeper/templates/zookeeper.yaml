@@ -4,6 +4,15 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Chart.Name }}-data
+  {{- if or .Values.storageAnnotations .Values.global.storageAnnotations }}
+  annotations:
+    {{- with .Values.storageAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.storageAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
   labels:
     zone: internal
     app.kubernetes.io/name: {{ .Chart.Name }}-data
@@ -58,6 +67,11 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
+{{- if .Values.global }}
+  {{- if or .Values.serviceAccountName .Values.global.serviceAccountName }}
+      serviceAccountName: {{ template "serviceAccountName" . }}
+  {{- end }}
+{{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "image" . }}

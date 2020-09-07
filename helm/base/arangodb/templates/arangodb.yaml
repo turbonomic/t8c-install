@@ -4,6 +4,15 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Chart.Name }}
+  {{- if or .Values.storageAnnotations .Values.global.storageAnnotations }}
+  annotations:
+    {{- with .Values.storageAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.storageAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
   labels:
     zone: secure
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -29,12 +38,21 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: {{ .Chart.Name }}-apps
+  {{- if or .Values.storageAnnotations .Values.global.storageAnnotations }}
+  annotations:
+    {{- with .Values.storageAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.storageAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
   labels:
     zone: secure
     app.kubernetes.io/name: {{ .Chart.Name }}-apps
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  name: {{ .Chart.Name }}-apps
 spec:
   accessModes:
     - ReadWriteOnce
@@ -56,6 +74,15 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Chart.Name }}-dump
+  {{- if or .Values.storageAnnotations .Values.global.storageAnnotations }}
+  annotations:
+    {{- with .Values.storageAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.storageAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
   labels:
     zone: secure
     app.kubernetes.io/name: {{ .Chart.Name }}-dump
@@ -110,6 +137,11 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
+{{- if .Values.global }}
+  {{- if or .Values.serviceAccountName .Values.global.serviceAccountName }}
+      serviceAccountName: {{ template "serviceAccountName" . }}
+  {{- end }}
+{{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "image" . }}

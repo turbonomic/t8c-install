@@ -161,10 +161,10 @@ data:
             metrics:
               - type: transaction
                 queries:
-                  used: 'sum by (instance,job,service,namespace,uri) (rate(api_call_latency_in_seconds_count{job="xl"}[10m]))'
+                  used: 'sum by (instance,job,service,namespace,uri) (rate(turbo_api_call_latency_seconds_count{job="xl"}[10m]))'
               - type: responseTime
                 queries:
-                  used: 'avg by (instance,job,service,namespace,uri) ((delta(api_call_latency_in_seconds_sum{job="xl"}[10m])/delta(api_call_latency_in_seconds_count[10m])) > 0) * 1000'
+                  used: 'avg by (instance,job,service,namespace,uri) ((delta(turbo_api_call_latency_seconds_sum{job="xl"}[10m])/delta(turbo_api_call_latency_seconds_count[10m])) > 0) * 1000'
             attributes:
               id:
                 label: uri
@@ -191,10 +191,10 @@ data:
               # HTTP metrics
               - type: transaction
                 queries:
-                  used: 'sum by (instance,service,namespace) (delta(api_call_counts{job="xl",failed="false"}[10m]))/600'
+                  used: 'sum by (instance,service,namespace) (delta(turbo_api_calls_total{job="xl",failed="false"}[10m]))/600'
               - type: responseTime
                 queries:
-                  used: 'avg by (instance,service,namespace) ((delta(api_call_latency_in_seconds_sum{job="xl"}[10m])/delta(api_call_latency_in_seconds_count[10m])) > 0) * 1000'
+                  used: 'avg by (instance,service,namespace) ((delta(turbo_api_call_latency_seconds_sum{job="xl"}[10m])/delta(turbo_api_call_latency_seconds_count[10m])) > 0) * 1000'
               # GRPC metrics
               - type: transaction
                 queries:

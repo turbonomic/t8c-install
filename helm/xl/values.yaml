@@ -8,7 +8,8 @@ global:
 #  imageUsername: turbouser
 #  imagePassword: turbopassword
   repository: turbonomic
-  tag: 7.22.6
+  tag: 7.22.9
+#  serviceAccountName: t8c-serviceaccount
 #  pullPolicy: IfNotPresent
   customImageNames: true
   nodeSelector: {}
@@ -33,8 +34,40 @@ global:
   elk: false
 #  debug: true
   dev_options: "-agentlib:jdwp=transport=dt_socket,address=0.0.0.0:8000,server=y,suspend=n"
+  storageAnnotations: {}
 #  storageClassName: default
 #  storageSelector: true
+#  dbSecretName: foo
+  # The above specifies the name of the Kubernetes secret holding the MariaDB credentials
+  # - Relevant components are: action-orchestrator, auth, clustermgr, cost, group, history,
+  #   plan-orchestrator and topology-processor.
+  # - Secret name is customizable for each component (by placing the same var under the
+  #   component's section).
+  # Secret format in yaml:
+  #####################################
+  # apiVersion: v1
+  #   kind: Secret
+  #   metadata:
+  #     name: foo
+  #   type: Opaque
+  #   stringData:
+  #     db-creds: |-
+  #       username: 'db_user'
+  #       password: 'db_password'
+  #####################################
+  # Notes:
+  # - The metadata.name is the "dbSecretName" configured above
+  # - The key in the data has to be the fixed word "db-creds", but it is customizable by an env
+  #   var in each component as the following where the key is now "auth-creds"; this makes it
+  #   possible to pack multiple credentials in the same k8s secret using different keys
+  ######################################################################
+  # auth:
+  #   dbSecretName: foo
+  #   env:
+  #     ... (a copy of other env vars needed here; omitted for clarity)
+  #     - name: secretsYamlPath
+  #       value: file:/vault/secrets/auth-creds
+  #######################################################################
   securityContext:
     fsGroup: 2000
   certmanager:

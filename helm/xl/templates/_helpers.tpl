@@ -54,6 +54,24 @@ Also, we can't use a single if because lazy evaluation is not an option
 {{- end -}}
 
 {{/*
+Return the serviceAccountName
+*/}}
+{{- define "serviceAccountName" -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else logic.
+Also, we can't use a single if because lazy evaluation is not an option
+*/}}
+{{- if .Values.global }}
+    {{- if .Values.serviceAccountName }}
+        {{- printf "%s" .Values.serviceAccountName -}}
+    {{- else if or .Values.global.serviceAccountName  -}}
+        {{- printf "%s" .Values.global.serviceAccountName -}}
+    {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the pullPolicy
 */}}
 {{- define "pullPolicy" -}}
@@ -137,3 +155,21 @@ timeoutSeconds: {{ coalesce .Values.livenessTimeoutSecs .Values.global.livenessT
 successThreshold: {{ coalesce .Values.livenessSuccessThreshold .Values.global.livenessSuccessThreshold 1 }}
 failureThreshold: {{ coalesce .Values.livenessFailureThreshold .Values.global.livenessFailureThreshold 60 }}
 {{ end }}
+
+{{/*
+Return the db secret name
+*/}}
+{{- define "dbSecretName" -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else logic.
+Also, we can't use a single if because lazy evaluation is not an option
+*/}}
+{{- if .Values.dbSecretName }}
+    {{- printf "%s" .Values.dbSecretName -}}
+{{- else -}}
+    {{- if and .Values.global .Values.global.dbSecretName }}
+        {{- printf "%s" .Values.global.dbSecretName -}}
+    {{- end -}}
+{{- end -}}
+{{- end -}}

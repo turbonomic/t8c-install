@@ -12,6 +12,8 @@ image:
   pullPolicy: IfNotPresent
 
 livenessFailureThreshold: 1440
+readinessTimeoutSecs: 72000
+livenessTimeoutSecs: 72000
 
 env:
   - name: component_type

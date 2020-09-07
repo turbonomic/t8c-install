@@ -1,3 +1,17 @@
+image:
+  repository: grafana/loki
+  tag: 1.6.0
+  pullPolicy: IfNotPresent
+
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - myRegistryKeySecretName
+
+fullnameOverride: loki
+
 ## Affinity for pod assignment
 ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 affinity: {}
@@ -24,6 +38,7 @@ config:
     chunk_idle_period: 3m
     chunk_block_size: 262144
     chunk_retain_period: 1m
+    max_transfer_retries: 0
     lifecycler:
       ring:
         kvstore:
@@ -37,8 +52,8 @@ config:
       #   consul:
       #     host: "consul:8500"
       #     prefix: ""
-      #     httpclienttimeout: "20s"
-      #     consistentreads: true
+      #     http_client_timeout: "20s"
+      #     consistent_reads: true
   limits_config:
     enforce_metric_name: false
     reject_old_samples: true
@@ -60,17 +75,10 @@ config:
     filesystem:
       directory: /data/loki/chunks
   chunk_store_config:
-    max_look_back_period: 0
+    max_look_back_period: 0s
   table_manager:
     retention_deletes_enabled: false
-    retention_period: 0
-
-image:
-  repository: grafana/loki
-  tag: v1.1.0
-  pullPolicy: IfNotPresent
-
-fullnameOverride: loki
+    retention_period: 0s
 
 ## Additional Loki container arguments, e.g. log level (debug, info, warn, error)
 extraArgs: {}
@@ -103,6 +111,9 @@ persistence:
   - ReadWriteOnce
   size: 10Gi
   annotations: {}
+  # selector:
+  #   matchLabels:
+  #     app.kubernetes.io/name: loki
   # subPath: ""
   # existingClaim:
 
@@ -176,7 +187,14 @@ serviceMonitor:
   enabled: false
   interval: ""
   additionalLabels: {}
+  annotations: {}
   # scrapeTimeout: 10s
+
+initContainers: []
+## Init containers to be added to the loki pod.
+# - name: my-init-container
+#   image: busybox:latest
+#   command: ['sh', '-c', 'echo hello']
 
 extraContainers: []
 ## Additional containers to be added to the loki pod.

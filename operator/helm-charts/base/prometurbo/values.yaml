@@ -4,10 +4,9 @@
 
 # Replace the image with desired version
 image:
-  prometurboRepository: turbonomic/prometurbo
-  prometurboTag: 7.22.6
-  turbodifRepository: turbonomic/turbodif
-  turbodifTag: 7.22.6
+  repository: turbonomic
+  prometurboTag: latest
+  turbodifTag: latest
   pullPolicy: IfNotPresent
 
 #nameOverride: ""

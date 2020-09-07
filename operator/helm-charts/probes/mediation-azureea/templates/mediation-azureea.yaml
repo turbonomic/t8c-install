@@ -30,6 +30,11 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
+{{- if .Values.global }}
+  {{- if or .Values.serviceAccountName .Values.global.serviceAccountName }}
+      serviceAccountName: {{ template "serviceAccountName" . }}
+  {{- end }}
+{{- end }}
       containers:
       - name: {{ .Chart.Name }}
 {{- if .Values.global }}

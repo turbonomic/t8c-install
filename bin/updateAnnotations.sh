@@ -1,9 +1,16 @@
 #!/bin/bash
 
+# Namespace.. turbonomic by default
+nameSpace=turbonomic
+if [ $# -eq 1 ]
+  then
+    nameSpace=$1
+fi
+
 # Need to check if the helm release is uid based (xl-release-XXX instead of xl-release)
 # and if it is, can convert it before or after the upgrade of the operator
-helmRelease=$(kubectl get xls -o yaml|grep name:|head -1 | awk '{print $2}')
-secretName=$(kubectl get pvc -o yaml -n turbonomic | grep "app.kubernetes.io/instance" | uniq | awk '{print $2}')
+helmRelease=$(kubectl get xls -o yaml -n ${nameSpace} |grep name:|head -1 | awk '{print $2}')
+secretName=$(kubectl get pvc -o yaml -n ${nameSpace} | grep "app.kubernetes.io/instance" | uniq | awk '{print $2}')
 # Exit if the uid based release has already been converted
 if [ "$helmRelease" = "$secretName" ]; then
   echo "helm release has already been converted, nothing to do. Exiting."
@@ -13,16 +20,13 @@ fi
 echo "-----------------------"
 echo "Scale down the Operator"
 echo "-----------------------"
-kubectl scale deployment --replicas=0 t8c-operator -n turbonomic
-operatorCount=$(kubectl get pod | grep t8c-operator | wc -l)
+kubectl scale deployment --replicas=0 t8c-operator -n ${nameSpace}
+operatorCount=$(kubectl get pod -n ${nameSpace} | grep t8c-operator | wc -l)
 while [ ${operatorCount} -gt 0 ]
 do
- operatorCount=$(kubectl get pod | grep t8c-operator | wc -l)
+ operatorCount=$(kubectl get pod -n ${nameSpace} | grep t8c-operator | wc -l)
 done
 echo
-
-# Current instance annotation
-helmRelease=$(kubectl get pvc -o yaml -n turbonomic | grep "app.kubernetes.io/instance" | uniq | awk '{print $2}' | cut -d- -f1,2)
 
 # Update pvcs
 cat << EOF > /tmp/pvc-patch.yml
@@ -34,9 +38,9 @@ EOF
 echo "----------------------"
 echo "pvc update annotations"
 echo "----------------------"
-for pvc in $(kubectl get pvc -n turbonomic | awk '{print $1}' | egrep -v NAME)
+for pvc in $(kubectl get pvc -n ${nameSpace} | awk '{print $1}' | egrep -v NAME)
 do
-  kubectl patch pvc ${pvc} -n turbonomic --type merge --patch "$(cat /tmp/pvc-patch.yml)"
+  kubectl patch pvc ${pvc} -n ${nameSpace} --type merge --patch "$(cat /tmp/pvc-patch.yml)"
 done
 echo
 
@@ -76,13 +80,13 @@ EOF
 echo "------------------"
 echo "deployment updates"
 echo "------------------"
-for deployment in $(kubectl get deployment -n turbonomic | awk '{print $1}' | egrep -v NAME)
+for deployment in $(kubectl get deployment -n ${nameSpace} | awk '{print $1}' | egrep -v NAME)
 do
   if [[ X${deployment} = Xgrafana ]] || [[ X${deployment} =~ Xprometheus.* ]]
   then
-    kubectl patch deployment ${deployment} -n turbonomic --type merge --patch "$(cat /tmp/3rdParty-deployment-patch.yml)"
+    kubectl patch deployment ${deployment} -n ${nameSpace} --type merge --patch "$(cat /tmp/3rdParty-deployment-patch.yml)"
   else
-    kubectl patch deployment ${deployment} -n turbonomic --type merge --patch "$(cat /tmp/deployment-patch.yml)"
+    kubectl patch deployment ${deployment} -n ${nameSpace} --type merge --patch "$(cat /tmp/deployment-patch.yml)"
   fi
 done
 echo
@@ -108,9 +112,9 @@ EOF
 echo "-----------------"
 echo "daemonset updates"
 echo "-----------------"
-for daemonset in $(kubectl get daemonset -n turbonomic | awk '{print $1}' | egrep -v NAME)
+for daemonset in $(kubectl get daemonset -n ${nameSpace} | awk '{print $1}' | egrep -v NAME)
 do
-  kubectl patch daemonset ${daemonset} -n turbonomic --type merge --patch "$(cat /tmp/daemonset-patch.yml)"
+  kubectl patch daemonset ${daemonset} -n ${nameSpace} --type merge --patch "$(cat /tmp/daemonset-patch.yml)"
 done
 echo
 
@@ -121,38 +125,21 @@ cat << EOF > /tmp/cm-patch.yml
       app.kubernetes.io/instance: ${helmRelease}
 EOF
 
-configMap=$(kubectl get cm -n turbonomic | grep global | awk '{print $1}')
+configMap=$(kubectl get cm -n ${nameSpace} | grep global | awk '{print $1}')
 
 echo "-----------------"
-echo "daemonset updates"
-echo "-----------------"
-for daemonset in $(kubectl get daemonset -n turbonomic | awk '{print $1}' | egrep -v NAME)
-do
-  kubectl patch daemonset ${daemonset} -n turbonomic --type merge --patch "$(cat /tmp/daemonset-patch.yml)"
-done
-echo
-
-# Update ConfigMap
-cat << EOF > /tmp/cm-patch.yml
-  metadata:
-    labels:
-      app.kubernetes.io/instance: ${helmRelease}
-EOF
-
-configMap=$(kubectl get cm -n turbonomic | grep global | awk '{print $1}')
-
 echo "configmap updates"
 echo "-----------------"
-kubectl patch cm ${configMap} -n turbonomic --type merge --patch "$(cat /tmp/cm-patch.yml)"
+kubectl patch cm ${configMap} -n ${nameSpace} --type merge --patch "$(cat /tmp/cm-patch.yml)"
 echo
 
 # Update secrets
 echo "---------------"
 echo "secrets updates"
 echo "---------------"
-kubectl get secrets -n turbonomic $(kubectl get secrets -n turbonomic | grep ${helmRelease} | awk '{print $1}' | head -1) -o yaml > /tmp/helm-release.yml
+kubectl get secrets -n ${nameSpace} $(kubectl get secrets -n ${nameSpace} | grep ${helmRelease} | awk '{print $1}' | tail -1) -o yaml > /tmp/helm-release.yml
 sed -i "s/${helmRelease}-[0-9A-Za-z]*/${helmRelease}/g" /tmp/helm-release.yml
-kubectl get secrets -n turbonomic $(kubectl get secrets -n turbonomic | grep ${helmRelease} | awk '{print $1}' | head -1) -o jsonpath={.data.release} | base64 -d | base64 -d |gunzip > /tmp/xl-release
+kubectl get secrets -n ${nameSpace} $(kubectl get secrets -n ${nameSpace} | grep ${helmRelease} | awk '{print $1}' | tail -1) -o jsonpath={.data.release} | base64 -d | base64 -d |gunzip > /tmp/xl-release
 sed -i "s/${helmRelease}-[0-9A-Za-z]*/${helmRelease}/g" /tmp/xl-release
 gzip -c /tmp/xl-release | base64 -w 0 | base64 -w 0 > /tmp/xl-updated-release
 cat << EOF > /tmp/script.sed
@@ -170,21 +157,21 @@ sed -i '/^data:/a \
 sed -i '/^  release/N;s/\n/ /' /tmp/helm-release.yml
 
 # Delete the latest secret and apply the updated one
-for secrets in $(kubectl get secrets -n turbonomic | grep ${helmRelease} | awk '{print $1}')
+for secrets in $(kubectl get secrets -n ${nameSpace} | grep ${helmRelease} | awk '{print $1}')
 do
-  kubectl delete secrets -n turbonomic ${secrets}
+  kubectl delete secrets -n ${nameSpace} ${secrets}
 done
 
 # Apply the new release
-kubectl apply -f /tmp/helm-release.yml -n turbonomic
+kubectl apply -f /tmp/helm-release.yml -n ${nameSpace}
 echo
 
 # Delete existing replica sets
-kubectl delete rs --all -n turbonomic
-kubectl delete daemonset --all -n turbonomic
+kubectl delete rs --all -n ${nameSpace}
+kubectl delete daemonset --all -n ${nameSpace}
 
 # Scale the operator back up
 echo "---------------------"
 echo "Scale up the Operator"
 echo "---------------------"
-kubectl scale deployment --replicas=1 t8c-operator -n turbonomic
+kubectl scale deployment --replicas=1 t8c-operator -n ${nameSpace}

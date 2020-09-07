@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ .Values.image.prometurboRepository }}:{{ .Values.image.prometurboTag }}
+          image: {{ template "prometurbo_image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - --v={{ .Values.args.logginglevel }}
@@ -32,7 +32,7 @@ spec:
               mountPath: /etc/prometurbo
               readOnly: true
         - name: turbodif
-          image: {{ .Values.image.turbodifRepository }}:{{ .Values.image.turbodifTag }}
+          image: {{ template "turbodif_image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - --v={{ .Values.args.logginglevel }}

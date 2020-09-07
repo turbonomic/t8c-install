@@ -4,8 +4,8 @@
 
 # Replace the image with desired version
 image:
-  repository: turbonomic/kubeturbo
-  tag: 7.22.6
+  repository: turbonomic
+  tag: latest
   pullPolicy: IfNotPresent
 
 annotations:

@@ -18,6 +18,15 @@ log_msg "Starting DBs mountpoint switch..."
 
 # TODO check the mountpoint is the expected one (should be the same as the MYSQL_DIR)
 
+# Exit the script if /var/lib/dbs is already created
+ls ${NEW_DB_MOUNTPOINT}
+result=$?
+if [ $result -eq 0 ]
+then
+  echo "This script looks like it has already been run, please check ${NEW_DB_MOUNTPOINT}"
+  exit 0
+fi
+
 # return if mysql dir is not present
 if [ ! -d "$MYSQL_DIR" ]
 then

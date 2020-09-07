@@ -31,10 +31,10 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
-      serviceAccount: turbo-user
+      serviceAccountName: turbo-user
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ template "kubeturbo_image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - --turboconfig=/etc/kubeturbo/turbo.config

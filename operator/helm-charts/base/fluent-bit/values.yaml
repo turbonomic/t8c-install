@@ -8,11 +8,16 @@ loki:
   # password: pass
 config:
   port: 2020
+  tenantID: '""'
+  batchWait: 1
+  batchSize: 10240
   loglevel: warn
   lineFormat: json
+  k8sLoggingParser: "Off"
   removeKeys:
     - kubernetes
     - stream
+  autoKubernetesLabels: false
   labels: '{job="fluent-bit"}'
   labelMap:
     kubernetes:
@@ -24,6 +29,16 @@ config:
       container_name: container
       pod_name: instance
     stream: stream
+  # parsers: # Allow to define custom parsers. The key here is the same as the one in the [PARSER] section of parsers.conf file.
+  #  - Name: json
+  #    Format: json
+  #    Time_Key: time
+  #    Time_Format: "%d/%b/%Y:%H:%M:%S %z"
+
+  # extraOutputs: # Allow to define extra outputs in addition to the one automatically created
+  #   - Name: stdout
+  #     Format: json
+  #     json_date_format: time
 
 affinity: {}
 
@@ -33,8 +48,13 @@ deploymentStrategy: RollingUpdate
 
 image:
   repository: grafana/fluent-bit-plugin-loki
-  tag: 0.1
+  tag: 1.6.0-amd64
   pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be present in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  # pullSecrets:
+  #   - myRegistrKeySecretName
 
 fullnameOverride: fluent-bit-loki
 
@@ -94,4 +114,5 @@ serviceMonitor:
   enabled: false
   interval: ""
   additionalLabels: {}
+  annotations: {}
   # scrapeTimeout: 10s

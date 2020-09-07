@@ -2,11 +2,11 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   annotations:
-    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1alpha1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"repository":"registry.connect.redhat.com/turbonomic"},{"tag":"7.22.6"}}}}]'
+    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"repository":"registry.connect.redhat.com/turbonomic"},{"tag":"7.22.9"}}}]'
     capabilities: Basic Install
     categories: Monitoring
     certified: "false"
-    containerImage: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:401e92886aac51cdeb88234ae1b5489d3cdb0d11a182bc65839751894e8f0b21
+    containerImage: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:cf56f096eab9bdd52d71fffd60d518425c8dc10d1f7b2ba0fb60efa1ed03be80
     createdAt: "2019-07-01T00:00:00.000Z"
     description: Turbonomic Workload Automation for Multicloud simultaneously optimizes performance, compliance, and cost in real-time. Workloads are precisely resourced, automatically, to perform while satisfying business constraints.
     repository: https://github.com/turbonomic/t8c-install/tree/master/operator
@@ -21,7 +21,7 @@ spec:
         displayName: Turbonomic Platform Operator
         kind: Xl
         name: xls.charts.helm.k8s.io
-        version: v1alpha1
+        version: v1
   description: |-
     ### Realtime Decision Automation for Multicloud Applications
     Turbonomic Workload Automation for Multicloud simultaneously optimizes performance, compliance, and cost in real-time. Workloads are precisely resourced, automatically, to perform while satisfying business constraints:
@@ -55,7 +55,7 @@ spec:
                 serviceAccountName: t8c-operator
                 containers:
                 - name: t8c-operator
-                  image: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:401e92886aac51cdeb88234ae1b5489d3cdb0d11a182bc65839751894e8f0b21
+                  image: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:cf56f096eab9bdd52d71fffd60d518425c8dc10d1f7b2ba0fb60efa1ed03be80
                   imagePullPolicy: Always
                   env:
                   - name: WATCH_NAMESPACE

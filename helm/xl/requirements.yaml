@@ -109,15 +109,15 @@ dependencies:
     condition: global.elk
   - name: loki
     repository: file://../base/loki
-    version: "^0.20.0"
+    version: "^0.31.1"
     condition: loki.enabled
   - name: promtail
     repository: file://../base/promtail
-    version: "^0.15.0"
+    version: "^0.24.0"
     condition: promtail.enabled
   - name: fluent-bit
     repository: file://../base/fluent-bit
-    version: "^0.0.2"
+    version: "^0.3.0"
     condition: fluent-bit.enabled
 
 # Monitoring dependencies

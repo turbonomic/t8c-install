@@ -8,7 +8,7 @@ deploymentStrategy: RollingUpdate
 
 image:
   repository: grafana/promtail
-  tag: v1.1.0
+  tag: 1.6.0
   pullPolicy: IfNotPresent
 
 livenessProbe: {}
@@ -92,6 +92,9 @@ volumes:
   hostPath:
     path: /var/log/pods
 
+# Custom volumes together with the default ones
+extraVolumes: []
+
 volumeMounts:
 - name: docker
   mountPath: /var/lib/docker/containers
@@ -99,6 +102,17 @@ volumeMounts:
 - name: pods
   mountPath: /var/log/pods
   readOnly: true
+
+# Custom volumeMounts together with the default ones
+extraVolumeMounts: []
+
+# Add extra Commandline args while starting up promtail.
+# more info : https://github.com/grafana/loki/pull/1530
+
+extraCommandlineArgs: []
+# example:
+# extraCommandlineArgs:
+#   - -client.external-labels=hostname=$(HOSTNAME)
 
 config:
   client:
@@ -112,17 +126,18 @@ config:
 
     backoff_config:
       # Initial backoff time between retries
-      minbackoff: 100ms
+      min_period: 100ms
       # Maximum backoff time between retries
-      maxbackoff: 5s
+      max_period: 5s
       # Maximum number of retries when sending batches, 0 means infinite retries
-      maxretries: 20
+      max_retries: 20
 
     # The labels to add to any time series or alerts when communicating with loki
     external_labels: {}
 
   server:
     http_listen_port: 3101
+
   positions:
     filename: /run/promtail/positions.yaml
   target_config:
@@ -133,4 +148,8 @@ serviceMonitor:
   enabled: false
   interval: ""
   additionalLabels: {}
+  annotations: {}
   # scrapeTimeout: 10s
+
+# Extra env variables to pass to the promtail container
+env: []
