@@ -220,7 +220,7 @@ do
     sudo /usr/sbin/vgremove -f ${i}
   fi
 done
-sudo /usr/sbin/wipefs -a /dev/sdb
+sudo /usr/sbin/wipefs -a ${device}
 
 # Setup GlusterFS Native Storage Service for Kubernetes
 if (( ${tLen} > 1 ))
