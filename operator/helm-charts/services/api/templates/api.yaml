@@ -118,6 +118,12 @@ spec:
         env:
 {{ template "java.setJVMEnvironmentOptions" . }}
 {{ toYaml .Values.env | indent 8 }}
+{{- if .Values.global }}
+  {{- if or .Values.logtostdout .Values.global.logtostdout }}
+        - name: LOG_TO_STDOUT
+          value: "true"
+  {{- end }}
+{{- end }}
         ports:
           - containerPort: 8080
           - containerPort: 9001

@@ -48,6 +48,12 @@ spec:
         env:
 {{ template "java.setJVMEnvironmentOptions" . }}
 {{ toYaml .Values.env | indent 8 }}
+{{- if .Values.global }}
+  {{- if or .Values.logtostdout .Values.global.logtostdout }}
+        - name: LOG_TO_STDOUT
+          value: "true"
+  {{- end }}
+{{- end }}
         ports:
           - containerPort: 8080
           - containerPort: 9001
@@ -75,6 +81,11 @@ spec:
         - mountPath: /tmp
           name: repository-tmpfs0
 {{- if .Values.global }}
+  {{- if or .Values.dbSecretName .Values.global.dbSecretName }}
+        - mountPath: /vault/secrets
+          name: db-creds
+          readOnly: true
+  {{- end -}}
   {{- if .Values.global.registry }}
     {{- if .Values.global.imagePullSecret }}
       imagePullSecrets:
@@ -107,6 +118,14 @@ spec:
           optional: true
       - name: repository-tmpfs0
         emptyDir: {}
+{{- if .Values.global }}
+  {{- if or .Values.dbSecretName .Values.global.dbSecretName }}
+      - name: db-creds
+        secret:
+          secretName: {{ template "dbSecretName" . }}
+          optional: true
+  {{- end }}
+{{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}

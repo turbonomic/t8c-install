@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+replicaCount: 1
+
 # Replace the image with desired version
 image:
   repository: turbonomic
@@ -19,19 +21,26 @@ roleName: "cluster-admin"
 
 # Turbo server version and address
 serverMeta:
-  version: 7.22
+  version: 8.0
   turboServer: http://topology-processor:8080
-  #proxy: http://username:password@proxyserver:proxyport
+#  proxy: http://username:password@proxyserver:proxyport
 
 # Turbo server api user and password stored in a secret or optionally specified as username and password
 # The opsManagerUserName requires Turbo administrator role
 # The UserName and Password are only needed when a targetName is configured in targetConfig
 restAPIConfig:
-  turbonomicCredentialsSecretName: turbonomic-credentials
-  opsManagerUserName: administrator
-  opsManagerPassword: administrator
+  turbonomicCredentialsSecretName: "turbonomic-credentials"
+  opsManagerUserName: Turbo_username
+  opsManagerPassword: Turbo_password
 
-# Enabling targetConfig
+# For targetConfig, targetName provides better group naming to identify k8s clusters in UI
+# - If no targetConfig is specified, a default targetName will be created from the apiserver URL in
+#   the kubeconfig.
+# - Specify a targetName only will register a probe with type Kubernetes-<targetName>, as well as
+#   adding your cluster as a target with the name Kubernetes-<targetName>.
+# - Specify a targetType only will register a probe without adding your cluster as a target.
+#   The probe will appear as a Cloud Native probe in the UI with a type Kubernetes-<targetType>.
+#
 targetConfig:
   targetName: Turbonomic
 
@@ -58,3 +67,5 @@ args:
   stitchuuid: true
   # if Kubernetes version is older than 1.6, then add another arg for move/resize action
   pre16k8sVersion: false
+
+resources: {}

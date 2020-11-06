@@ -12,8 +12,8 @@ image:
   pullPolicy: IfNotPresent
 
 #env:
-  # - name: EXTERNAL_AUDITLOG
-  #   value: rsyslog-audit.company.com:514
+#  - name: EXTERNAL_AUDITLOG
+#    value: rsyslog-audit.company.com:514
 
 persistence:
   logsize: 30Gi

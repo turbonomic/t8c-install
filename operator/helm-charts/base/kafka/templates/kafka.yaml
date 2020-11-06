@@ -1,5 +1,6 @@
 {{ if .Values.global }}
-  {{ if (not .Values.global.externalKafka) }}
+  {{ if and (not .Values.global.externalKafka) (not .Values.global.externalKafkaIP) }}
+    {{/* Kafka is not external, so define a PVC and a Deployment for it. */}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -149,6 +150,7 @@ spec:
   {{ end }}
 {{ end }}
 ---
+        {{/* We always need a service for Kafka. */}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -159,15 +161,38 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
+  ports:
+  - name: tcp-kafka
+    port: {{ .Values.global.externalKafkaPort | default 9092 }}
 {{- if .Values.global }}
   {{- if .Values.global.externalKafka }}
+        {{/* Kafka is externalized by DNS name */}}
   type: ExternalName
   externalName: {{ .Values.global.externalKafka }}
   {{- end -}}
-{{- end }}
-  ports:
-  - name: tcp-kafka
-    port: 9092
+  {{- if and (not .Values.global.externalKafka) (not .Values.global.externalKafkaIP)}}
+        {{/* Kafka is running as a container within Kubernetes */}}
   selector:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+  {{- end -}}
+  {{- if and (.Values.global.externalKafkaIP) (not .Values.global.externalKafka)}}
+        {{/* Kafka is externalized by IP; headless service requires a manual endpoint definition */}}
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+      zone: internal
+      app.kubernetes.io/name: {{ .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/managed-by: {{ .Release.Service }}
+subsets:
+  - addresses:
+    - ip: {{ .Values.global.externalKafkaIP | quote }}
+    ports:
+    - name: tcp-kafka
+      port: {{ .Values.global.externalKafkaPort | default 9092 }}
+  {{- end -}}
+{{- end }}

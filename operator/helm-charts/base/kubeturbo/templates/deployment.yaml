@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "kubeturbo.name" . }}
@@ -37,18 +37,23 @@ spec:
           image: {{ template "kubeturbo_image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            - --turboconfig=/etc/kubeturbo/turbo.config
-            - --v={{ .Values.args.logginglevel }}
+          - --turboconfig=/etc/kubeturbo/turbo.config
+          - --v={{ .Values.args.logginglevel }}
           {{- if .Values.args.kubelethttps }}
-            - --kubelet-https={{ .Values.args.kubelethttps }}
-            - --kubelet-port={{ .Values.args.kubeletport }}
+          - --kubelet-https={{ .Values.args.kubelethttps }}
+          - --kubelet-port={{ .Values.args.kubeletport }}
           {{- end }}
           {{- if not .Values.args.stitchuuid }}
-            - --stitch-uuid={{ .Values.args.stitchuuid }}
+          - --stitch-uuid={{ .Values.args.stitchuuid }}
+          {{- end }}
+          {{- if .Values.args.sccsupport }}
+          - --scc-support={{ .Values.args.sccsupport }}
           {{- end }}
           {{- if .Values.args.pre16k8sVersion }}
-            - --k8sVersion=1.5
+          - --k8sVersion=1.5
           {{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
           - name: turbo-volume
             mountPath: /etc/kubeturbo

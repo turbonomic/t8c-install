@@ -19,7 +19,7 @@ log_msg "Starting DBs mountpoint switch..."
 # TODO check the mountpoint is the expected one (should be the same as the MYSQL_DIR)
 
 # Exit the script if /var/lib/dbs is already created
-ls ${NEW_DB_MOUNTPOINT}
+ls ${NEW_DB_MOUNTPOINT} > /dev/null 2>&1
 result=$?
 if [ $result -eq 0 ]
 then
@@ -58,7 +58,7 @@ log_msg "PostgreSQL stopped"
 
 # copy mysql data into a volume subdir (basically one level deeper)
 log_msg "Moving Mysql data (a move error on mysqltmp will appear, it's normal)"
-sudo mkdir "$MYSQL_DIR"/mysqltmp
+sudo mkdir "$MYSQL_DIR"/mysqltmp > /dev/null 2>&1
 sudo chown mysql:mysql "$MYSQL_DIR"/mysqltmp
 sudo mv "$MYSQL_DIR"/* "$MYSQL_DIR"/mysqltmp
 sudo mv "$MYSQL_DIR"/mysqltmp "$MYSQL_DIR"/mysql

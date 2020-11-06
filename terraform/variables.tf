@@ -117,6 +117,10 @@ variable "istio" {
   default = false
 }
 
+variable "mediation-actionstream-kafka" {
+  default = false
+}
+
 variable "mssql" {
   default = false
 }
@@ -125,7 +129,15 @@ variable "mysql" {
   default = false
 }
 
+variable "oracle" {
+  default = false
+}
+
 variable "tomcat" {
+  default = false
+}
+
+variable "jvm" {
   default = false
 }
 
@@ -213,10 +225,6 @@ variable "xtremio" {
   default = false
 }
 
-variable "action-orchestrator_memory" {}
-variable "history_memory" {}
-variable "market_memory" {}
-variable "repository_memory" {}
-variable "topology-processor_memory" {}
-variable "mediation-appdynamics_memory" {}
-variable "mediation-vcenter_memory" {}
+variable "udt" {
+  default = false
+}

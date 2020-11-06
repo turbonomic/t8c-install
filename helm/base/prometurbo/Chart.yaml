@@ -1,8 +1,0 @@
-apiVersion: v1
-name: prometurbo
-version: 0.1.0
-appVersion: 7.22.0
-description: A Helm chart for Turbonomic prometurbo metric server and data ingestion framework probe
-sources:
-  - https://github.com/turbonomic/prometurbo
-  - https://github.com/turbonomic/data-ingestion-framework

@@ -5,7 +5,7 @@ provider "helm" {
 }
 
 resource "helm_release" "xl" {
-  chart     = "../helm/xl"
+  chart     = "../operator/helm-charts/xl"
   name      = "${var.name}"
   namespace = "${var.namespace}"
 
@@ -128,6 +128,11 @@ resource "helm_release" "xl" {
   }
 
   set {
+    name  = "mediation-actionstream-kafka.enabled"
+    value = "${var.mediation-actionstream-kafka ? true : false}"
+  }
+
+  set {
     name  = "mssql.enabled"
     value = "${var.mssql ? true : false}"
   }
@@ -138,8 +143,18 @@ resource "helm_release" "xl" {
   }
 
   set {
+    name  = "oracle.enabled"
+    value = "${var.oracle ? true : false}"
+  }
+
+  set {
     name  = "tomcat.enabled"
     value = "${var.tomcat ? true : false}"
+  }
+
+  set {
+    name  = "jvm.enabled"
+    value = "${var.jvm ? true : false}"
   }
 
   set {
@@ -250,46 +265,5 @@ resource "helm_release" "xl" {
   set {
       name  = "udt.enabled"
       value = "${var.udt ? true : false}"
-    }
-
-  # Resources
-  set {
-    name  = "action-orchestrator.resources.limits.memory"
-    value = "${var.action-orchestrator_memory}"
-  }
-
-  set {
-    name  = "history.resources.limits.memory"
-    value = "${var.history_memory}"
-  }
-
-  set {
-    name  = "market.resources.limits.memory"
-    value = "${var.market_memory}"
-  }
-
-  set {
-    name  = "repository.resources.limits.memory"
-    value = "${var.repository_memory}"
-  }
-
-  set {
-    name  = "topology-processor.resources.limits.memory"
-    value = "${var.topology-processor_memory}"
-  }
-
-  set {
-    name  = "mediation-appdynamics.resources.limits.memory"
-    value = "${var.mediation-appdynamics_memory}"
-  }
-
-  set {
-    name  = "mediation-vcenter.resources.limits.memory"
-    value = "${var.mediation-vcenter_memory}"
-  }
-
-  set {
-      name  = "mediation-udt.resources.limits.memory"
-      value = "${var.mediation-udt_memory}"
     }
 }

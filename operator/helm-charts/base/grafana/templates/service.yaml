@@ -33,12 +33,6 @@ spec:
 {{- else }}
   type: {{ .Values.service.type }}
 {{- end }}
-{{- if .Values.global }}
-  {{- if .Values.global.externalIP }}
-  externalIPs:
-    - {{ .Values.global.externalIP }}
-  {{- end }}
-{{- end }}
   ports:
     - name: {{ .Values.service.portName }}
       port: {{ .Values.service.port }}

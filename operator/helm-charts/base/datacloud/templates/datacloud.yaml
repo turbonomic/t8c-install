@@ -62,6 +62,10 @@ spec:
         - name: "SEVONE_{{ $name }}"
           value: {{ $value | quote }}
         {{- end }}
+        {{- range $name, $value := .Values.sevone.env }}
+        - name: {{ $name | quote }}
+          value: {{ $value | quote }}
+        {{- end }}
 {{- if .Values.sevone.tls_cert_secret_name }}
         - name: SEVONE_GRPC_CERT
           value: "/usr/share/pki/sevone/tls.crt"

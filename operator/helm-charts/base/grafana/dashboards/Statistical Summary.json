@@ -33,6 +33,7 @@
           "value": "max"
         }
       ],
+      "datasource": "Prometheus",
       "filterNull": false,
       "fontSize": "100%",
       "gridPos": {
@@ -72,7 +73,7 @@
       ],
       "targets": [
         {
-          "expr": "mkt_analysis_duration_seconds",
+          "expr": "mkt_analysis_duration_seconds{namespace=\"[[namespace]]\"}",
           "format": "table",
           "hide": false,
           "intervalFactor": 1,
@@ -98,6 +99,7 @@
           "value": "max"
         }
       ],
+      "datasource": "Prometheus",
       "filterNull": false,
       "fontSize": "100%",
       "gridPos": {
@@ -137,7 +139,7 @@
       ],
       "targets": [
         {
-          "expr": "mkt_economy_build_duration_seconds",
+          "expr": "mkt_economy_build_duration_seconds{namespace=\"[[namespace]]\"}",
           "format": "table",
           "hide": false,
           "intervalFactor": 1,
@@ -155,6 +157,7 @@
           "value": "avg"
         }
       ],
+      "datasource": "Prometheus",
       "filterNull": false,
       "fontSize": "100%",
       "gridPos": {
@@ -194,7 +197,7 @@
       ],
       "targets": [
         {
-          "expr": "mkt_analysis_duration_seconds_sum",
+          "expr": "mkt_analysis_duration_seconds_sum{namespace=\"[[namespace]]\"}",
           "format": "table",
           "hide": false,
           "intervalFactor": 1,
@@ -220,6 +223,7 @@
           "value": "max"
         }
       ],
+      "datasource": "Prometheus",
       "filterNull": false,
       "fontSize": "100%",
       "gridPos": {
@@ -261,7 +265,7 @@
       ],
       "targets": [
         {
-          "expr": "tp_broadcast_duration_seconds_sum",
+          "expr": "tp_broadcast_duration_seconds_sum{namespace=\"[[namespace]]\"}",
           "format": "table",
           "hide": false,
           "intervalFactor": 1,
@@ -287,6 +291,7 @@
           "value": "max"
         }
       ],
+      "datasource": "Prometheus",
       "filterNull": false,
       "fontSize": "100%",
       "gridPos": {
@@ -328,7 +333,7 @@
       ],
       "targets": [
         {
-          "expr": "tp_discovery_duration_seconds_sum",
+          "expr": "tp_discovery_duration_seconds_sum{namespace=\"[[namespace]]\"}",
           "format": "table",
           "intervalFactor": 1,
           "refId": "A"
@@ -353,6 +358,7 @@
           "value": "max"
         }
       ],
+      "datasource": "Prometheus",
       "filterNull": false,
       "fontSize": "100%",
       "gridPos": {
@@ -392,7 +398,7 @@
       ],
       "targets": [
         {
-          "expr": "ao_populate_store_duration_seconds_sum{store_type=\"Live\"}",
+          "expr": "ao_populate_store_duration_seconds_sum{namespace=\"[[namespace]]\",store_type=\"Live\"}",
           "format": "table",
           "hide": false,
           "intervalFactor": 1,
@@ -418,6 +424,7 @@
           "value": "max"
         }
       ],
+      "datasource": "Prometheus",
       "filterNull": false,
       "fontSize": "100%",
       "gridPos": {
@@ -457,7 +464,7 @@
       ],
       "targets": [
         {
-          "expr": "ao_populate_store_duration_seconds_sum{store_type=\"Plan\"}",
+          "expr": "ao_populate_store_duration_seconds_sum{namespace=\"[[namespace]]\",store_type=\"Plan\"}",
           "format": "table",
           "intervalFactor": 1,
           "refId": "A"
@@ -472,7 +479,34 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "turbonomic",
+          "value": "turbonomic"
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(namespace)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Namespace",
+        "multi": false,
+        "name": "namespace",
+        "options": [],
+        "query": "label_values(namespace)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-6h",

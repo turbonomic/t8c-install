@@ -24,6 +24,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "Histogram of response latency (seconds) of gRPC that had been application-level handled by the server.",
       "fill": 1,
       "gridPos": {
@@ -116,6 +117,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "Total number of RPCs completed on the server, regardless of success or failure.",
       "fill": 1,
       "gridPos": {
@@ -209,6 +211,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "Total number of stream messages sent by the server.",
       "fill": 1,
       "gridPos": {
@@ -302,6 +305,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "Total number of stream messages received from the client.",
       "fill": 1,
       "gridPos": {

@@ -1,4 +1,226 @@
 {{- if .Values.openshiftingress.enabled }}
+{{- if .Values.global.ingress.domain }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ui
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  path: /
+  to:
+    kind: Service
+    name: ui
+  port:
+    targetPort: http-ui
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ui-app
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  path: /app
+  to:
+    kind: Service
+    name: ui
+  port:
+    targetPort: http-ui
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ui-assets
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  path: /assets
+  to:
+    kind: Service
+    name: ui
+  port:
+    targetPort: http-ui
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ui-doc
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  path: /doc
+  to:
+    kind: Service
+    name: ui
+  port:
+    targetPort: http-ui
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: api
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  path: /api
+  to:
+    kind: Service
+    name: api
+  port:
+    targetPort: http-api
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: swagger
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  path: /swagger/external/index.html
+  to:
+    kind: Service
+    name: api
+  port:
+    targetPort: http-api
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: vmturbo-rest
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  path: /vmturbo/rest
+  to:
+    kind: Service
+    name: api
+  port:
+    targetPort: http-api
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: vmturbo-saml2
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  path: /vmturbo/saml2
+  to:
+    kind: Service
+    name: api
+  port:
+    targetPort: http-api
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: vmturbo-oauth2
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  path: /vmturbo/oauth2
+  to:
+    kind: Service
+    name: api
+  port:
+    targetPort: http-api
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: ws-messsages
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  path: /ws/messages
+  to:
+    kind: Service
+    name: api
+  port:
+    targetPort: http-api
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: reports
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  path: /reports
+  to:
+    kind: Service
+    name: grafana
+  port:
+    targetPort: service
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+---
+{{ else }}
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
@@ -17,6 +239,7 @@ spec:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
 ---
+{{- end }}
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:

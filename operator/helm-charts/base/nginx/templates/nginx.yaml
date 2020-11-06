@@ -42,11 +42,19 @@ spec:
         env:
         - name: API
           value: api.{{ .Release.Namespace }}.svc.cluster.local
+        - name: UI
+          value: ui.{{ .Release.Namespace }}.svc.cluster.local
         - name: TOPOLOGY
           value: topology-processor.{{ .Release.Namespace }}.svc.cluster.local
         - name: GRAFANA
           value: grafana.{{ .Release.Namespace }}.svc.cluster.local
 {{ toYaml .Values.env | indent 8 }}
+{{- if .Values.global }}
+  {{- if or .Values.logtostdout .Values.global.logtostdout }}
+        - name: LOG_TO_STDOUT
+          value: "true"
+  {{- end }}
+{{- end }}
         ports:
           - containerPort: 8000
           - containerPort: 8443

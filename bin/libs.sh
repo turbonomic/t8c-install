@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # Library functions to be used in other scripts.
 
@@ -28,4 +28,18 @@ configure_buffer_pool() {
 	log_msg "Changing Innodb buffer pool size to: ${BUFFER_POOL_SIZE_MB} MB"
 
 	sudo sed -i 's/innodb_buffer_pool_size.*/innodb_buffer_pool_size = '$BUFFER_POOL_SIZE_MB'M/' $MYSQL_CONF
+}
+
+configure_max_allowed_packet() {
+    local MYSQL_CONF=${1}
+    MAX_ALLOWED_PACKET="1G"
+	log_msg "Changing max allowed packets to: ${MAX_ALLOWED_PACKET}"
+    sudo sed -i 's/max_allowed_packet.*/max_allowed_packet = '${MAX_ALLOWED_PACKET}'/' $MYSQL_CONF
+}
+
+configure_innodb_log_file_size() {
+    local MYSQL_CONF=${1}
+    INNODB_LOG_FILE_SIZE="10G"
+	log_msg "Changing innodb log file size to: ${INNODB_LOG_FILE_SIZE}"
+    sudo sed -i 's/innodb_log_file_size.*/innodb_log_file_size = '${INNODB_LOG_FILE_SIZE}'/' $MYSQL_CONF
 }

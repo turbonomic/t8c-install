@@ -115,7 +115,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
@@ -148,6 +148,12 @@ spec:
         imagePullPolicy: {{ template "pullPolicy" . }}
         env:
 {{ toYaml .Values.env | indent 8 }}
+{{- if .Values.global }}
+  {{- if or .Values.logtostdout .Values.global.logtostdout }}
+        - name: LOG_TO_STDOUT
+          value: "true"
+  {{- end }}
+{{- end }}
         ports:
           - containerPort: 8529
           - containerPort: 8599

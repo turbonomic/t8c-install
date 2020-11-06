@@ -9,32 +9,35 @@ Expand the name of the chart.
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
 */}}
 {{- define "kibana.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- $name := default .Chart.Name .Values.nameOverride -}}
-{{- if contains $name .Release.Name -}}
-{{- printf .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
+{{- $name := default .Release.Name .Values.nameOverride -}}
+{{- printf "%s-%s" $name .Chart.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
-Create the name of the service account to use
+Return the appropriate apiVersion for ingress.
 */}}
-{{- define "kibana.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-{{ default (include "kibana.fullname" .) .Values.serviceAccount.name }}
+{{- define "kibana.ingress.apiVersion" -}}
+{{- if semverCompare "<1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- print "extensions/v1beta1" -}}
 {{- else -}}
-{{- if .Values.serviceAccountName -}}
-{{- .Values.serviceAccountName }}
-{{- else -}}
-{{ default "default" .Values.serviceAccount.name }}
+{{- print "networking.k8s.io/v1beta1" -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Common labels
+*/}}
+{{- define "kibana.labels" -}}
+app: {{ .Chart.Name }}
+release: {{ .Release.Name | quote }}
+heritage: {{ .Release.Service }}
+{{- if .Values.labels }}
+{{ toYaml .Values.labels }}
+{{- end }}
 {{- end -}}

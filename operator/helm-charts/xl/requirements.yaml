@@ -19,7 +19,7 @@ dependencies:
   - name: postgresql
     repository: file://../base/postgresql
     version: 8.9.6
-    condition: timescaledb.enabled,extractor.enabled,reporting.enabled
+    condition: timescaledb.enabled,reporting.enabled
   - name: kafka
     repository: file://../base/kafka
     version: 0.1.0
@@ -37,6 +37,10 @@ dependencies:
     condition: platform.enabled
 
 # Services dependencies
+  - name: ui
+    repository: file://../services/ui
+    version: 0.1.0
+    condition: ui.enabled
   - name: api
     repository: file://../services/api
     version: 0.1.0
@@ -97,15 +101,15 @@ dependencies:
 # Logging dependencies
   - name: elasticsearch
     repository: file://../base/elasticsearch
-    version: 1.24.0
+    version: 7.9.2
     condition: global.elk
   - name: kibana
     repository: file://../base/kibana
-    version: 2.2.0
+    version: 7.9.2
     condition: global.elk
   - name: logstash
     repository: file://../base/logstash
-    version: 1.7.0
+    version: 7.9.2
     condition: global.elk
   - name: loki
     repository: file://../base/loki
@@ -123,7 +127,7 @@ dependencies:
 # Monitoring dependencies
   - name: prometheus
     repository: file://../base/prometheus
-    version: 9.5.0
+    version: 11.10.0
     condition: prometheus.enabled
   - name: prometheus-mysql-exporter
     repository: file://../base/prometheus-mysql-exporter
@@ -135,7 +139,7 @@ dependencies:
     condition: grafana.enabled,reporting.enabled
   - name: kubeturbo
     repository: file://../base/kubeturbo
-    version: 0.1.0
+    version: 1.0.0
     condition: kubeturbo.enabled
   - name: prometurbo
     repository: file://../base/prometurbo
@@ -149,6 +153,10 @@ dependencies:
     repository: file://../base/datacloud
     version: 0.1.0
     condition: datacloud.enabled
+  - name: datacloud-graph
+    repository: file://../base/datacloud-graph
+    version: 0.1.0
+    condition: datacloud-graph.enabled
 
 # Integration dependencies
   - name: intersight-integration
@@ -233,10 +241,6 @@ dependencies:
     repository: file://../probes/mediation-compellent
     version: 0.1.0
     condition: compellent.enabled
-  - name: mediation-customdata
-    repository: file://../probes/mediation-customdata
-    version: 0.1.0
-    condition: customdata.enabled
   - name: mediation-dynatrace
     repository: file://../probes/mediation-dynatrace
     version: 0.1.0
@@ -269,6 +273,10 @@ dependencies:
     repository: file://../probes/mediation-hyperv
     version: 0.1.0
     condition: hyperv.enabled
+  - name: mediation-instana
+    repository: file://../probes/mediation-instana
+    version: 0.1.0
+    condition: instana.enabled
   - name: mediation-intersight
     repository: file://../probes/mediation-intersight
     version: 0.1.0
@@ -285,6 +293,10 @@ dependencies:
     repository: file://../probes/mediation-istio
     version: 0.1.0
     condition: istio.enabled
+  - name: mediation-actionstream-kafka
+    repository: file://../probes/mediation-actionstream-kafka
+    version: 0.1.0
+    condition: actionstream-kafka.enabled
   - name: mediation-netapp
     repository: file://../probes/mediation-netapp
     version: 0.1.0
@@ -309,10 +321,18 @@ dependencies:
     repository: file://../probes/mediation-mysql
     version: 0.1.0
     condition: mysql.enabled
+  - name: mediation-oracle
+    repository: file://../probes/mediation-oracle
+    version: 0.1.0
+    condition: oracle.enabled
   - name: mediation-tomcat
     repository: file://../probes/mediation-tomcat
     version: 0.1.0
     condition: tomcat.enabled
+  - name: mediation-jvm
+    repository: file://../probes/mediation-jvm
+    version: 0.1.0
+    condition: jvm.enabled
   - name: mediation-oneview
     repository: file://../probes/mediation-oneview
     version: 0.1.0

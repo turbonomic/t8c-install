@@ -1,218 +1,152 @@
-fullnameOverride: kibana
+---
+elasticsearchHosts: "http://elasticsearch:9200"
 
-image:
-  repository: "docker.elastic.co/kibana/kibana-oss"
-  tag: "6.7.0"
-  pullPolicy: "IfNotPresent"
+replicas: 1
 
-testFramework:
-  image: "dduportal/bats"
-  tag: "0.4.0"
+# Extra environment variables to append to this nodeGroup
+# This will be appended to the current 'env:' key. You can use any of the kubernetes env
+# syntax here
+extraEnvs:
+  - name: "NODE_OPTIONS"
+    value: "--max-old-space-size=1800"
+#  - name: MY_ENVIRONMENT_VAR
+#    value: the_value_goes_here
 
-commandline:
-  args: []
+# Allows you to load environment variables from kubernetes secret or config map
+envFrom: []
+# - secretRef:
+#     name: env-secret
+# - configMapRef:
+#     name: config-map
 
-elasticsearch:
-  host: elasticsearch-client
-  port: 9200
-  # All Kibana configuration options are adjustable via env vars.
-  # To adjust a config option to an env var uppercase + replace `.` with `_`
-  # Ref: https://www.elastic.co/guide/en/kibana/current/settings.html
-  #
-  # ELASTICSEARCH_URL: http://elasticsearch-client:9200
-  # SERVER_PORT: 5601
-  # LOGGING_VERBOSE: "true"
-  # SERVER_DEFAULTROUTE: "/app/kibana"
+# A list of secrets and their paths to mount inside the pod
+# This is useful for mounting certificates for security and for mounting
+# the X-Pack license
+secretMounts: []
+#  - name: kibana-keystore
+#    secretName: kibana-keystore
+#    path: /usr/share/kibana/data/kibana.keystore
+#    subPath: kibana.keystore # optional
 
-deployment:
-  annotations: {}
+image: "docker.elastic.co/kibana/kibana"
+imageTag: "7.9.2"
+imagePullPolicy: "IfNotPresent"
+
+# additionals labels
+labels: {}
+
+podAnnotations: {}
+  # iam.amazonaws.com/role: es-cluster
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+#  requests:
+#    cpu: "1000m"
+#    memory: "2Gi"
+#  limits:
+#    cpu: "1000m"
+#    memory: "2Gi"
+
+protocol: http
+
+serverHost: "0.0.0.0"
+
+healthCheckPath: "/app/kibana"
+
+# Allows you to add any config files in /usr/share/kibana/config/
+# such as kibana.yml
+kibanaConfig: {}
+#   kibana.yml: |
+#     key:
+#       nestedkey: value
+
+# If Pod Security Policy in use it may be required to specify security context as well as service account
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  # readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+serviceAccount: ""
+
+# This is the PriorityClass settings as defined in
+# https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
+priorityClassName: ""
+
+httpPort: 5601
+
+extraContainers: ""
+# - name: dummy-init
+#   image: busybox
+#   command: ['echo', 'hey']
+
+extraInitContainers: ""
+# - name: dummy-init
+#   image: busybox
+#   command: ['echo', 'hey']
+
+updateStrategy:
+  type: "Recreate"
 
 service:
-  type: LoadBalancer
-  # clusterIP: None
-  # portName: kibana-svc
-  externalPort: 5601
-  internalPort: 5601
-  # authProxyPort: 5602 To be used with authProxyEnabled and a proxy extraContainer
-  ## External IP addresses of service
-  ## Default: nil
-  ##
-  # externalIPs:
-  # - 192.168.0.1
-  #
-  ## LoadBalancer IP if service.type is LoadBalancer
-  ## Default: nil
-  ##
-  # loadBalancerIP: 10.2.2.2
-  annotations: {}
-    # Annotation example: setup ssl with aws cert when service.type is LoadBalancer
-    # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:EXAMPLE_CERT
+  type: ClusterIP
+  loadBalancerIP: ""
+  port: 5601
+  nodePort: ""
   labels: {}
-    ## Label example: show service URL in `kubectl cluster-info`
-    # kubernetes.io/cluster-service: "true"
-  ## Limit load balancer source ips to list of CIDRs (where available)
-  # loadBalancerSourceRanges: []
-  selector: {}
+  annotations: {}
+    # cloud.google.com/load-balancer-type: "Internal"
+    # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+    # service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    # service.beta.kubernetes.io/openstack-internal-load-balancer: "true"
+    # service.beta.kubernetes.io/cce-load-balancer-internal-vpc: "true"
+  loadBalancerSourceRanges: []
+    # 0.0.0.0/0
 
 ingress:
   enabled: false
-  # hosts:
-    # - kibana.localhost.localdomain
-    # - localhost.localdomain/kibana
-  # annotations:
-  #   kubernetes.io/ingress.class: nginx
-  #   kubernetes.io/tls-acme: "true"
-  # tls:
-    # - secretName: chart-example-tls
-    #   hosts:
-    #     - chart-example.local
-
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: false
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  # If set and create is false, the service account must be existing
-  name:
-
-livenessProbe:
-  enabled: false
-  path: /status
-  initialDelaySeconds: 30
-  timeoutSeconds: 10
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  path: /
+  hosts:
+    - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 
 readinessProbe:
-  enabled: false
-  path: /status
-  initialDelaySeconds: 30
-  timeoutSeconds: 10
+  failureThreshold: 3
+  initialDelaySeconds: 10
   periodSeconds: 10
-  successThreshold: 5
+  successThreshold: 3
+  timeoutSeconds: 5
 
-# Enable an authproxy. Specify container in extraContainers
-authProxyEnabled: false
-
-extraContainers: |
-# - name: proxy
-#   image: quay.io/gambol99/keycloak-proxy:latest
-#   args:
-#     - --resource=uri=/*
-#     - --discovery-url=https://discovery-url
-#     - --client-id=client
-#     - --client-secret=secret
-#     - --listen=0.0.0.0:5602
-#     - --upstream-url=http://127.0.0.1:5601
-#   ports:
-#     - name: web
-#       containerPort: 9090
-
-extraVolumeMounts: []
-
-extraVolumes: []
-
-resources: {}
-  # limits:
-  #   cpu: 100m
-  #   memory: 300Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 300Mi
-
-priorityClassName: ""
-
-# Affinity for pod assignment
-# Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-# affinity: {}
-
-# Tolerations for pod assignment
-# Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-tolerations: []
-
-# Node labels for pod assignment
-# Ref: https://kubernetes.io/docs/user-guide/node-selection/
+imagePullSecrets: []
 nodeSelector: {}
+tolerations: []
+affinity: {}
 
-podAnnotations: {}
-replicaCount: 1
-revisionHistoryLimit: 3
+nameOverride: ""
+fullnameOverride: "kibana"
 
-# Custom labels for pod assignment
-podLabels: {}
+lifecycle: {}
+  # preStop:
+  #   exec:
+  #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+  # postStart:
+  #   exec:
+  #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
 
-# To export a dashboard from a running Kibana 6.3.x use:
-# curl --user <username>:<password> -XGET https://kibana.yourdomain.com:5601/api/kibana/dashboards/export?dashboard=<some-dashboard-uuid> > my-dashboard.json
-# A dashboard is defined by a name and a string with the json payload or the download url
-dashboardImport:
-  enabled: false
-  timeout: 60
-  xpackauth:
-    enabled: false
-    username: myuser
-    password: mypass
-  dashboards: {}
-    # k8s: https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json
-
-# List of plugins to install using initContainer
-# NOTE : We notice that lower resource constraints given to the chart + plugins are likely not going to work well.
-plugins:
-  # set to true to enable plugins installation
-  enabled: false
-  # set to true to remove all kibana plugins before installation
-  reset: false
-  # Use <plugin_name,version,url> to add/upgrade plugin
-  values:
-    # - elastalert-kibana-plugin,1.0.1,https://github.com/bitsensor/elastalert-kibana-plugin/releases/download/1.0.1/elastalert-kibana-plugin-1.0.1-6.4.2.zip
-    # - logtrail,0.1.31,https://github.com/sivasamyk/logtrail/releases/download/v0.1.31/logtrail-6.6.0-0.1.31.zip
-    # - other_plugin
-
-persistentVolumeClaim:
-  # set to true to use pvc
-  enabled: false
-  # set to true to use you own pvc
-  existingClaim: false
-  annotations: {}
-
-  accessModes:
-    - ReadWriteOnce
-  size: "5Gi"
-  ## If defined, storageClassName: <storageClass>
-  ## If set to "-", storageClassName: "", which disables dynamic provisioning
-  ## If undefined (the default) or set to null, no storageClassName spec is
-  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-  ##   GKE, AWS & OpenStack)
-  ##
-  # storageClass: "-"
-
-# default security context
-securityContext:
-  enabled: false
-  allowPrivilegeEscalation: false
-  runAsUser: 1000
-  fsGroup: 2000
-
-extraConfigMapMounts: []
-  # - name: logtrail-configs
-  #   configMap: kibana-logtrail
-  #   mountPath: /usr/share/kibana/plugins/logtrail/logtrail.json
-  #   subPath: logtrail.json
-
-# Add your own init container or uncomment and modify the given example.
-initContainers: {}
-  ## Don't start kibana till Elasticsearch is reachable.
-  ## Ensure that it is available at http://elasticsearch:9200
-  ##
-  # es-check:  # <- will be used as container name
-  #   image: "appropriate/curl:latest"
-  #   imagePullPolicy: "IfNotPresent"
-  #   command:
-  #     - "/bin/sh"
-  #     - "-c"
-  #     - |
-  #       is_down=true
-  #       while "$is_down"; do
-  #         if curl -sSf --fail-early --connect-timeout 5 http://elasticsearch:9200; then
-  #           is_down=false
-  #         else
-  #           sleep 5
-  #         fi
-  #       done
+# Deprecated - use only with versions < 6.6
+elasticsearchURL: "" # "http://elasticsearch:9200"

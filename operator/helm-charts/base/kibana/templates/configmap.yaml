@@ -1,14 +1,13 @@
+{{- if .Values.kibanaConfig }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "kibana.fullname" . }}
-  labels:
-    app: {{ template "kibana.name" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+  name: {{ template "kibana.fullname" . }}-config
+  labels: {{ include "kibana.labels" . | nindent 4 }}
 data:
-  kibana.yml: |
-    server.host: "0"
-    server.name: kibana
-    elasticsearch.url: "http://{{ .Values.elasticsearch.host }}:{{ .Values.elasticsearch.port }}"
+{{- range $path, $config := .Values.kibanaConfig }}
+  {{ $path }}: |
+{{ $config | indent 4 -}}
+{{- end -}}
+{{- end -}}

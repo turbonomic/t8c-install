@@ -31,7 +31,7 @@ The following table shows the values exposed which are also seen in the file [va
 Parameter|Default Value|Required / Opt to Change|Parameter Type
 ------------ | ------------- | --------------- | -------------
 image.repository|turbonomic/kubeturbo|optional|path to repo
-image.tag|6.3|optional|kubeturbo tag
+image.tag|7.21|optional|kubeturbo tag
 image.pullPolicy|IfNotPresent|optional| 
 serverMeta.version| |required|number x.y
 serverMeta.turboServer| |required|https URL to log into Server
@@ -42,12 +42,11 @@ args.logginglevel|2|optional|number
 args.kubelethttps|true|optional, change to false if k8s 1.10 or older|bolean
 args.kubeletport|10250|optional, change to 10255 if k8s 1.10 or older|number
 args.stitchuuid|true|optional, change to false if IaaS is VMM, Hyper-V|bolean
-masterNodeDetectors.nodeNamePatterns|node name includes `.*master.*`|optional but equired to avoid suspending masters identified by node name. If no match, this is ignored.| string, regex used, example:  `.*master.*`
-masterNodeDetectors.nodeLabels|any value for label key value `node-role.kubernetes.io/master`|optional but required to avoid suspending masters identified by node label key value pair, If no match, this is ignored.|regex used, specify the key as **masterNodeDetectors.nodeLabelsKey** such as  `node-role.kubernetes.io/master` and the value as **masterNodeDetectors.nodeLabelsValue** such as `.*`
+HANodeConfig.nodeRoles|master nodes are by default with HA supported|Optional. Supported in kubeturbo 6,4.3 with Turbonomic Server 6.4.3|Set of String, you can pass it as HANodeConfig.nodeRoles="\\"master\\"\\,\\"worker\\""
 daemonPodDetectors.daemonPodNamespaces1 and daemonPodNamespaces2|daemonSet kinds are by default allow for node suspension. Adding this parameter changes default.|Optional but required to identify pods in the namespace to be ignored for cluster consolidation| regex used, values in quotes & comma separated`"kube-system","kube-service-catalog","openshift-.*"`
 daemonPodDetectors.daemonPodNamePatterns|daemonSet kinds are by default allow for node suspension. Adding this parameter changes default.|Optional but required to identify pods matching this pattern to be ignored for cluster consolidation|regex used `.*ignorepod.*`
 
-For more on `masterNodeDetectors` and `daemonPodDetectors` go to [YAMLS_README.md](https://github.com/turbonomic/kubeturbo/tree/master/deploy/kubeturbo_yamls/YAMLS_README.md) under kubeturbo/deploy/kubeturbo_yamls/
+For more on `HANodeConfig` and `daemonPodDetectors` go to [YAMLS_README.md](https://github.com/turbonomic/kubeturbo/tree/master/deploy/kubeturbo_yamls/YAMLS_README.md) under kubeturbo/deploy/kubeturbo_yamls/
 
 #### Updating Turbo Server
 When you update the Turbonomic or CWOM Server, you will need to update the configMap resource to reflect the new version.

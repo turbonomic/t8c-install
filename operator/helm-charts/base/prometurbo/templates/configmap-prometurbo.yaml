@@ -7,257 +7,61 @@ data:
     # Prometheus servers and metrics to scrape
     servers:
 {{- if .Values.prometheusServers }}
-{{ tpl .Values.prometheusServers . | indent 6 }}
+{{ toYaml .Values.prometheusServers | indent 6 }}
 {{- end }}
+{{- if .Values.extraPrometheusServers }}
+{{ toYaml .Values.extraPrometheusServers | indent 6 }}
+{{- end }}
+
     # A map of exporter configurations to discover entities and related metrics
     exporters:
       istio:
-        entities:
-          - type: application
-            metrics:
-              - type: responseTime
-                queries:
-                  used: 'rate(istio_request_duration_milliseconds_sum{request_protocol="http",response_code="200",reporter="destination"}[1m])/rate(istio_request_duration_milliseconds_count{}[1m]) >= 0'
-              - type: transaction
-                queries:
-                  used: 'rate(istio_requests_total{request_protocol="http",response_code="200",reporter="destination"}[1m]) > 0'
-              - type: responseTime
-                queries:
-                  used: 'rate(istio_request_duration_milliseconds_sum{request_protocol="grpc",grpc_response_status="0",response_code="200",reporter="destination"}[1m])/rate(istio_request_duration_milliseconds_count{}[1m]) >= 0'
-              - type: transaction
-                queries:
-                  used: 'rate(istio_requests_total{request_protocol="grpc",grpc_response_status="0",response_code="200",reporter="destination"}[1m]) > 0'
-            attributes:
-              ip:
-                label: instance
-                matches: \d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??
-                isIdentifier: true
-              namespace:
-                label: destination_service_namespace
-              service_ns:
-                label: destination_service_namespace
-              service_name:
-                label: destination_service_name
-              service:
-                label: destination_service_name
+{{- if .Values.exporters.istio }}
+{{ toYaml .Values.exporters.istio | indent 8 }}
+{{- end }}
       istio-1.4:
-        entities:
-          - type: application
-            metrics:
-              - type: responseTime
-                queries:
-                  used: '1000.0*rate(istio_turbo_pod_latency_time_ms_sum{response_code="200"}[3m])/rate(istio_turbo_pod_latency_time_ms_count{response_code="200"}[3m]) >= 0'
-              - type: transaction
-                queries:
-                  used: 'rate(istio_turbo_pod_request_count{response_code="200"}[3m]) > 0'
-            attributes:
-              ip:
-                label: destination_ip
-                isIdentifier: true
-              name:
-                label: destination_uid
-                # Convert from "kubernetes://<podName>.<namespace>" to "<namespace>/<podName>"
-                matches: ^kubernetes://(?P<podName>[a-z0-9]([-a-z0-9]*[a-z0-9])?).(?P<namespace>[a-z0-9]([-a-z0-9]*[a-z0-9])?)$
-                as: "$namespace/$podName"
-              namespace:
-                label: destination_svc_ns
-              service_ns:
-                label: destination_svc_ns
-              service_name:
-                label: destination_svc_name
-              service:
-                label: destination_svc_name
-              target:
-                label: job
+{{- $exporter := index .Values "exporters" "istio-1.4" }}
+{{- if $exporter }}
+{{ toYaml $exporter | indent 8 }}
+{{- end }}
       redis:
-        entities:
-          - type: application
-            metrics:
-              - type: transaction
-                queries:
-                  used: 'rate(redis_commands_processed_total[3m])'
-            attributes:
-              ip:
-                label: addr
-                # Convert from "ip:host" to "ip"
-                matches: \d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??
-                isIdentifier: true
-              target:
-                label: job
+{{- if .Values.exporters.redis }}
+{{ toYaml .Values.exporters.redis | indent 8 }}
+{{- end }}
       cassandra:
-        entities:
-          - type: application
-            metrics:
-              - type: responseTime
-                queries:
-                  used: '0.001*max(cassandra_stats{name=~"org:apache:cassandra:metrics:table:(write|read)latency:99thpercentile"}) by (instance)'
-              - type: transaction
-                queries:
-                  used: 'sum(cassandra_stats{name=~"org:apache:cassandra:metrics:table:(write|read)latency:oneminuterate"}) by (instance)'
-            attributes:
-              ip:
-                label: instance
-                matches: \d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??
-                isIdentifier: true
-              target:
-                label: job
+{{- if .Values.exporters.cassandra }}
+{{ toYaml .Values.exporters.cassandra | indent 8 }}
+{{- end }}
       webdriver:
-        entities:
-          - type: application
-            hostedOnVM: true
-            metrics:
-              - type: responseTime
-                queries:
-                  used: '1000*(navigation_timing_load_event_end_seconds{job="webdriver"}-navigation_timing_start_seconds{job="webdriver"})'
-            attributes:
-              ip:
-                label: instance
-                matches: \d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??
-                isIdentifier: true
-              target:
-                label: job
+{{- if .Values.exporters.webdriver }}
+{{ toYaml .Values.exporters.webdriver | indent 8 }}
+{{- end }}
       node:
-        entities:
-          - type: virtualMachine
-            metrics:
-              - type: cpu
-                queries:
-                  used: 'sum by (instance, job) (irate(node_cpu_seconds_total{}[3m]))'
-              - type: memory
-                queries:
-                  used: 'node_memory_MemTotal_bytes{} - node_memory_MemAvailable_bytes{}'
-            attributes:
-              ip:
-                label: instance
-                matches: \d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??
-                isIdentifier: true
+{{- if .Values.exporters.node }}
+{{ toYaml .Values.exporters.node | indent 8 }}
+{{- end }}
       jmx-tomcat:
-        entities:
-          - type: application
-            hostedOnVM: true
-            metrics:
-              - type: cpu
-                queries:
-                  used: 'java_lang_OperatingSystem_ProcessCpuLoad'
-              - type: memory
-                queries:
-                  used: 'java_lang_Memory_HeapMemoryUsage_used/1024'
-                  capacity: 'java_lang_Memory_HeapMemoryUsage_max/1024'
-              - type: collectionTime
-                queries:
-                  used: 'sum without (name) (delta(java_lang_GarbageCollector_CollectionTime)[10m])/600*100'
-              - type: responseTime
-                queries:
-                  used: 'rate(Catalina_GlobalRequestProcessor_processingTime{name=~".*http-.*"}[3m])'
-            attributes:
-              ip:
-                label: instance
-                matches: \d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??
-                isIdentifier: true
-      turbonomic:
-        entities:
-          # Transaction for api calls
-          - type: businessTransaction
-            metrics:
-              - type: transaction
-                queries:
-                  used: 'sum by (instance,job,service,namespace,uri) (rate(turbo_api_call_latency_seconds_count{job="xl"}[10m]))'
-              - type: responseTime
-                queries:
-                  used: 'avg by (instance,job,service,namespace,uri) ((delta(turbo_api_call_latency_seconds_sum{job="xl"}[10m])/delta(turbo_api_call_latency_seconds_count[10m])) > 0) * 1000'
-            attributes:
-              id:
-                label: uri
-                isIdentifier: true
-              namespace:
-                label: namespace
-          # Transaction for plan
-          - type: businessTransaction
-            metrics:
-              - type: responseTime
-                queries:
-                  used: 'avg by (instance,job,service,namespace,status) (delta(plan_run_time_seconds_sum{status="SUCCEEDED"}[10m])/delta(plan_run_time_seconds_count[10m]) > 0) * 1000'
-            attributes:
-              id:
-                label: service
-                matches: plan-orchestrator
-                as: /plan
-                isIdentifier: true
-              namespace:
-                label: namespace
-          - type: application
-            metrics:
-              # TODO: Some of the XL services may be more relevant on kafka messages vs grpc
-              # HTTP metrics
-              - type: transaction
-                queries:
-                  used: 'sum by (instance,service,namespace) (delta(turbo_api_calls_total{job="xl",failed="false"}[10m]))/600'
-              - type: responseTime
-                queries:
-                  used: 'avg by (instance,service,namespace) ((delta(turbo_api_call_latency_seconds_sum{job="xl"}[10m])/delta(turbo_api_call_latency_seconds_count[10m])) > 0) * 1000'
-              # GRPC metrics
-              - type: transaction
-                queries:
-                  used: 'sum by (instance,service,namespace) (delta(grpc_server_handled_total{job="xl",code="OK"}[10m]))/600'
-              - type: responseTime
-                queries:
-                  used: 'avg by (instance,service,namespace) ((delta(grpc_server_handled_latency_seconds_sum{job="xl"}[10m])/delta(grpc_server_handled_latency_seconds_count[10m])) > 0) * 1000'
-              - type: collectionTime
-                queries:
-                  used: 'sum without(gc) (delta(jvm_gc_collection_seconds_sum{job="xl"}[10m]))/600*100'
-              - type: heap
-                queries:
-                  used: 'jvm_memory_bytes_used{area="heap",job="xl"}/1024'
-                  capacity: 'jvm_memory_bytes_max{area="heap",job="xl"}/1024'
-            attributes:
-              ip:
-                label: instance
-                matches: \d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??
-                isIdentifier: true
-              namespace:
-                label: namespace
-              service:
-                label: service
-              service_ns:
-                label: namespace
-              service_name:
-                label: service
-          - type: databaseServer
-            hostedOnVM: true
-            metrics:
-              - type: dbMem
-                queries:
-                  used: 'mysql_global_status_innodb_buffer_pool_bytes_data{job="xl"}/1024'
-                  capacity: 'mysql_global_variables_innodb_buffer_pool_size{job="xl"}/1024'
-              - type: memory
-                queries:
-                  used: 'mysql_global_status_innodb_buffer_pool_bytes_data{job="xl"}/1024'
-                  capacity: 'mysql_global_variables_innodb_buffer_pool_size{job="xl"}/1024'
-              - type: dbCacheHitRate
-                queries:
-                  used: '1/(1 + delta(mysql_global_status_innodb_buffer_pool_reads{job="xl"}[10m])/delta(mysql_global_status_innodb_buffer_pool_read_requests[10m]))*100'
-              - type: connection
-                queries:
-                  used: 'mysql_global_status_threads_connected{job="xl"}'
-                  capacity: 'mysql_global_variables_max_connections{job="xl"}'
-              - type: transaction
-                queries:
-                  used: 'sum(rate(mysql_global_status_commands_total{job="xl",command=~"(commit|rollback)"}[10m])) without (command)'
-            attributes:
-              ip:
-                label: host_ip
-                matches: \d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??
-              namespace:
-                label: namespace
-              id:
-                label: host_ip
-                matches: (?P<hostIP>\d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})??)
-                as: DatabaseServer-$hostIP
-                isIdentifier: true
-              service:
-                label: service
+{{- $exporter := index .Values "exporters" "jmx-tomcat" }}
+{{- if $exporter }}
+{{ toYaml $exporter | indent 8 }}
+{{- end }}
+      turbonomic-service:
+{{- $exporter := index .Values "exporters" "turbonomic-service" }}
+{{- if $exporter }}
+{{ toYaml $exporter | indent 8 }}
+{{- end }}
+      turbonomic-db:
+{{- $exporter := index .Values "exporters" "turbonomic-db" }}
+{{- if $exporter }}
+{{ toYaml $exporter | indent 8 }}
+{{- end }}
+      turbonomic-mediation:
+{{- $exporter := index .Values "exporters" "turbonomic-mediation" }}
+{{- if $exporter }}
+{{ toYaml $exporter | indent 8 }}
+{{- end }}
 {{- if .Values.extraPrometheusExporters }}
-{{ tpl .Values.extraPrometheusExporters . | indent 6 }}
+{{ toYaml .Values.extraPrometheusExporters | indent 6 }}
 {{- end }}
   businessapp.config: |-
     # This configuration defines business applications and their associated business transactions
@@ -276,5 +80,5 @@ data:
     #   dependOn: [ string ]           # The list of services that the business transaction depends on. Required.
     businessApplications:
 {{- if .Values.businessApplications }}
-{{ tpl .Values.businessApplications . | indent 6 }}
+{{ toYaml .Values.businessApplications | indent 6 }}
 {{- end }}

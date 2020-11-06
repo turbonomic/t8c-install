@@ -21,6 +21,8 @@ sevone:
       GRPC_PORT: 443
       PERSIST: none
       TRANSPORT: de-grpc
+  # Provide KEY: value pairs for arbitrary env to pass to the collector
+  env: {}
   tls_cert_secret_name:
   tls_cert_secret_key: "tls.crt"
   data_volume:

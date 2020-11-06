@@ -8,9 +8,9 @@ infrastructure. Packaged as a container, it uses the [operator pattern](https://
 to manage Turbonomic-specific [custom resource](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/),
 following best practices to manage all the underlying Kubernetes objects for you. 
 
-This repository is used to build the [Turbonomic Platform Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) (t8c-operator).
-If you are just looking for documentation on how to deploy and use the latest release, please see the
-[Getting Started Documentation](DEPLOY.md).
+This repository is used to build the Turbonomic Platform Operator (t8c-operator).
+
+> **NOTE** Documentation on how to deploy the Turbonomic Platform on kubernetes is being maintained in this project's wiki.  Start [here](https://github.com/turbonomic/t8c-install/wiki).
 
 
 ## Prerequisites 
@@ -78,26 +78,9 @@ This will use your current Kubernetes context from `~/.kube/config`.
 
 ### Running in Local and Remote Clusters
 
-You can install and start the operator by running
-````
-kubectl create ns turbonomic
-kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/crds/charts_v1alpha1_xl_crd.yaml
-kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/service_account.yaml -n turbonomic
-kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/role.yaml -n turbonomic
-kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/role_binding.yaml -n turbonomic
-kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/operator.yaml -n turbonomic
-````
+To deploy Turbonomic into a Kubernetes cluster, follow the documentation [here](https://github.com/turbonomic/t8c-install/wiki).
 
-Note that `deploy/operator.yaml` uses the image name `turbonomic/t8c-operator`.
-If you pushed this image to a remote registry, you need to change the `image`
-parameter in this file to refer to the correct location.
-
-If you are deploying on Openshift, change the security context of the project to the 'anyuid' SCC
-````
-oc adm policy add-scc-to-group anyuid system:serviceaccounts:turbonomic
-````
-
-Create or modify the Turbonomic custom resource, to deploy an instance of Turbonomic within the namespace
+Remember the custom resource defines your Turbonomic instance's configuration. To modify the Turbonomic platform, leverage the custom resource to make changes and apply:
 ````
 kubectl apply -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml -n turbonomic
 ````

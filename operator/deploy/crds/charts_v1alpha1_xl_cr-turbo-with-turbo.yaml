@@ -20,14 +20,15 @@ spec:
   # Global settings
   global:
     repository: turbonomic
-    tag: 7.22.8
-    #externalIP: 10.0.2.15
-    #externalDbIP: 10.0.2.15
-    #externalTimescaleDBIP: 10.0.2.15
+    tag: 8.0.7
+    externalIP: 10.0.2.15
+    externalDbIP: 10.0.2.15
+    externalTimescaleDBIP: 10.0.2.15
+    externalArangoDBName: arango.turbo.svc.cluster.local
 
   grafana:
     # Grafana is disabled by default. To enable it, uncomment:
-    enabled: true
+    #enabled: true
     adminPassword: admin
     grafana.ini:
       database:
@@ -39,15 +40,15 @@ spec:
         # See: https://github.com/helm/charts/issues/5167
         password: grafana
 
-# Kubeturbo probe
+  # Kubeturbo probe
   kubeturbo:
     enabled: true
 
-# Prometurbo metric server and Turbodif probe
+  # Prometurbo metric server and Turbodif probe
   prometurbo:
     enabled: true
 
-# Prometheus mysql exporter
+  # Prometheus mysql exporter
   prometheus-mysql-exporter:
     # ONLY enable for appliance install
     enabled: true
@@ -56,6 +57,6 @@ spec:
       user: turbodbuser
       pass: turbodbpassword
 
-# Prometheus server and built-in exporters
+  # Prometheus server and built-in exporters
   prometheus:
     enabled: true

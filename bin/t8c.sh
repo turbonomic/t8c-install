@@ -5,13 +5,22 @@
 # Purpose: Setup a kubernetes environment with T8s xl components
 # Tools:  Kubespray, Heketi, GlusterFs
 
+# Exit out if running as root or sudo
+
 # Variable to use if a non-turbonomic deployment
 deploymentBrand=${1}
+serviceAccountFile="/opt/turbonomic/kubernetes/operator/deploy/service_account.yaml"
+roleFile="/opt/turbonomic/kubernetes/operator/deploy/cluster_role.yaml"
+roleBindingFile="/opt/turbonomic/kubernetes/operator/deploy/cluster_role_binding.yaml"
+crdsFile="/opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_crd.yaml"
+operetorFile="/opt/turbonomic/kubernetes/operator/deploy/operator.yaml"
+chartsFile="/opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml"
 
 # Set the ip address for a single node setup.  Multinode should have the
 # ip values set manually in /opt/local/etc/turbo.conf
 singleNodeIp=$(ip address show eth0 | egrep inet | egrep -v inet6 | awk '{print $2}' | awk -F/ '{print$1}')
 sed -i "s/10.0.2.15/${singleNodeIp}/g" /opt/local/etc/turbo.conf
+sed -i "s/10.0.2.15/${singleNodeIp}/g" /opt/local/etc/server.properties
 for i in $(ls /opt/turbonomic/kubernetes/operator/deploy/crds/)
 do 
   sed -i "s/10.0.2.15/${singleNodeIp}/g" /opt/turbonomic/kubernetes/operator/deploy/crds/$i
@@ -159,7 +168,7 @@ else
 fi
 
 # Run ansible kubespray install
-/usr/bin/ansible-playbook --flush-cache -i inventory/turbocluster/hosts.yml -b --become-user=root cluster.yml
+/usr/local/bin/ansible-playbook --flush-cache -i inventory/turbocluster/hosts.yml -b --become-user=root cluster.yml
 # Check on ansible status and exit out if there are any failures.
 ansibleStatus=$?
 # Reset the kubespray yaml back to the original source
@@ -268,9 +277,11 @@ cat << EOF >> /tmp/topology.json
         }
 EOF
 
-cp "${glusterStorageJson}.template" "${glusterStorageJson}"
-sed -i '/nodes/r /tmp/topology.json' "${glusterStorageJson}"
-rm -rf /tmp/topology.json
+# This is commented out to use a specific private ip to set the storage ep
+# If a multi-node env is required, this will have to be revisited.
+#cp "${glusterStorageJson}.template" "${glusterStorageJson}"
+#sed -i '/nodes/r /tmp/topology.json' "${glusterStorageJson}"
+#rm -rf /tmp/topology.json
 
 # Set the heketi admin key (used also in the turboEnv.sh script
 export ADMIN_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
@@ -358,22 +369,22 @@ then
   echo "                   Operator Installation                              "
   echo "######################################################################"
   # See if the operator has an external ip
-  sed -i "s/tag:.*/tag: ${turboVersion}/g" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
-  grep -r "externalIP:" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
+  sed -i "s/tag:.*/tag: ${turboVersion}/g" ${chartsFile}
+  grep -r "externalIP:" ${chartsFile}
   result="$?"
   if [ $result -ne 0 ]; then
     sed -i "/tag:/a\
-\    externalIP: ${node}\n" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
+\    externalIP: ${node}\n" ${chartsFile}
   fi
 
   # Set branding if not turbonomic
   if [ ! -z "${deploymentBrand}" ]
   then
     # Adjust regular installs
-    echo "  api:" >> /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
-    echo "    image:" >> /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
-    echo "      repository: ${deploymentBrand}" >> /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
-    echo "      tag: ${turboVersion}" >> /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
+    echo "  ui:" >> ${chartsFile}
+    echo "    image:" >> ${chartsFile}
+    echo "      repository: ${deploymentBrand}" >> ${chartsFile}
+    echo "      tag: ${turboVersion}" >> ${chartsFile}
   fi
 
   # Enable services for gluster
@@ -381,14 +392,14 @@ then
   sudo systemctl enable gfsck.service
   sudo systemctl daemon-reload
 
-  # Setup mariadb before brining up XL components
+  # Setup mariadb before bringing up XL components
   #./mariadb_storage_setup.sh
   # Check to see if an external db is being used.  If so, do not run mariadb locally
-  egrep "externalDBName" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
+  egrep "externalDBName" ${chartsFile}
   externalDB=$(echo $?)
   if [ X${externalDB} = X0 ]
   then
-    externalDB=$(egrep "externalDBName" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml)
+    externalDB=$(egrep "externalDBName" ${chartsFile})
     echo "The database is external from this server"
     echo "${externalDB}"
   else
@@ -398,11 +409,11 @@ then
   # Setup timescaledb before bringing up XL components
   # ./configure_timescaledb.sh
   # Check to see if an external timescaledb is being used. If so, do not run timescaledb locally
-  egrep "externalTimescaleDBName" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
+  egrep "externalTimescaleDBName" ${chartsFile}
   externalTimescaleDB=$(echo $?)
   if [ X${externalTimescaleDB} = X0 ]
   then
-    externalTimescaleDB=$(egrep "externalTimescaleDBName" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml)
+    externalTimescaleDB=$(egrep "externalTimescaleDBName" ${chartsFile})
     echo "The TimescaleDB database is external from this server"
     echo "${externalTimescaleDB}"
   else
@@ -411,11 +422,34 @@ then
     /opt/local/bin/switch_dbs_mount_point.sh
   fi
 
+  # Setup kafka/zookeeper before bringing up XL components (if so configured)
+  # Check to see if an external kafka is being used.  If so, do not run kafka locally
+  # We have to do two checks because the external kafka variable ("externalKafka") is a substring of
+  # the alternative configuration ("externalKafkaIp") that runs Kafka in the VM.
+  egrep "externalKafka" ${chartsFile}
+  externalKafka=$(echo $?)
+  egrep "externalKafkaIP" ${chartsFile}
+  runKafkaInVM=$(echo $?)
+
+  if [ X${externalKafka} = X0 ] && [ X${runKafkaInVM} != X0 ]
+  then
+    externalKafkaName=$(egrep "externalKafka" ${chartsFile})
+    echo "Kafka is external from this server:"
+    echo "${externalKafkaName}"
+  elif [ X${runKafkaInVM} = X0 ]
+  then
+    echo "Kafka is configured to run in the VM, configuring..."
+    /opt/local/bin/configure_kafka.sh
+  else
+    echo "Kafka is configured to run as a container, skipping configuration for the VM service."
+  fi
+
   # Create the operator
-  kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/service_account.yaml -n turbonomic
-  kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/cluster_role.yaml -n turbonomic
-  kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/cluster_role_binding.yaml -n turbonomic
-  kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_crd.yaml -n turbonomic
-  kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/operator.yaml -n turbonomic
-  kubectl create -f /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml -n turbonomic
+  kubectl create -f ${serviceAccountFile} -n turbonomic
+  kubectl create -f ${roleFile} -n turbonomic
+  kubectl create -f ${roleBindingFile} -n turbonomic
+  kubectl create -f ${crdsFile} -n turbonomic
+  kubectl create -f ${operetorFile} -n turbonomic
+  sleep 10
+  kubectl create -f ${chartsFile} -n turbonomic
 fi

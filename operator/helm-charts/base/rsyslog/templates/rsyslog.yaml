@@ -132,6 +132,8 @@ spec:
           tcpSocket:
             port: 2514
 {{- include "common.getReadinessThresholds" . | indent 10 }}
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
         securityContext:
           readOnlyRootFilesystem: true
           capabilities:

@@ -20,3 +20,11 @@ cd /etc/kubernetes
 
 systemctl restart docker
 systemctl restart kubelet
+
+cp /root/.kube/config /root/.kube/config.old
+cp /etc/kubernetes/admin.conf /root/.kube/config
+
+cp /opt/turbonomic/.kube/config /opt/turbonomic/.kube/config.old
+cp /etc/kubernetes/admin.conf /opt/turbonomic/.kube/config
+chown turbo.turbo /opt/turbonomic/.kube/config
+sed -i '/user: kubernetes-admin/a \    namespace: turbonomic' /opt/turbonomic/.kube/config

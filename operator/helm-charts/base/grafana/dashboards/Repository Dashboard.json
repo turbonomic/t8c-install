@@ -22,6 +22,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -54,7 +55,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(repo_update_topology_duration_seconds_sum{topology_type=\"source\"}[10m])",
+          "expr": "delta(repo_update_topology_duration_seconds_sum{namespace=\"[[namespace]]\",topology_type=\"source\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -62,7 +63,7 @@
           "refId": "A"
         },
         {
-          "expr": "delta(repo_update_topology_duration_seconds_sum{topology_type=\"projected\"}[10m])",
+          "expr": "delta(repo_update_topology_duration_seconds_sum{namespace=\"[[namespace]]\",topology_type=\"projected\"}[10m])",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{topology_type}}",
@@ -115,6 +116,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 11,
@@ -147,7 +149,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(repo_global_supply_chain_duration_seconds_sum[10m])",
+          "expr": "delta(repo_global_supply_chain_duration_seconds_sum{namespace=\"[[namespace]]\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -201,6 +203,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 10,
@@ -233,9 +236,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(repo_single_source_supply_chain_duration_seconds_sum[10m])",
+          "expr": "delta(repo_single_source_supply_chain_duration_seconds_sum{namespace=\"[[namespace]]\"}[10m])",
           "format": "time_series",
-          "hide": true,
+          "hide": false,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -286,6 +289,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -318,7 +322,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(jvm_gc_collection_seconds_sum{service=\"repository\"}[10m])",
+          "expr": "delta(jvm_gc_collection_seconds_sum{namespace=\"[[namespace]]\",service=\"repository\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -373,6 +377,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -405,7 +410,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "jvm_memory_bytes_used{service=\"repository\"}",
+          "expr": "jvm_memory_bytes_used{namespace=\"[[namespace]]\",service=\"repository\"}",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -459,6 +464,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -491,7 +497,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_rss{name=~\"^k8s_repository.*\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",name=~\"^k8s_repository.*\"}",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -545,7 +551,34 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "turbonomic",
+          "value": "turbonomic"
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(namespace)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Namespace",
+        "multi": false,
+        "name": "namespace",
+        "options": [],
+        "query": "label_values(namespace)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-6h",

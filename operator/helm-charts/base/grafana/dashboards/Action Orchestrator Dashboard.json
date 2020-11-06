@@ -23,6 +23,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 10,
@@ -54,7 +55,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(ao_populate_store_duration_seconds_sum{store_type=\"Live\"}[10m])",
+          "expr": "delta(ao_populate_store_duration_seconds_sum{namespace=\"[[namespace]]\",store_type=\"Live\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -107,6 +108,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "Includes time to persist all actions to the database",
       "fill": 1,
       "gridPos": {
@@ -139,7 +141,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(ao_populate_store_duration_seconds_sum{store_type=\"Plan\"}[10m])",
+          "expr": "delta(ao_populate_store_duration_seconds_sum{namespace=\"[[namespace]]\",store_type=\"Plan\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -192,6 +194,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "decimals": 2,
       "description": "Includes time to persist all actions to the database",
       "fill": 1,
@@ -225,7 +228,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(ao_delete_plan_action_plan_duration_seconds_sum[10m])",
+          "expr": "delta(ao_delete_plan_action_plan_duration_seconds_sum{namespace=\"[[namespace]]\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -278,6 +281,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 9,
@@ -309,7 +313,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(jvm_gc_collection_seconds_sum{service=\"action-orchestrator\"}[10m])",
+          "expr": "delta(jvm_gc_collection_seconds_sum{namespace=\"[[namespace]]\",service=\"action-orchestrator\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -362,6 +366,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -393,7 +398,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "jvm_memory_bytes_used{service=\"action-orchestrator\"}",
+          "expr": "jvm_memory_bytes_used{namespace=\"[[namespace]]\",service=\"action-orchestrator\"}",
           "format": "time_series",
           "intervalFactor": 1,
           "refId": "A"
@@ -446,7 +451,34 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "turbonomic",
+          "value": "turbonomic"
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(namespace)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Namespace",
+        "multi": false,
+        "name": "namespace",
+        "options": [],
+        "query": "label_values(namespace)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-6h",

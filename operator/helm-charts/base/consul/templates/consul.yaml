@@ -89,6 +89,12 @@ spec:
         env:
         - name: CONSUL_BIND_INTERFACE
           value: eth0
+{{- if .Values.global }}
+  {{- if or .Values.logtostdout .Values.global.logtostdout }}
+        - name: LOG_TO_STDOUT
+          value: "true"
+  {{- end }}
+{{- end }}
         ports:
           - containerPort: 8301
           - containerPort: 8302
@@ -171,26 +177,51 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
+  ports:
+    # the port that this service should serve on
+    - name: http-consul
+      port: {{ .Values.global.externalConsulPort | default 8500 }}
+    - name: rpc-consul
+      port: 8400
+    - name: tcp-serflan
+      port: 8301
+    - name: tcp-serfwan
+      port: 8302
+    - name: tcp-server
+      port: 8300
+    - name: udp-consuldns
+      port: 8600
 {{- if .Values.global }}
   {{- if .Values.global.externalConsul }}
   type: ExternalName
   externalName: {{ .Values.global.externalConsul }}
   {{- end -}}
-{{- end }}
-  ports:
-  # the port that this service should serve on
-  - name: http-consul
-    port: 8500
-  - name: rpc-consul
-    port: 8400
-  - name: tcp-serflan
-    port: 8301
-  - name: tcp-serfwan
-    port: 8302
-  - name: tcp-server
-    port: 8300
-  - name: udp-consuldns
-    port: 8600
+  {{- if and (not .Values.global.externalConsul) (not .Values.global.externalConsulIP)}}
   selector:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+  {{- end -}}
+  {{- if and (.Values.global.externalConsulIP) (not .Values.global.externalConsul)}}
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{ .Chart.Name }}
+subsets:
+  - addresses:
+    - ip: {{ .Values.global.externalConsulIP | quote }}
+    ports:
+    - name: http-consul
+      port: {{ .Values.global.externalConsulPort | default 8500 }}
+    - name: rpc-consul
+      port: 8400
+    - name: tcp-serflan
+      port: 8301
+    - name: tcp-serfwan
+      port: 8302
+    - name: tcp-server
+      port: 8300
+    - name: udp-consuldns
+      port: 8600
+  {{- end -}}
+{{- end }}

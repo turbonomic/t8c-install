@@ -1,0 +1,1 @@
+Turbonomic collector (graph aware) deployed

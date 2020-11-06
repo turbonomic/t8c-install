@@ -77,13 +77,19 @@ spec:
     - uri:
         exact: /
     - uri:
-        prefix: /api
-    - uri:
         prefix: /app
     - uri:
         prefix: /assets
     - uri:
         prefix: /doc
+    route:
+    - destination:
+        host: ui.{{ .Release.Namespace }}.svc.cluster.local
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api
     - uri:
         prefix: /vmturbo/rest
     - uri:
@@ -100,13 +106,13 @@ spec:
         port:
           number: 8080
   - match:
-      - uri:
-          prefix: /reports
+    - uri:
+        prefix: /reports
     route:
-      - destination:
-          host: grafana.{{ .Release.Namespace }}.svc.cluster.local
-          port:
-            number: 3000
+    - destination:
+        host: grafana.{{ .Release.Namespace }}.svc.cluster.local
+        port:
+          number: 3000
 {{- if .Values.istioingress.routes }}
 {{ toYaml .Values.istioingress.routes | indent 2 }}
 {{- end }}

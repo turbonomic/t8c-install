@@ -1,5 +1,6 @@
 {{ if .Values.global }}
-  {{ if (not .Values.global.externalKafka) }}
+  {{ if and (not .Values.global.externalKafka) (not .Values.global.externalKafkaIP) }}
+    {{/* Kafka is not external, so we need to run Zookeeper as a container. Create a PVC, deployment and a service. */}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -77,11 +78,19 @@ spec:
         image: {{ template "image" . }}
         imagePullPolicy: {{ template "pullPolicy" . }}
         env:
-{{- if .Values.global.javaEnvironmentOptions }}
+{{- if .Values.global }}
+  {{- if .Values.global.javaEnvironmentOptions }}
         - name: JVMFLAGS
           value: {{ .Values.global.javaEnvironmentOptions | quote }}
+  {{- end }}
 {{- end }}
 {{ toYaml .Values.env | indent 8 }}
+{{- if .Values.global }}
+  {{- if or .Values.logtostdout .Values.global.logtostdout }}
+        - name: LOG_TO_STDOUT
+          value: "true"
+  {{- end }}
+{{- end }}
         ports:
           - containerPort: 2181
         livenessProbe:

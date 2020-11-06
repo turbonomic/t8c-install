@@ -1,0 +1,42 @@
+image:
+  repository: turbonomic
+  tag: latest
+  pullPolicy: IfNotPresent
+
+logLevel: warn
+enableDebugContainer: false
+configMap: null
+
+collectors:
+- topology
+- actions
+- costs
+- groups
+- expenses
+- targets
+
+env:
+  COSTS_ADDRESS: cost:9001
+  GROUPS_ADDRESS: group:9001
+  ACTIONS_ADDRESS: action-orchestrator:9001
+  KAFKA_HOSTS: kafka:9092
+  TOPOLOGY_PROCESSOR_ADDRESS: topology-processor:8080
+  DATACLOUD_HOST: datacloud.turbonomic.io
+  # Overwrite with a unique name to differentiate between other instances of the collector
+  # E.g. The name of your turbo instance
+  DATACLOUD_COLLECTOR_NAME: turbonomic-collector
+  DATACLOUD_SELFMON_PERIOD: 1m
+
+credentials:
+  type: "COLLECTOR_SERVICE_ACCOUNT_CREDENTIALS_FILE"
+  # type: "COLLECTOR_SERVICE_ACCOUNT_CREDENTIALS_FILE" # or "DATACLOUD_GRPC_TOKEN"
+  # secretName
+  # key
+  # projectId
+
+persistence:
+  size: 10Gi
+
+annotations: {}
+
+resources: {}

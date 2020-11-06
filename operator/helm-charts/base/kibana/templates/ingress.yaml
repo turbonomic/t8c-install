@@ -1,33 +1,29 @@
 {{- if .Values.ingress.enabled -}}
-{{- $serviceName := include "kibana.fullname" . -}}
-{{- $servicePort := .Values.service.externalPort -}}
-apiVersion: extensions/v1beta1
+{{- $fullName := include "kibana.fullname" . -}}
+{{- $servicePort := .Values.service.port -}}
+{{- $ingressPath := .Values.ingress.path -}}
+apiVersion: {{ template "kibana.ingress.apiVersion" . }}
 kind: Ingress
 metadata:
-  labels:
-    app: {{ template "kibana.name" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    heritage: {{ .Release.Service }}
-    release: {{ .Release.Name }}
-  name: {{ template "kibana.fullname" . }}
+  name: {{ $fullName }}
+  labels: {{ include "kibana.labels" . | nindent 4 }}
+{{- with .Values.ingress.annotations }}
   annotations:
-    {{- range $key, $value := .Values.ingress.annotations }}
-      {{ $key }}: {{ $value | quote }}
-    {{- end }}
+{{ toYaml . | indent 4 }}
+{{- end }}
 spec:
-  rules:
-    {{- range .Values.ingress.hosts }}
-      {{- $url := splitList "/" . }}
-    - host: {{ first $url }}
-      http:
-        paths:
-          - path: /{{ rest $url | join "/" }}
-            backend:
-              serviceName: {{ $serviceName }}
-              servicePort: {{ $servicePort }}
-    {{- end -}}
-  {{- if .Values.ingress.tls }}
+{{- if .Values.ingress.tls }}
   tls:
 {{ toYaml .Values.ingress.tls | indent 4 }}
-  {{- end -}}
-{{- end -}}
+{{- end }}
+  rules:
+  {{- range .Values.ingress.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $ingressPath }}
+            backend:
+              serviceName: {{ $fullName }}
+              servicePort: {{ $servicePort }}
+  {{- end }}
+{{- end }}

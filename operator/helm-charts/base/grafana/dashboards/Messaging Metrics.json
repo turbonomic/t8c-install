@@ -24,6 +24,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -60,7 +61,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(messages_sent_bytes{service=~\"$service\"}[$interval])",
+          "expr": "delta(messages_sent_bytes{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{topic}}",
@@ -114,6 +115,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -153,7 +155,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(messages_sent_bytes{service=~\"$service\"}[$interval])/delta(messages_sent{service=~\"$service\"}[$interval])",
+          "expr": "delta(messages_sent_bytes{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])/delta(messages_sent{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -208,6 +210,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -247,7 +250,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "messages_sent_largest_bytes{service=~\"$service\"}",
+          "expr": "messages_sent_largest_bytes{namespace=\"[[namespace]]\",service=~\"$service\"}",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -303,6 +306,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -339,7 +343,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(messages_sent{service=~\"$service\"}[$interval])",
+          "expr": "delta(messages_sent{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -395,6 +399,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 7,
@@ -431,7 +436,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(messages_sent_ms{service=~\"$service\"}[$interval])/delta(messages_sent{service=~\"$service\"}[$interval])",
+          "expr": "delta(messages_sent_ms{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])/delta(messages_sent{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -487,6 +492,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "The average total time it takes for a message to be received and processed from the moment it arrives at the broker",
       "fill": 1,
       "gridPos": {
@@ -524,7 +530,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(messages_received_processing_ms_sum{service=~\"$service\"}[$interval])/delta(messages_received_processing_ms_count{service=~\"$service\"}[$interval]) \n+ delta(messages_received_latency_ms{service=~\"$service\"}[$interval])/delta(messages_received{service=~\"$service\"}[$interval]) \n+ delta(messages_received_enqueued_ms_sum{service=~\"$service\"}[$interval])/delta(messages_received_enqueued_ms_count{service=~\"$service\"}[$interval])",
+          "expr": "delta(messages_received_processing_ms_sum{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])/delta(messages_received_processing_ms_count{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval]) \n+ delta(messages_received_latency_ms{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])/delta(messages_received{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval]) \n+ delta(messages_received_enqueued_ms_sum{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])/delta(messages_received_enqueued_ms_count{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -581,6 +587,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
         "h": 8,
@@ -617,7 +624,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(messages_received_bytes{service=~\"$service\"}[$interval])",
+          "expr": "delta(messages_received_bytes{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -673,6 +680,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "The time difference between the message timestamp and when the message was enqueued for processing in a component.",
       "fill": 1,
       "gridPos": {
@@ -710,7 +718,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(messages_received_latency_ms{service=~\"$service\"}[$interval])/delta(messages_received{service=~\"$service\"}[$interval])",
+          "expr": "delta(messages_received_latency_ms{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])/delta(messages_received{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
@@ -765,6 +773,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "The average time a message spent enqueued for processing in a consumer",
       "fill": 1,
       "gridPos": {
@@ -802,7 +811,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(messages_received_enqueued_ms_sum{service=~\"$service\"}[$interval])/delta(messages_received_enqueued_ms_count{service=~\"$service\"}[$interval])",
+          "expr": "delta(messages_received_enqueued_ms_sum{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])/delta(messages_received_enqueued_ms_count{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -858,6 +867,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "The average time a message spent in processing per message x topic",
       "fill": 1,
       "gridPos": {
@@ -895,7 +905,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(messages_received_processing_ms_sum{service=~\"$service\"}[$interval])/delta(messages_received_processing_ms_count{service=~\"$service\"}[$interval])",
+          "expr": "delta(messages_received_processing_ms_sum{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])/delta(messages_received_processing_ms_count{namespace=\"[[namespace]]\",service=~\"$service\"}[$interval])",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -952,6 +962,32 @@
   "tags": [],
   "templating": {
     "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "turbonomic",
+          "value": "turbonomic"
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(namespace)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Namespace",
+        "multi": false,
+        "name": "namespace",
+        "options": [],
+        "query": "label_values(namespace)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
       {
         "auto": false,
         "auto_count": 30,

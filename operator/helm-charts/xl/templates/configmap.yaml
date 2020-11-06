@@ -56,179 +56,38 @@ data:
         connRetryIntervalSeconds: 10
         # Remote iterator consumers - 10 minutes max wait for next chunk
         com.vmturbo.communication.remote.iterator.timeout: 600000
-        # driver property settings must be suitable for inclusion in a URL query
-        # string, with individual settings separated by "&". No initial "&" or "?" should appear
-        mariadbDriverProperties: useServerPrepStmts=true
-        mysqlDriverProperties:
       action-orchestrator:
         identityGeneratorPrefix: 9
-        actionPaginationDefaultLimit: 100
-        actionPaginationMaxLimit: 500
-        actionStatsWriteBatchSize: 500
         dbSchemaName: action
-        entityTypeRetryIntervalMillis: 1000
-        entityTypeMaxRetries: 6
-        maxLiveActionPlanAgeSeconds: 600
-        failedGroupUpdateDelaySeconds: 10
-        actionStatRollup.corePoolSize: 1
-        actionStatRollup.maxPoolSize: 10
-        actionStatRollup.threadKeepAliveMins: 1
-        actionStatRollup.executorQueueSize: 100
-        actionStatCleanup.corePoolSize: 1
-        # One thread per table - latest, hourly, daily, monthly
-        actionStatCleanup.maxPoolSize: 4
-        actionStatCleanup.threadKeepAliveMins: 1
-        actionStatCleanup.executorQueueSize: 10
-        actionStatCleanup.minTimeBetweenCleanupsMinutes: 60
-        retention.updateRetentionIntervalSeconds: 10
-        # The length of time after which an In-Progress action should be considered as "failed".
-        # Should be long enough to accommodate any long-running actions (e.g. storage move of a huge disk).
-        # 6 hrs by default.
-        actionExecution.timeoutMins: 360
       api:
         identityGeneratorPrefix: 5
-        multipartConfigMaxFileSizeKb: 50
-        multipartConfigMaxRequestSizeKb: 200
-        targetValidationTimeoutSeconds: 120
-        targetValidationPollIntervalSeconds: 2
-        targetDiscoveryTimeoutSeconds: 120
-        targetDiscoveryPollIntervalSeconds: 2
-        liveStatsRetrievalWindowSeconds: 60
         publicVersionString: {{ .Values.global.tag }}
+        enableReporting: {{ .Values.reporting.enabled }}
         groupBuildUseCaseFile: groupBuilderUsecases.json
         settingManagersFile: settingManagers.json
         settingStyleFile: settingSpecStyle.json
-        initialPlacementTimeoutSeconds: 600
         externalApiSwaggerUri: /vmturbo/apidoc/**
         externalApiFileSystemBase: file:/swagger/
-        cpuInfoCacheLifetimeHours: 8
-        sessionTimeoutSeconds: 1800
-        enableReporting: {{ .Values.reporting.enabled }}
       auth:
         dbSchemaName: auth
         identityGeneratorPrefix: 7
       cost:
         identityGeneratorPrefix: 10
-        turbonomic.ratecards.persistent.path: /home/turbonomic/data/
-        # The normal interval to trigger buy RI analysis after first time run.
-        normalBuyRIAnalysisIntervalHours: 336
         # the cost component will receive some large messages over grpc, so we will increase the max
         # DB properties
         dbSchemaName: cost
-        persistEntityCostChunkSize: 1000
-        # CurrentWeight for calculating the weighted_value in
-        # instance_type_hourly_by_week table.
-        # Value range from [0.0, 1.0]
-        preferredCurrentWeight : 0.6
-        # RI buy hour data points value range from 1 to 168 inclusive
-        # which is one week of data.
-        riMinimumDataPoints : 168
-        # Number of records to commit in one batch.
-        statsRecordsCommitBatchSize : 100
-        # Number of records to update in one batch.
-        statsRecordsUpdateBatchSize : 100
-        # Number of results to return when fetching lazily.
-        statsRecordsQueryBatchSize : 100
-        # Save Allocation Demand Tables in Diags
-        saveAllocationDemandStores: true
-        retention.updateRetentionIntervalSeconds: 10
-        projectedTopologyListenerTimeOut: 3600
       group:
         identityGeneratorPrefix: 4
-        createDefaultSettingPolicyRetryIntervalSec: 30
-        # make sure the value is the same as in api:sessionTimeoutSeconds
-        # TODO: find a better way to sync it with api:sessionTimeoutSeconds
-        tempGroupExpirationTimeMins: 30
         dbSchemaName: group_component
-      history:
-        writeTopologyChunkSize: 1000
-        userName: vmtplatform
-        requestHost: "%"
-        dbSchemaName: vmtdb
-        readonlyUserName: vmtreader
-        readonlyPassword: vmturbo
-        queryTimeoutSeconds: 900
-        # Migrations such as adding a new column to an existing huge database can take a
-        # long time. So set the timeout to a high value.
-        migrationTimeoutSeconds: 86400
-        latestTableTimeWindowMin: 15
-        historyPaginationDefaultLimit: 100
-        historyPaginationMaxLimit: 500
-        historyPaginationDefaultSortCommodity: priceIndex
-        # note = excluded commodities are case-insensitive, but in mixed case here for readability
-        # and to match exactly the values from discovery
-        # list obtained from $legacy/com.vmturbo.components.common/src/main/java/com/vmturbo/components/common/ClassicEnumMapper.java
-        # The commodities for which stats are not maintained/tracked in the DB.
-        # These are typically access commodities.
-        excludedCommodities: >-
-            ApplicationCommodity
-            CLUSTERCommodity
-            DATACENTERCommodity
-            DATASTORECommodity
-            DRSSEGMENTATIONCommodity
-            DSPMAccessCommodity
-            NETWORKCommodity
-            SEGMENTATIONCommodity
-            STORAGECLUSTERCommodity
-            VAPPAccessCommodity
-            VDCCommodity
-            VMPMAccessCommodity
-        retention.updateRetentionIntervalSeconds: 10
-        statsWritersMaxPoolSize: 6
-        systemLoadRecordsPerChunk: 500
-        timeToWaitNetworkReadinessMs: 10
-        # 5-minutes timeout to send big data through GRPC procedure calls
-        grpcReadingTimeoutMs: 300000
-
-        # timeouts for various execution "styles" used in HistorydbIO
-        # 20 seconds
-        executeTimeoutMsec.IMMEDIATE: 20000
-        # 1 minute
-        executeTimeoutMsec.PATIENT: 60000
-        # 2 minutes
-        executeTimeoutMsec.FORCED: 120000
-      market:
-        identityGeneratorPrefix: 2
-        # The maximum number of placement iterations the market should perform. Use to prevent ping-ponging VMs from
-        # making analysis take too long. If this number is <= 0, uses the default set in the market analysis codebase.
-        maxPlacementIterations: -1
-        # If entity utilization is below the lower watermark, Market could generate resize down actions.
-        rightsizeLowerWatermark: 0.7
-        # If entity utilization is above the upper watermark, Market could generate resize up actions.
-        rightsizeUpperWatermark: 0.7
-        # The maximum ratio of on-demand cost for the new template to current template of a vm for analysis engine to
-        # Quote Factor to be used by alleviate pressure plans.
-        alleviatePressureQuoteFactor: 0.2
-        # Suspension throttling configuration
-        suspensionThrottlingPerCluster: true
-        # Quote Factor to be used by all analysis runs except for alleviate pressure plans.
-        standardQuoteFactor: 0.68
-        # Move cost factor for controlling aggressiveness of market in generating on-prem live market move actions.
-        liveMarketMoveCostFactor: 0.05
       ml-datastore:
-        influxdbHealthCheckIntervalSeconds: 60
         influxHost: influxdb
         influxPort: 8086
         influxUsername: root
         influxDatabaseName: metron
-        actionOrchestratorHost: action-orchestrator
-        marketHost: market
-        # Retain data for 52 weeks (1 year),
-        # a replication factor set to one, and a shard group duration set to seven days.
-        # For more details on how retention policies work in influxdb see
-        # https://www.influxdata.com/blog/influxdb-shards-retention-policies/
-        # TODO: At some point consider using continuous queries to do rollups instead of dropping older data.
-        # https://docs.influxdata.com/influxdb/v1.7/guides/downsampling_and_retention/
-        influxShardDuration: 1w
-        influxRetentionPeriod: 52w
-        influxRetentionPolicyName: one-year-retention
-        # Batch size for writing to influx. The default batch size is 1000
-        influxBatchSize: 2000
         gzipToInflux: false
         # Setting jitterEnabled to false OR metricJitter to 0 avoids any jitter.
         jitterEnabled: false
         metricJitter: 0.05
-        influxHealthCheckIntervalSeconds: 60
         # Whitelist of commodities to write to influx.
         defaultCommodityWhitelist:
             BALLOONING,
@@ -291,136 +150,22 @@ data:
         clustersSupported: true
       plan-orchestrator:
         dbSchemaName: plan
-        # cron spec for running cluster rollup at 1AM daily = second (0-60) ,minute (0-59), hour(0-23),
-        #     day of month(1-31), month(1-12), day of week(0-7, 7=sun)
-        clusterRollupSchedule: "0 0 1 * * *"
-        # Run plan deletion at 2AM everyday
-        planDeletionSchedule: "0 0 2 * * *"
         # Config parameter to control the batch size for deleting old plans.
         planDeletionBatchSize: 500
         # Delay before the next batch of old plans is deleted.
         planDeletionDelayBetweenDeletesSeconds: 120
-        identityGeneratorPrefix: 3
         templateSpecFile: defaultTemplateSpec.json
         defaultTemplatesFile: defaultTemplates.json
         # Time-out for the CPU Info cache; this cache is updated very infrequently.
         cpuInfoCacheLifetimeHours: 8
-        # If true, calculate headroom for all clusters in one plan instance.
-        # If false, calculate headroom for restricted number of clusters in multiple plan instances.
-        headroomCalculationForAllClusters: true
-      repository:
-        repositorySearchPaginationDefaultLimit: 100
-        repositorySearchPaginationMaxLimit: 500
-        repositoryEntityStatsPaginationDefaultLimit: 100
-        repositoryEntityStatsPaginationMaxLimit: 300
-        # Note - OM-36437 - The price index sorting doesn't actually work right now,
-        # but there is no other good universally applicable default commodity.
-        repositoryEntityStatsPaginationDefaultSortCommodity: priceIndex
-        repositoryRealtimeTopologyDropDelaySecs: 30
-        numberOfExpectedRealtimeSourceDB: 2
-        numberOfExpectedRealtimeProjectedDB: 2
       topology-processor:
-        # suppress inspection "UnusedProperty" for whole file
-        identityGeneratorPrefix: 1
         # This should be in sync with the schema in the Topology Processor s pom.xml
         dbSchemaName: topology_processor
-        activateOrMoveInProgressRecordExpiredSeconds: 3600
-        inProgressActionExpiredSeconds: 3600
-        moveSucceedRecordExpiredSeconds: 1800
-        resizeSucceedRecordExpiredSeconds: 14400
-        scaleSucceedRecordExpiredSeconds: 21600
-        activateSucceedRecordExpiredSeconds: 14400
-        # cloud probe discovery involves downloading some large files, so we are setting the discovery
-        # timeout to 120 seconds, instead of using the default of 30 seconds.
-        # several keep-alive messages are sent by the client during this interval to keep the connection open.
-        discoveryTimeoutSeconds: 120
-        validationTimeoutSeconds: 30
-        topologyBroadcastIntervalMinutes: 10
-        minimumAccountExpensesUploadIntervalMins: 60
-        minimumRIDataUploadIntervalMins: 5
-        actionTimeoutSeconds: 30
         # Urgent metrics are collected every 10 minutes, the offline every 3 days
         collectionIntervalUrgentSec: 600
         collectionIntervalOfflineSec: 259200
-        anonymized: true
         bridgeHost: clustermgr
         bridgePort: 8120
-        discoveredGroupUploadIntervalSeconds: 10
-        # Size of chunks for uploading entity settings to the group component
-        entitySettingsChunksSize: 100
-        # The interval at which to attempt to reload assigned IDs
-        # after topology processor startup.
-        assignedIdReloadReattemptIntervalSeconds: 10
-        # This configuration value controls how often the commodity max values are
-        # loaded from history component = 12 Hours
-        maxValuesBackgroundLoadFrequencyMinutes: 720
-        # Timeout for acquiring the permit for running a discovering operation on a target.
-        probeDiscoveryPermitWaitTimeoutMins: 40
-        # Additional random interval timeout for acquring permit to prevent thundering herd issue.
-        probeDiscoveryPermitWaitTimeoutIntervalMins: 20
-        # This configuration value controls the initial delay before triggering
-        # the background load task when the initial load during startup fails.
-        # For subsequent fetches from the DB or when the initial load succeeds,
-        # the delay will be based on the maxValuesBackgroundLoadFrequencyMinutes
-        # config value.
-        maxValuesBackgroundLoadDelayOnInitFailureMinutes: 30
-        # IOPS capacities for each type of disk in Storage Controller, Logical Pool, and Disk Array entities.
-        diskIopsCapacitySsd: 5000
-        diskIopsCapacity7200Rpm: 800
-        diskIopsCapacity10kRpm: 1200
-        diskIopsCapacity15kRpm: 1600
-        diskIopsCapacityVseriesLun: 5000
-        # Factor by which to multiply probe's estimate of array's IOPS capacity
-        # For probes like Pure and XtremIO which provide the StorageController
-        # and DiskArray estimated IOPS capacity directly rather than a disk count.
-        arrayIopsCapacityFactor: 1.0
-        # Factors by which to multiply IOPS Capacity if disk has certain properties
-        hybridDiskIopsFactor: 1.5
-        flashAvailableDiskIopsFactor: 1.3
-        # The interval hours that how long the new discovered entities can not be generated
-        # resize down actions by Market.
-        resizeDownWarmUpIntervalHours: 4
-        # Whether or not to periodically collect changes for random entities during stitching
-        # in the stitching journal. Use the journal-related parameters below to tune
-        # how much information is collected.
-        #
-        # Even if this parameter is turned to false the journal can be manually collected
-        # using the /topology-processor/stitchingJournal REST endpoint.
-        stitchingJournalEnabled: false
-        # Control parameters for tuning how frequently and how many entities we trace
-        # through the stitching journal. Tracking more changes in the journal introduces
-        # a greater performance hit but also provides greater debugging information.
-        # journalMaxChangesetsPerOperation controls the maximum number of changes to
-        # be entered in the journal for a single operation.
-        journalMaxChangesetsPerOperation: 100
-        # The number of entities that should be chronicled in the journal when we create
-        # a non-empty stitching journal. Setting to 0 produces a journal that tracks
-        # no changes.
-        journalNumEntitiesToRecord: 8
-        # In production, in order to ensure the stitching journal has minimal performance impact
-        # we usually create an empty journal that does not trace any changes. However, once
-        # in every journalsPerRecording, we create a non-empty journal that does trace changes
-        # according to the configurations above. So, for example, if journalsPerRecording is 6
-        # we will trace stitching changes in one of every 6 broadcasts.
-        #
-        # To manually trigger the stitching journal at run-time using configurations you
-        # can specify (permits custom journal filters and options), use the
-        # /topology-processor/stitchingJournal REST endpoint.
-        journalsPerRecording: 6
-        # Time, in hours that a cpu_model -> scale_factor mapping is cached.
-        scaleFactorCacheTimeoutHr: 8
-        # Number of full discovery dumps to retain for any given target, unless overridden on a per-target basis
-        discoveryDumpsToHold.default: 0
-        # The pool size for commodity history values' calculations
-        historyAggregationMaxPoolSize: 8
-        # The chunk size for fetching data from history component upon startup
-        historyAggregationLoadingChunkSize: 1000
-        # The chunk size for a task of aggregating commodity history values
-        historyAggregationCalculationChunkSize: 2000
-        # How often to checkpoint the percentile cache in the persistence store
-        historyAggregation.percentileMaintenanceWindowHours: 24
-        # Whether to enable consistent scaling
-        consistentScalingEnabled: true
       extractor:
         dbHost: timescaledb
         dbPort: 5432

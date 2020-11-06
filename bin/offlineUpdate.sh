@@ -13,71 +13,20 @@ pushd /etc/; for i in `sudo grep -lr 10.0.2.15 *`; do sudo sed -i "s/10.0.2.15/$
 sudo rm -rf /root/.kube > /dev/null 2>&1
 sudo rm -rf /opt/turbonomic/.kube > /dev/null 2>&1
 
-cp /opt/kubespray/roles/container-engine/docker/templates/rh_docker.repo.j2 /opt/kubespray/roles/container-engine/docker/templates/rh_docker.repo.j2.orig
-sed -i '/docker-engine/,+8d' /opt/kubespray/roles/container-engine/docker/templates/rh_docker.repo.j2
+FILE_007=/opt/kubespray/roles/kubernetes/preinstall/tasks/0070-system-packages.yml
+ONLINE_FILE_007=/opt/kubespray/roles/kubernetes/preinstall/tasks/0070-system-packages.yml.online
+OFFLINE_FILE_007=/opt/kubespray/roles/kubernetes/preinstall/tasks/0070-system-packages.yml.offline
+if [ ! -f "${ONLINE_FILE_007}" ]
+then
+    cp ${FILE_007} ${ONLINE_FILE_007}
+    cp ${OFFLINE_FILE_007} ${FILE_007}
+fi
 
-cp /opt/kubespray/roles/download/tasks/download_container.yml /opt/kubespray/roles/download/tasks/download_container.yml.online
-sed -i '/- facts/a\
-  ignore_errors: yes' /opt/kubespray/roles/download/tasks/download_container.yml
-sed -i '/run_once: yes/a\
-  ignore_errors: yes' /opt/kubespray/roles/download/tasks/download_container.yml
-sed -i '/- pull_required/a\
-  ignore_errors: yes' /opt/kubespray/roles/download/tasks/download_container.yml
-sed -i '/- group_names/a\
-  ignore_errors: yes' /opt/kubespray/roles/download/tasks/download_container.yml
-sed -i 's/retries: 4/retries: 1/g' /opt/kubespray/roles/download/tasks/download_container.yml
-
-cp /opt/kubespray/roles/kubernetes/preinstall/tasks/0070-system-packages.yml /opt/kubespray/roles/kubernetes/preinstall/tasks/0070-system-packages.yml.online
-sed -i '/- bootstrap-os/a\
-  ignore_errors: yes' /opt/kubespray/roles/kubernetes/preinstall/tasks/0070-system-packages.yml
-sed -i '/- not is_atomic/a\
-  ignore_errors: yes' /opt/kubespray/roles/kubernetes/preinstall/tasks/0070-system-packages.yml
-sed -i 's/retries: 4/retries: 1/g' /opt/kubespray/roles/kubernetes/preinstall/tasks/0070-system-packages.yml
-
-cp /opt/kubespray/roles/kubernetes/preinstall/defaults/main.yml /opt/kubespray/roles/kubernetes/preinstall/defaults/main.yml.online
-sed -i '/- xfsprogs/a\
-ignore_errors: yes' /opt/kubespray/roles/kubernetes/preinstall/defaults/main.yml
-
-#cp /opt/kubespray/roles/download/tasks/set_docker_image_facts.yml /opt/kubespray/roles/download/tasks/set_docker_image_facts.yml.online
-#sed -i 's/pull_args: >-/pull_args: absent#>-/g' /opt/kubespray/roles/download/tasks/set_docker_image_facts.yml
-
-cp /opt/kubespray/roles/download/tasks/kubeadm_images.yml /opt/kubespray/roles/download/tasks/kubeadm_images.yml.online
-sed -i '/delegate_to:/a\
-  ignore_errors: yes' /opt/kubespray/roles/download/tasks/kubeadm_images.yml
-sed -i '/command:/a\
-  ignore_errors: yes' /opt/kubespray/roles/download/tasks/kubeadm_images.yml
-
-cp /opt/kubespray/roles/network_plugin/calico/tasks/install.yml /opt/kubespray/roles/network_plugin/calico/tasks/install.yml.online
-sed -i '/- upgrade/a\
-  ignore_errors: yes' /opt/kubespray/roles/network_plugin/calico/tasks/install.yml
-
-cp /opt/kubespray/roles/download/tasks/download_file.yml /opt/kubespray/roles/download/tasks/download_file.yml.online
-sed -i '/- group_names/a\
-  ignore_errors: yes' /opt/kubespray/roles/download/tasks/download_file.yml
-
-cp /opt/kubespray/roles/download/tasks/sync_container.yml /opt/kubespray/roles/download/tasks/sync_container.yml.online
-sed -i 's/retries: 4/retries: 1/g' /opt/kubespray/roles/download/tasks/sync_container.yml
-
-cp /opt/kubespray/roles/download/tasks/download_file.yml /opt/kubespray/roles/download/tasks/download_file.yml.online
-sed -i 's/retries: 4/retries: 1/g' /opt/kubespray/roles/download/tasks/download_file.yml
-
-cp /opt/kubespray/roles/kubernetes-apps/helm/tasks/main.yml /opt/kubespray/roles/kubernetes-apps/helm/tasks/main.yml.online 
-sed -i '/proxy_env/a\
-  ignore_errors: yes' /opt/kubespray/roles/kubernetes-apps/helm/tasks/main.yml
-
-cp /opt/kubespray/roles/container-engine/docker/tasks/main.yml /opt/kubespray/roles/container-engine/docker/tasks/main.yml.online
-sed -i '/when: ansible_distribution/a\
-  ignore_errors: yes' /opt/kubespray/roles/container-engine/docker/tasks/main.yml
-sed -i '/- yum_result.results/a\
-  ignore_errors: yes' /opt/kubespray/roles/container-engine/docker/tasks/main.yml
-
-#sudo cp /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.online
-#sudo sed -i '/enabled=0/d' /etc/yum.repos.d/CentOS-Base.repo
-#sudo sed -i '/gpgkey/i \
-#enabled=0' /etc/yum.repos.d/CentOS-Base.repo
-#
-#sudo cp /etc/yum.repos.d/docker.repo /etc/yum.repos.d/docker.repo.online
-#sudo sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/docker.repo
-#
-#sudo cp /etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo.online
-#sudo sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/docker.repo
+CONT_MAIN_FILE="/opt/kubespray/roles/container-engine/docker/tasks/main.yml"
+CONT_MAIN_ONLINE_FILE="/opt/kubespray/roles/container-engine/docker/tasks/main.yml.online"
+CONT_MAIN_OFFLINE_FILE="/opt/kubespray/roles/container-engine/docker/tasks/main.yml.offline"
+if [ ! -f "${CONT_MAIN_ONLINE_FILE}" ]
+then
+    cp ${CONT_MAIN_FILE} ${CONT_MAIN_ONLINE_FILE}
+    cp ${CONT_MAIN_OFFLINE_FILE} ${CONT_MAIN_FILE}
+fi

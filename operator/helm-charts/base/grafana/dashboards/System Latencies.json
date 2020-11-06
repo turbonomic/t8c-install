@@ -23,6 +23,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "See https://vmturbo.atlassian.net/wiki/display/Home/XL+200k+Performance+Thought for what this means.",
       "fill": 1,
       "gridPos": {
@@ -55,28 +56,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(tp_discovery_duration_seconds_sum{source=\"top\"}[10m])",
+          "expr": "delta(tp_discovery_duration_seconds_sum{namespace=\"[[namespace]]\",source=\"top\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "A"
         },
         {
-          "expr": "delta(tp_broadcast_duration_seconds_sum{source='topology-processor'}[10m])",
+          "expr": "delta(tp_broadcast_duration_seconds_sum{namespace=\"[[namespace]]\",source='topology-processor'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "B"
         },
         {
-          "expr": "delta(repo_update_topology_duration_seconds_sum{source='repository',topology_type='source'}[10m])",
+          "expr": "delta(repo_update_topology_duration_seconds_sum{namespace=\"[[namespace]]\",source='repository',topology_type='source'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "C"
         },
         {
-          "expr": "delta(repo_global_supply_chain_duration_seconds_sum[10m])",
+          "expr": "delta(repo_global_supply_chain_duration_seconds_sum{namespace=\"[[namespace]]\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -129,6 +130,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "See https://vmturbo.atlassian.net/wiki/display/Home/XL+200k+Performance+Thought for what this means.",
       "fill": 1,
       "gridPos": {
@@ -161,28 +163,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(tp_discovery_duration_seconds_sum{source='topology-processor'}[10m])",
+          "expr": "delta(tp_discovery_duration_seconds_sum{namespace=\"[[namespace]]\",source='topology-processor'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "A"
         },
         {
-          "expr": "delta(tp_broadcast_duration_seconds_sum{source='topology-processor'}[10m])",
+          "expr": "delta(tp_broadcast_duration_seconds_sum{namespace=\"[[namespace]]\",source='topology-processor'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "B"
         },
         {
-          "expr": "delta(mkt_analysis_duration_seconds_sum[10m])",
+          "expr": "delta(mkt_analysis_duration_seconds_sum{namespace=\"[[namespace]]\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "C"
         },
         {
-          "expr": "delta(ao_populate_store_duration_seconds_sum{store_type='Live'}[10m])",
+          "expr": "delta(ao_populate_store_duration_seconds_sum{namespace=\"[[namespace]]\",store_type='Live'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -235,6 +237,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "See https://vmturbo.atlassian.net/wiki/display/Home/XL+200k+Performance+Thought for what this means.",
       "fill": 1,
       "gridPos": {
@@ -267,21 +270,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(ao_populate_store_duration_seconds_sum{store_type='Live'}[10m])",
+          "expr": "delta(ao_populate_store_duration_seconds_sum{namespace=\"[[namespace]]\",store_type='Live'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "A"
         },
         {
-          "expr": "delta(tp_broadcast_duration_seconds_sum{source='topology-processor'}[10m])",
+          "expr": "delta(tp_broadcast_duration_seconds_sum{namespace=\"[[namespace]]\",source='topology-processor'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "B"
         },
         {
-          "expr": "delta(history_update_topology_duration_seconds_sum{context_type='live',source='topology-processor'}[10m])",
+          "expr": "delta(history_update_topology_duration_seconds_sum{namespace=\"[[namespace]]\",context_type='live',source='topology-processor'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -334,6 +337,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "See https://vmturbo.atlassian.net/wiki/display/Home/XL+200k+Performance+Thought for what this means.",
       "fill": 1,
       "gridPos": {
@@ -366,35 +370,35 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(tp_broadcast_duration_seconds_sum{source='topology-processor'}[10m])",
+          "expr": "delta(tp_broadcast_duration_seconds_sum{namespace=\"[[namespace]]\",source='topology-processor'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "A"
         },
         {
-          "expr": "delta(tp_discovery_duration_seconds_sum{source='topology-processor'}[10m])",
+          "expr": "delta(tp_discovery_duration_seconds_sum{namespace=\"[[namespace]]\",source='topology-processor'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "B"
         },
         {
-          "expr": "delta(mkt_analysis_duration_seconds_sump[10m])",
+          "expr": "delta(mkt_analysis_duration_seconds_sump{namespace=\"[[namespace]]\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "C"
         },
         {
-          "expr": "delta(history_update_topology_duration_seconds_sum{context_type='live',topology_type='source'}[10m])",
+          "expr": "delta(history_update_topology_duration_seconds_sum{namespace=\"[[namespace]]\",context_type='live',topology_type='source'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "D"
         },
         {
-          "expr": "history_update_topology",
+          "expr": "history_update_topology{namespace=\"[[namespace]]\"}",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -447,6 +451,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
+      "datasource": "Prometheus",
       "description": "See https://vmturbo.atlassian.net/wiki/display/Home/XL+200k+Performance+Thought for what this means.",
       "fill": 1,
       "gridPos": {
@@ -479,28 +484,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "delta(tp_discovery_duration_seconds_sum{source='topology-processor'}[10m])",
+          "expr": "delta(tp_discovery_duration_seconds_sum{namespace=\"[[namespace]]\",source='topology-processor'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "A"
         },
         {
-          "expr": "delta(tp_broadcast_duration_seconds_sum{source='topology-processor'}[10m])",
+          "expr": "delta(tp_broadcast_duration_seconds_sum{namespace=\"[[namespace]]\",source='topology-processor'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "B"
         },
         {
-          "expr": "delta(mkt_analysis_duration_seconds_sum[10m])",
+          "expr": "delta(mkt_analysis_duration_seconds_sum{namespace=\"[[namespace]]\"}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
           "refId": "C"
         },
         {
-          "expr": "delta(history_update_topology_duration_seconds_sum{context_type='live',topology_type='source'}[10m])",
+          "expr": "delta(history_update_topology_duration_seconds_sum{namespace=\"[[namespace]]\",context_type='live',topology_type='source'}[10m])",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -553,7 +558,34 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "turbonomic",
+          "value": "turbonomic"
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(namespace)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Namespace",
+        "multi": false,
+        "name": "namespace",
+        "options": [],
+        "query": "label_values(namespace)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
     "from": "now-6h",

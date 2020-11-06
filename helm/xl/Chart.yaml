@@ -1,5 +1,0 @@
-apiVersion: v1
-appVersion: "7.22"
-description: A Helm chart for deploying XL in Kubernetes
-name: xl
-version: 1.6.0
