@@ -1,0 +1,24 @@
+# permissions for end users to edit xls.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: xl-editor-role
+rules:
+- apiGroups:
+  - charts.helm.k8s.io
+  resources:
+  - xls
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - charts.helm.k8s.io
+  resources:
+  - xls/status
+  verbs:
+  - get

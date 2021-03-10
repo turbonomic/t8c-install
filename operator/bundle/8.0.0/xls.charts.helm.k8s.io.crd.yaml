@@ -193,12 +193,6 @@ spec:
                   description: Enable nginx ingress
                   type: boolean
               type: object
-            ui:
-              properties:
-                enabled:
-                  description: Enable UI Component
-                  type: boolean
-              type: object
             openshiftingress:
               properties:
                 enabled:
@@ -280,64 +274,6 @@ spec:
                               type: string
                           type: object
                       type: object
-                  type: object
-              type: object
-            datacloud-graph:
-              properties:
-                enabled:
-                  description: Enable datacloud graph collector
-                  type: boolean
-                annotations:
-                  description: component specific pod annotations list
-                  type: object
-                resources:
-                  description: component resource configuration
-                  type: object
-                logLevel:
-                  description: component log level (debug, info, warn, error)
-                  type: string
-                configMap:
-                  description: name of configmap with additional collector config
-                  type: string
-                enableDebugContainer:
-                  description: start a pod with the collector state mounted for debugging
-                  type: boolean
-                env:
-                  description: "KEY: value pairs to pass as env to the collector"
-                  type: object
-                image:
-                  description: component specific image options
-                  properties:
-                    repository:
-                      description: component container registry and repository name
-                      type: string
-                    tag:
-                      description: component container tag
-                      type: string
-                    pullPolicy:
-                      description: component image pull policy
-                      type: string
-                  type: object
-                credentials:
-                  properties:
-                    type:
-                      description: credentials type (COLLECTOR_SERVICE_ACCOUNT_CREDENTIALS_FILE or DATACLOUD_GRPC_TOKEN)
-                      type: string
-                    secretName:
-                      description: the secret containing credentials
-                      type: string
-                    key:
-                      description: the key in the secret containing credentials
-                      type: string
-                    projectId:
-                      description: the project id to send to
-                      type: string
-                  type: object
-                persistence:
-                  properties:
-                    size:
-                      description: the size of the persistent storage
-                      type: string
                   type: object
               type: object
             kubeturbo:
@@ -983,6 +919,12 @@ spec:
               properties:
                 enabled:
                   description: Enable EMC XtremIO mediation
+                  type: boolean
+              type: object
+            xen:
+              properties:
+                enabled:
+                  description: Enable EMC VMAX mediation
                   type: boolean
               type: object
 
@@ -3792,6 +3734,45 @@ spec:
                   type: object
               type: object
             mediation-xtremio:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    serviceAccountName:
+                      description: component serviceAccountName
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                javaComponentOptions:
+                  description: component additional java options
+                  type: string
+                debug:
+                  description: component debug
+                  type: boolean
+                resources:
+                  description: component resource configuration
+                  properties:
+                    limits:
+                      description: component limits
+                      properties:
+                        memory:
+                          description: component memory limits
+                          type: string
+                      type: object
+                  type: object
+              type: object
+            mediation-xen:
               properties:
                 annotations:
                   description: component specific pod annotations list

@@ -3,11 +3,22 @@
 # storage-restore.sh
 # Fix issues that may be caused by underlying storage layer
 
+# Get the parameters used for kubernetes, gluster, turbo setup
+source /opt/local/etc/turbo.conf
+
 # redirect stdout/stderr to a file
 current_time=$(date "+%Y.%m.%d-%H.%M.%S")
 exec &> /tmp/restore-gluster-${current_time}.log
 
 # Functions
+
+# Check for local or shared storage
+# Case-insensitive comparsion (due to the use of ',,')
+if [ X${storage,,} = "Xlocal" ]
+then
+  echo "Using local storage, so storage restore is not required."
+  exit 0
+fi
 
 # Run this as the root user
 if [[ $(/usr/bin/id -u) -ne 0 ]]
@@ -54,7 +65,7 @@ echo "---------------------"
 turboPodCount=$(/usr/local/bin/kubectl get pod -n turbonomic | wc -l)
 while [ ${turboPodCount} -gt 0 ]
 do
-  turboPodCount=$(/usr/local/bin/kubectl get pod -n turbonomic | egrep -v "prometheus-node-exporter|fluent-bit-loki|loki|elasticsearch|logstash|NAME" | wc -l)
+  turboPodCount=$(/usr/local/bin/kubectl get pod -n turbonomic | egrep -v "prometheus-node-exporter|fluent-bit-loki|loki|elasticsearch|logstash|datacloud|NAME" | wc -l)
 done
 echo
 

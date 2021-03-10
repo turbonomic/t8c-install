@@ -17,15 +17,17 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 8.0.7
+    tag: 8.1.6
     #externalIP: 10.0.2.15
     #externalDbIP: 10.0.2.15
     #externalTimescaleDBIP: 10.0.2.15
-    #externalArangoDBName: arango.turbo.svc.cluster.local
+    externalArangoDBName: arango.turbo.svc.cluster.local
 
 # Component selector - Probes
 #  actionscript:
 #    enabled: true
+#  actionstream-kafka:
+#    enabled: false
 #  appdynamics:
 #    enabled: true
 #  appinsights:
@@ -44,11 +46,17 @@ spec:
 #    enabled: false
 #  hyperv:
 #    enabled: true
+#  kubeturbo:
+#    enabled: true
 #  netapp:
 #    enabled: true
 #  nutanix:
 #    enabled: true
 #  oneview:
+#    enabled: true
+#  prometheus:
+#    enabled: true
+#  prometurbo:
 #    enabled: true
 #  pure:
 #    enabled: true
@@ -57,8 +65,6 @@ spec:
 #  servicenow:
 #    enabled: false
 #  ucs:
-#    enabled: true
-#  udt:
 #    enabled: true
 #  vcenter:
 #    enabled: true
@@ -74,7 +80,17 @@ spec:
 #    enabled: true
 #  mysql:
 #    enabled: false
+#  oracle:
+#    enabled: false
+#  tomcat:
+#    enabled: false
+#  jvm:
+#    enabled: false
 #  newrelic:
 #    enabled: true
-#  tomcat:
+#  udt:
+#    enabled: true
+#  websphere:
+#    enabled: false
+#  weblogic:
 #    enabled: false

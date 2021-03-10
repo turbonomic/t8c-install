@@ -111,7 +111,7 @@ spec:
 {{- end }}
       restartPolicy: Always
       securityContext:
-        fsGroup: 65534
+        fsGroup: {{ .Values.global.securityContext.fsGroup | default 65534 }}
       volumes:
       - name: mediation-awscost-data
         emptyDir: {}

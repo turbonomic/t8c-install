@@ -74,6 +74,71 @@ spec:
           readOnly: true
         - mountPath: /tmp
           name: extractor-tmpfs0
+{{ if .Values.splunk.enabled }}
+      - name: splunk-kafka-connect
+        image: "{{ .Values.image.kafkarepository }}/splunk-kafka-connect:{{ .Values.image.kafkatag }}"
+        imagePullPolicy: {{ template "pullPolicy" . }}
+        env:
+{{- toYaml .Values.kafka.env | nindent 8 }}
+        ports:
+        - name: http
+          containerPort: 8083
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8083
+        resources:
+{{ toYaml .Values.kafka.resources | indent 12 }}
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+        volumeMounts:
+        - mountPath: /tmp
+          name: extractor-tmpfs0
+{{- end }}
+{{- if .Values.snowflake.enabled }}
+      - name: snowflake-kafka-connect
+        image: "{{ .Values.image.kafkarepository }}/snowflake-kafka-connect:{{ .Values.image.kafkatag }}"
+        imagePullPolicy: {{ template "pullPolicy" . }}
+        env:
+{{- toYaml .Values.kafka.env | nindent 8 }}
+        ports:
+        - name: http
+          containerPort: 8083
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8083
+        resources:
+{{ toYaml .Values.kafka.resources | indent 12 }}
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+        volumeMounts:
+        - mountPath: /tmp
+          name: extractor-tmpfs0
+{{- end }}
+{{- if .Values.logstash.enabled }}
+      - name: logstash
+        image: "{{ .Values.image.logstashrepository }}/logstash:{{ .Values.image.logstashtag }}"
+        imagePullPolicy: {{ template "pullPolicy" . }}
+        env:
+{{ toYaml .Values.logstash.env | indent 8 }}
+        resources:
+{{ toYaml .Values.logstash.resources | indent 12 }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/logstash/config
+        - name: logstash-pipeline-volume
+          mountPath: /usr/share/logstash/pipeline
+        - name: cert-ca
+          mountPath: "/etc/logstash/certificates"
+          readOnly: true
+{{- end }}
 {{- if .Values.global }}
   {{- if .Values.global.registry }}
     {{- if .Values.global.imagePullSecret }}
@@ -107,11 +172,67 @@ spec:
           optional: true
       - name: extractor-tmpfs0
         emptyDir: {}
+{{- if .Values.logstash.enabled }}
+      - name: config-volume
+        configMap:
+          name: logstash-configmap
+          items:
+          - key: logstash.yml
+            path: logstash.yml
+      - name: logstash-pipeline-volume
+        configMap:
+          name: logstash-configmap
+          items:
+          - key: logstash.conf
+            path: logstash.conf
+      - name: cert-ca
+        secret:
+          secretName: {{ .Values.logstash.settings.ES_SSL_NAME }}
+          optional: true
+{{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}
       app.kubernetes.io/instance: {{ .Release.Name }}
 ---
+{{- if .Values.logstash.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-configmap
+data:
+  logstash.yml: |
+    http.host: "0.0.0.0"
+    path.config: /usr/share/logstash/pipeline
+  logstash.conf: |
+    input {
+      kafka {
+        topics => ["{{ .Release.Namespace }}.exporter"]
+        bootstrap_servers => "kafka:9092"
+        client_id => "logstash"
+        group_id => "logstash"
+        codec => "json"
+        type => "json"
+        session_timeout_ms => "60000"   # Rebalancing if consumer is found dead
+        request_timeout_ms => "70000"   # Resend request after 70 seconds
+      }
+    }
+    filter {
+    }
+    output {
+      elasticsearch {
+        index => "{{ .Values.logstash.settings.ES_TOPIC }}"
+        hosts => [ "{{ .Values.logstash.settings.ES_HOSTS }}" ]
+        user => "{{ .Values.logstash.settings.ES_USER }}"
+        password => "${ES_PASSWORD}"
+        manage_template => false
+        ssl => "{{ .Values.logstash.settings.ES_SSL }}"
+        ssl_certificate_verification => "{{ .Values.logstash.settings.ES_SSL_CRT_VER }}"
+        cacert => '/etc/logstash/certificates/ca.crt'
+      }
+    }
+---
+{{- end }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -136,3 +257,21 @@ spec:
   selector:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+{{- if or .Values.splunk.enabled .Values.snowflake.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-kafka-connect
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  ports:
+    - name: http-kafka-connect
+      port: 8083
+  selector:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

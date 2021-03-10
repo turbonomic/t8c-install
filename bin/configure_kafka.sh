@@ -7,8 +7,9 @@ set -euo pipefail
 source /opt/local/bin/libs.sh
 
 service_exists() {
-    local n=$1
-    if [[ $(systemctl list-units --all -t service --full --no-legend "$n.service" | cut -f1 -d' ') == $n.service ]]; then
+    local service=$1
+    if [ -f "/etc/systemd/system/$service" ]; then
+        # service exists
         return 0
     else
         return 1
@@ -26,6 +27,8 @@ DEST_KAFKA_CONFIG="/opt/kafka/config/server.properties"
 # Check if Zookeeper is installed
 if service_exists zookeeper.service
 then
+    log_msg "Zookeeper is installed"
+else
     log_msg "Zookeeper is not installed. Aborting..."
     exit 1
 fi
@@ -43,6 +46,8 @@ sudo systemctl restart zookeeper.service
 # Check if Kafka is installed
 if service_exists kafka.service
 then
+    log_msg "Kafka is installed"
+else
     log_msg "Kafka is not installed. Aborting..."
     exit 1
 fi

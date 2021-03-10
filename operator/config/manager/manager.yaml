@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    control-plane: t8c-operator
+  name: turbonomic
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: t8c-operator
+  labels:
+    control-plane: t8c-operator
+    app.kubernetes.io/name: t8c-operator
+    app.kubernetes.io/instance: t8c-operator
+    app.kubernetes.io/managed-by: operator-life
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      control-plane: t8c-operator
+  template:
+    metadata:
+      labels:
+        control-plane: t8c-operator
+    spec:
+      serviceAccountName: t8c-operator
+      containers:
+      - name: t8c-operator
+        image: turbonomic/t8c-operator:8.1
+        args:
+        - "--enable-leader-election"
+        - "--leader-election-id=operator"
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 100m
+            memory: 90Mi
+          requests:
+            cpu: 100m
+            memory: 60Mi
+        env:
+        - name: WATCH_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: OPERATOR_NAME
+          value: "t8c-operator"
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+        volumeMounts:
+        - mountPath: /tmp
+          name: operator-tmpfs0
+      volumes:
+      - name: operator-tmpfs0
+        emptyDir: {}
+      terminationGracePeriodSeconds: 10

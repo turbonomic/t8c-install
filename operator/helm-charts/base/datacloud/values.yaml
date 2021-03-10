@@ -1,16 +1,8 @@
-# Default values for consul.
+# Default values for datacloud.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-annotations: {}
-
-image:
-  repository: turbonomic
-  tag: latest
-  pullPolicy: IfNotPresent
-
-resources: {}
-
+# this sevone section is deprecated
 sevone:
   transport:
     # Should have SEVONE_GRPC_TOKEN as the key. Can be obtained from your profile page on datacloud.turbonomic.io.
@@ -32,20 +24,77 @@ sevone:
   # and set service_account_credentials_secret to the name of the secret you created
   service_account_credentials_secret: #datacloud-service-account-credentials
 
-collector:
-  kafka:
-    host: kafka
-    port: 9092
-    version: "1.1.0"
-    topics:
-      topology: tp-live-topologies
-    client_id: sevone
-  api:
-    action:
-      enable: "true"
-      host: action-orchestrator
-      port: 9001
-    group:
-      host: group
-      port: 9001
 
+host: datacloud.turbonomic.io
+log_level: info
+
+image:
+  repository: turbonomic
+  tag: latest
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+
+credentials:
+  # type: "service_account" # or "apikey"
+  # secret_name: ""
+  # secret_key: ""
+  # project_id: ""
+
+env: {}
+
+flat:
+  enabled: true
+  image:
+    name: datacloud
+    repository: ""
+    tag: ""
+
+graph:
+  enabled: true
+  image:
+    name: datacloud-graph
+    repository: ""
+    tag: ""
+  name: turbonomic-graph
+  collectors:
+  - topology
+  - actions
+  - costs
+  - groups
+  - expenses
+  - targets
+  persistence:
+    size: 10Gi
+  selfmon_period: 1m
+  debug_container: false
+
+kafka:
+  host: kafka
+  port: 9092
+  version: "1.1.0"
+  topics:
+    topology: tp-live-topologies
+  client_id: datacloud
+
+consul:
+  host: consul
+  port: 8500
+
+api:
+  action:
+    enable: "true"
+    host: action-orchestrator
+    port: 9001
+  cost:
+    host: cost
+    port: 9001
+  group:
+    host: group
+    port: 9001
+  topology:
+    host: topology-processor
+    port: 9001
+
+annotations: {}
+
+resources: {}

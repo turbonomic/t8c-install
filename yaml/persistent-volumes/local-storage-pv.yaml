@@ -1,0 +1,323 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-api-certs
+  labels:
+    partition: api-certs
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: api-certs
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/api-certs
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-api
+  labels:
+    partition: api
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: api
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/api
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-auth
+  labels:
+    partition: auth
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: auth
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/auth
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-consul-data
+  labels:
+    partition: consul-data
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: consul-data
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/consul-data
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-kafka-log
+  labels:
+    partition: kafka-log
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: kafka-log
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/kafka-log
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-zookeeper-data
+  labels:
+    partition: zookeeper-data
+spec:
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: zookeeper-data
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/zookeeper-data
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-rsyslog-syslogdata
+  labels:
+    partition: rsyslog-syslogdata
+spec:
+  capacity:
+    storage: 30Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: rsyslog-syslogdata
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/rsyslog-syslogdata
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-rsyslog-auditlogdata
+  labels:
+    partition: rsyslog-auditlogdata
+spec:
+  capacity:
+    storage: 30Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: rsyslog-auditlogdata
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/rsyslog-auditlogdata
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-topology-processor
+  labels:
+    partition: topology-processor
+spec:
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: topology-processor
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/topology-processor
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-prometheus-alertmanager
+  labels:
+    partition: prometheus-alertmanager
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: prometheus-alertmanager
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/prometheus-alertmanager
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-prometheus-server
+  labels:
+    partition: prometheus-server
+spec:
+  capacity:
+    storage: 8Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: prometheus-server
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/prometheus-server
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv-graphstate-datacloud-graph
+  labels:
+    partition: graphstate-datacloud-graph
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: turbo-local-storage
+  claimRef:
+    name: graphstate-datacloud-graph-0
+    namespace: turbonomic
+  local:
+    path: /data/turbonomic/graphstate-datacloud-graph
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1

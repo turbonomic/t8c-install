@@ -10,7 +10,7 @@ fi
 # Need to check if the helm release is uid based (xl-release-XXX instead of xl-release)
 # and if it is, can convert it before or after the upgrade of the operator
 helmRelease=$(kubectl get xls -o yaml -n ${nameSpace} |grep name:|head -1 | awk '{print $2}')
-secretName=$(kubectl get pvc -o yaml -n ${nameSpace} | grep "app.kubernetes.io/instance" | uniq | awk '{print $2}')
+secretName=$(kubectl get pvc -o yaml -n ${nameSpace} | grep "app.kubernetes.io/instance" | awk '{print $2}' | sort | uniq | head -1)
 # Exit if the uid based release has already been converted
 if [ "$helmRelease" = "$secretName" ]; then
   echo "helm release has already been converted, nothing to do. Exiting."

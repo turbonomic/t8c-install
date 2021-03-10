@@ -9,6 +9,10 @@ replicaCount: 1
 image:
   repository: turbonomic
   tag: latest
+  kafkarepository: turbonomic
+  kafkatag: latest
+  logstashrepository: docker.elastic.co/logstash
+  logstashtag: 7.11.1
   pullPolicy: IfNotPresent
 
 env:
@@ -34,3 +38,44 @@ resources:
     memory: 32Gi
   requests:
     memory: 512Mi
+
+splunk:
+  enabled: false
+snowflake:
+  enabled: false
+
+kafka:
+  resources:
+    limits:
+      memory: 2Gi
+  env:
+    - name: LOG_DIR
+      value: /tmp/logs
+#    - name: KAFKA_OPTS
+#      value: >-
+#            -Dhttp.useProxy=true -Dhttps.useProxy=true
+#            -Dhttp.proxyHost=<proxyHost> -Dhttp.proxyPort=<proxyPort>
+#            -Dhttps.proxyHost=<proxyHostHTTPS> -Dhttps.proxyPort=<proxyPortHTTPS>
+#            -Dhttp.proxyUser=<ProxyUser> -Dhttp.proxyPassword=<ProxyPassword>
+#            -Dhttps.proxyUser=<ProxyUserHTTPS> -Dhttps.proxyPassword=<ProxyPasswordHTTPS>
+
+logstash:
+  enabled: false
+  resources:
+    limits:
+      memory: 2Gi
+  settings:
+    ES_TOPIC: "turbonomic"
+    ES_HOSTS: "https://elasticsearch:9200"
+    ES_USER: "elastic"
+    ES_SSL: "true"
+    ES_SSL_CRT_VER: "true"
+    ES_SSL_NAME: "elasticsearch-es-http-certs-public"
+  # Provide KEY: value pairs for arbitrary env to pass to logstash
+  env:
+    - name: ES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: elasticsearch-es-elastic-user
+          key: elastic
+          optional: true

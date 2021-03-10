@@ -24,6 +24,29 @@ usage()
 # Test variables are not empty.
 [ -z "${turboVersion}" ] && usage
 
+# Make sure the turbo version is greater than what is currently deployed
+versionTag=$(grep 'tag' /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml | head -n1 | awk '{print $2}')
+versionTag=${versionTag/-SNAPSHOT/}
+currentTag=$(echo ${versionTag} | sed 's/\.//g')
+updateTag=$(echo ${turboVersion} | sed 's/\.//g')
+if [[ "${updateTag}" < "${currentTag}" ]] || [[ "${updateTag}" = "${currentTag}" ]]
+then
+  echo "Exiting....."
+  echo "Ensure that the OpsManager is upgraded to a newer version than the current version"
+  exit 1
+fi
+
+# Check for mount image on /mnt/iso
+mount | grep "/mnt/iso" > /dev/null
+result=$?
+if [ x${result} = x0 ]
+then
+  echo "Exiting....."
+  echo "It appears there is something mounted on /mnt/iso"
+  echo "Please run: umount /mnt/iso and try again"
+  exit 1
+fi
+
 # Upgrade non-xl application code
 if [ ! -d /mnt/iso ]
 then
@@ -32,6 +55,6 @@ else
   sudo rm -rf /mnt/iso/*
 fi
 pushd /mnt/iso/
-sudo curl -o /mnt/iso/online-packages.tar http://download.vmturbo.com/appliance/download/updates/${turboVersion}/online-packages.tar
+sudo curl -o /mnt/iso/online-packages.tar https://download.vmturbo.com/appliance/download/updates/${turboVersion}/online-packages.tar
 sudo tar -xvf online-packages.tar
 /mnt/iso/turboupgrade.sh

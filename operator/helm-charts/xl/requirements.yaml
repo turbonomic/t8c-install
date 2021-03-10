@@ -153,10 +153,6 @@ dependencies:
     repository: file://../base/datacloud
     version: 0.1.0
     condition: datacloud.enabled
-  - name: datacloud-graph
-    repository: file://../base/datacloud-graph
-    version: 0.1.0
-    condition: datacloud-graph.enabled
 
 # Integration dependencies
   - name: intersight-integration
@@ -309,6 +305,18 @@ dependencies:
     repository: file://../probes/mediation-newrelic
     version: 0.1.0
     condition: newrelic.enabled
+  - name: mediation-weblogic
+    repository: file://../probes/mediation-weblogic
+    version: 0.1.0
+    condition: weblogic.enabled
+  - name: mediation-websphere
+    repository: file://../probes/mediation-websphere
+    version: 0.1.0
+    condition: websphere.enabled
+  - name: mediation-jboss
+    repository: file://../probes/mediation-jboss
+    version: 0.1.0
+    condition: jboss.enabled
   - name: mediation-nutanix
     repository: file://../probes/mediation-nutanix
     version: 0.1.0
@@ -417,3 +425,7 @@ dependencies:
     repository: file://../probes/mediation-xtremio
     version: 0.1.0
     condition: xtremio.enabled
+  - name: mediation-xen
+    repository: file://../probes/mediation-xen
+    version: 0.1.0
+    condition: xen.enabled

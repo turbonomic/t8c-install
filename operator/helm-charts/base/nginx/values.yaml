@@ -11,6 +11,8 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+externalTrafficPolicy: Local
+
 env:
   - name: component_type
     value: nginx

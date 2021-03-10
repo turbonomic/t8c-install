@@ -81,6 +81,11 @@ spec:
         - mountPath: /tmp
           name: market-tmpfs0
 {{- if .Values.global }}
+  {{- if or .Values.dbSecretName .Values.global.dbSecretName }}
+        - mountPath: /vault/secrets
+          name: db-creds
+          readOnly: true
+  {{- end -}}
   {{- if .Values.global.registry }}
     {{- if .Values.global.imagePullSecret }}
       imagePullSecrets:
@@ -113,6 +118,14 @@ spec:
           optional: true
       - name: market-tmpfs0
         emptyDir: {}
+{{- if .Values.global }}
+  {{- if or .Values.dbSecretName .Values.global.dbSecretName }}
+      - name: db-creds
+        secret:
+          secretName: {{ template "dbSecretName" . }}
+          optional: true
+  {{- end }}
+{{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}

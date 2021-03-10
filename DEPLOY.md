@@ -29,7 +29,15 @@ kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/maste
 
 ## Prerequisites for Deploying on Openshift
 
-If you are deploying on Openshift, change the security context of the project to the 'anyuid' SCC
+If you are deploying on Openshift, you need to use the group id from the uid-range assigned to the project:
+````
+spec:
+  global:
+    securityContext:
+      fsGroup: 1000630000
+````
+
+Or you can change the security context of the project to the 'anyuid' SCC
 ````
 oc adm policy add-scc-to-group anyuid system:serviceaccounts:turbonomic
 ````
@@ -91,41 +99,11 @@ spec:
   nginxingress:
     enabled: false
 ````
-For example, Openshift application routes to the ui/api can be defined instead as:
+For example, Openshift application routes to the ui/api can be created by the operator:
 ````
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: api
-  namespace: turbonomic
 spec:
-  host: turbonomic.apps.cluster.openshift-turbonomic.net
-  to:
-    kind: Service
-    name: api
-  port:
-    targetPort: http-api
-  tls:
-    insecureEdgeTerminationPolicy: Redirect
-    termination: edge
-````
-and for remote probes as:
-````
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: topology-processor
-  namespace: turbonomic
-spec:
-  host: turbonomic-targets.apps.cluster.openshift-turbonomic.net
-  to:
-    kind: Service
-    name: topology-processor
-  port:
-    targetPort: http-topology-processor
-  tls:
-    insecureEdgeTerminationPolicy: Redirect
-    termination: edge
+  openshiftingress:
+    enabled: true
 ````
 
 ### Supported Kubernetes Versions

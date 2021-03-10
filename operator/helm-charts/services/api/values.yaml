@@ -4,6 +4,8 @@
 
 annotations: {}
 
+replicaCount: 1
+
 image:
   repository: turbonomic
   tag: latest

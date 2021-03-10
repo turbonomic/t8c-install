@@ -13,10 +13,10 @@ source /opt/local/bin/libs.sh
 sudo yum install --disablerepo="mariadb" -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 
 # install the client packages
-sudo yum install --disablerepo="mariadb" -y postgresql12
+sudo yum install --disablerepo="mariadb" -y postgresql12-12.6-1PGDG.rhel7.x86_64
 
 # install the server packages
-sudo yum install --disablerepo="mariadb" -y postgresql12-server
+sudo yum install --disablerepo="mariadb" -y postgresql12-server-12.6-1PGDG.rhel7.x86_64
 
 log_msg "Successfully installed Postgres."
 
@@ -37,7 +37,7 @@ metadata_expire=300
 EOL
 
 # Now install appropriate package for PG version
-sudo yum install --disablerepo="mariadb" -y timescaledb-postgresql-12
+sudo yum install --disablerepo="mariadb" -y timescaledb-2-postgresql-12-2.0.1-0.el7.x86_64 timescaledb-2-loader-postgresql-12-2.0.1-0.el7.x86_64 timescaledb-tools-0.10.1-0.el7.x86_64
 
 log_msg "Successfully installed TimescaleDB."
 

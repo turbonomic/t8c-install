@@ -87,33 +87,6 @@ while getopts "a:bd:D:g:hn:v" opt; do
     esac
 done
 
-# Check that we have a valid configuration
-if [ X$bootproto == "Xstatic" ];then
-    if [ -z $ipAddr ]; then
-        echo "Must supply an IP address"
-        usage
-        exit
-    fi
-
-    if [ -z $netMask ]; then
-        echo "Must supply an IP address AND a netmask"
-        usage
-        exit
-    fi
-
-    if [ -z $gateWay ]; then
-        echo "Must supply an IP address, a netmask, AND a gateway address"
-        usage
-        exit
-    fi
-
-    if [ -z ${dns[0]} ]; then
-        echo "Must supply an IP address, a netmask, a gateway address, AND at least one DNS server"
-        usage
-        exit
-    fi
-fi
-
 if [ X$verbose == X1 ]; then
     dump
 fi
@@ -148,14 +121,14 @@ fi
 if [ X${bootproto} = "Xstatic" ]; then 
 
     if [ X${interactive} == "X1" ]; then
-      read -e -p "Please enter the IP Address for this machine :: " ipAddr
-      read -e -p "Please enter the network mask for this machine :: " netMask
-      read -e -p "Please enter the Gateway address for this machine :: " gateWay
+      read -e -p "Please enter the IP Address for this machine (Mandatory):: " ipAddr
+      read -e -p "Please enter the network mask for this machine (Mandatory):: " netMask
+      read -e -p "Please enter the Gateway address for this machine (Mandatory):: " gateWay
       # Declare dns array
       # declare -a dns
       #  All subsequent commands in this script will treat
       #+ the variable "dns" as an array.
-      read -e -p "Enter DNS Server(s) IP Address for this machine (separated from each other by a space) :: " -a dns
+      read -e -p "Enter DNS Server(s) IP Address for this machine (separated from each other by a space) (Mandatory, at least 1 required) :: " -a dns
       read -e -p "Enter Domain Name for this machine :: " domainName
 
       echo ""
@@ -176,6 +149,33 @@ if [ X${bootproto} = "Xstatic" ]; then
       echo "The Domain is: ${domainName}"
       echo "--------"
 
+    # Check that we have a valid configuration
+    if [ -z $ipAddr ]; then
+        echo
+        echo "Exiting......"
+        echo "Script is being aborted, the following mandatory input is missing: IP Address"
+        exit 1
+    fi
+    if [ -z $netMask ]; then
+        echo
+        echo "Exiting......"
+        echo "Script is being aborted, the following mandatory input is missing: Netmask"
+        exit 1
+    fi
+
+    if [ -z $gateWay ]; then
+        echo
+        echo "Exiting......"
+        echo "Script is being aborted, the following mandatory input is missing: Gateway"
+        exit 1
+    fi
+
+    if [ -z ${dns[0]} ]; then
+        echo
+        echo "Exiting......"
+        echo "Script is being aborted, the following mandatory input is missing: DNS Server (at least one)"
+        exit 1
+    fi
       read -e -p "Are you sure you want to use these settings? (y/n) :: " answer
   else
       answer="y"

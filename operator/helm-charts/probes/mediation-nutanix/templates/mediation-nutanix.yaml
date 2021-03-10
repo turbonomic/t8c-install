@@ -79,6 +79,9 @@ spec:
           readOnly: true
         - mountPath: /tmp
           name: mediation-nutanix-tmpfs0
+        - mountPath: /etc/targets
+          name: nutanix-secrets
+          readOnly: true
 {{- if .Values.global }}
   {{- if .Values.global.registry }}
     {{- if .Values.global.imagePullSecret }}
@@ -112,6 +115,10 @@ spec:
           optional: true
       - name: mediation-nutanix-tmpfs0
         emptyDir: {}
+      - name: nutanix-secrets
+        secret:
+          secretName: "nutanix"
+          optional: true
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}

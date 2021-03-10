@@ -157,6 +157,14 @@ printf '\nFinished! kubectl apply commands will follow\n'
 /usr/local/bin/kubectl apply -f /etc/kubernetes/calico-config.yml -n kube-system
 /usr/local/bin/kubectl apply -f /etc/kubernetes/calico-kube-controllers.yml -n kube-system
 
+# Update configmaps
+/usr/local/bin/kubectl get cm -n kube-system kubeadm-config -o yaml > /etc/kubernetes/kubeadm-config.yaml
+/usr/local/bin/kubectl get cm -n kube-system kube-proxy -o yaml > /etc/kubernetes/kube-proxy.yaml
+sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/kubeadm-config.yaml
+sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/kube-proxy.yaml
+/usr/local/bin/kubectl apply -f /etc/kubernetes/kubeadm-config.yaml
+/usr/local/bin/kubectl apply -f /etc/kubernetes/kube-proxy.yaml -n kube-system
+
 # Apply the ip change to the instance
 sed -i "s/${oldIP}/${newIP}/g" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
 /usr/local/bin/kubectl apply -f /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
@@ -166,3 +174,10 @@ sed -i "s/${oldIP}/${newIP}/g" /opt/kubespray/inventory/turbocluster/hosts.yml
 sed -i "s/${oldIP}/${newIP}/g" /opt/kubespray/inventory/turbocluster/hosts.yml
 sed -i "s/${oldIP}/${newIP}/g" /opt/kubespray/inventory/turbocluster/hosts.yml
 sed -i "s/${oldIP}/${newIP}/g" /opt/local/etc/turbo.conf
+
+# Reboot the instance:
+echo ""
+echo ""
+echo "################################################"
+echo "Please reboot the server to pick up the changes"
+echo "################################################"

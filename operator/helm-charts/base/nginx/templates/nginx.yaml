@@ -151,7 +151,7 @@ metadata:
 {{- end }}
 spec:
   type: LoadBalancer
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: {{ .Values.externalTrafficPolicy }}
   ports:
   - name: https-nginx
     port: 443

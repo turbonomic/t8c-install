@@ -128,8 +128,8 @@ resource "helm_release" "xl" {
   }
 
   set {
-    name  = "mediation-actionstream-kafka.enabled"
-    value = "${var.mediation-actionstream-kafka ? true : false}"
+    name  = "actionstream-kafka.enabled"
+    value = "${var.actionstream-kafka ? true : false}"
   }
 
   set {

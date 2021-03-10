@@ -2,6 +2,28 @@
 
 # mariadbUpgrade.sh
 
+# Check if the database is hosted on this kubernetes node
+# Not external to the instance, or as a docker image
+serverIp=$(ifconfig eth0 | grep 'inet' |egrep -v 'inet6' | cut -d: -f2 | awk '{ print $2}')
+databaseIp=$(grep externalDbIP /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml | egrep -v '#' | awk '{print $2}')
+databaseName=$(grep externalDBName /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml | egrep -v '#' | awk '{print $2}')
+
+# Check to see if the database is remote from the server
+if [ -z "${databaseIp+x}" ]
+then
+  if [ -z "${databaseName}" ]
+  then
+    echo "Exiting, the database server does not appear to be hosted on this kubernetes node"
+    exit 1
+  fi
+else
+  if [ X${serverIp} != X${databaseIp} ]
+  then
+    echo "Exiting, the database server does not appear to be hosted on this kubernetes node"
+    exit 1
+  fi
+fi
+
 # Check the version installed
 dbVersion=$(rpm -qi MariaDB-server | grep Version | head -1| awk -F: '{print $2}' | xargs)
 if [ X${dbVersion} = "X10.5.6" ]
@@ -14,6 +36,15 @@ fi
 echo
 echo "Enter the mysql password:"
 dbPassword=$(systemd-ask-password password:)
+
+# Check to ensure the password is correct
+mysql -uroot -p${dbPassword} -e"quit" > /dev/null 2>&1
+result=$?
+if [ $result -ne 0 ]
+then
+  echo "You have entered an invalid database password"
+  exit 1
+fi
 
 # Upgrade Mariadb - Requires the Turbonomic system to be stopped
 # Scale down the operator
@@ -34,7 +65,7 @@ echo "---------------------"
 turboPodCount=$(/usr/local/bin/kubectl get pod -n turbonomic | wc -l)
 while [ ${turboPodCount} -gt 0 ]
 do
-  turboPodCount=$(/usr/local/bin/kubectl get pod -n turbonomic | egrep -v "prometheus-node-exporter|fluent-bit-loki|loki|elasticsearch|logstash|NAME" | wc -l)
+  turboPodCount=$(/usr/local/bin/kubectl get pod -n turbonomic | egrep -v "prometheus-node-exporter|fluent-bit-loki|loki|elasticsearch|logstash|datacloud|NAME" | wc -l)
 done
 echo
 
@@ -44,8 +75,8 @@ sudo rm -rf /etc/yum.repos.d/mariadb.repo
 sudo bash -c 'cat << EOF > /etc/yum.repos.d/mariadb.repo
 [mariadb]
 name = MariaDB-10.5.6
-baseurl=http://yum.mariadb.org/10.5.6/centos7-amd64
-# alternative: baseurl=http://archive.mariadb.org/mariadb-10.5.6/yum/centos7-amd64
+baseurl=https://yum.mariadb.org/10.5.6/centos7-amd64
+# alternative: baseurl=https://archive.mariadb.org/mariadb-10.5.6/yum/centos7-amd64
 gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1
 EOF'

@@ -1,3 +1,6 @@
+{{ if .Values.global }}
+  {{ if not .Values.global.enableExternalSecrets }}
+    {{/* Kubernetes secrets for encryption keys are disabled, so use the PV legacy behavior instead */}}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -68,6 +71,8 @@ spec:
     requests:
       storage: 1Gi
 ---
+  {{- end }}
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -78,7 +83,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: Recreate
   template:
@@ -145,10 +150,27 @@ spec:
             drop:
             - ALL
         volumeMounts:
+{{ if .Values.global }}
+  {{ if not .Values.global.enableExternalSecrets }}
+    {{/* Kubernetes secrets for encryption keys are disabled, so use the PV legacy behavior instead */}}
         - mountPath: /home/turbonomic/data
           name: api
         - mountPath: /tmp/certs
           name: api-certs
+  {{- end }}
+{{- end }}
+{{- if .Values.global }}
+  {{- if .Values.global.enableExternalSecrets }}
+    {{/* Kubernetes secrets are enabled for encryption keys. */}}
+        - mountPath: /home/turbonomic/data/master_keys
+          name: master-key-secret
+          readOnly: true
+    {{/* Optionally mount the legacy encryption key to be read in as part of upgrades. */}}
+        - mountPath: /home/turbonomic/data/helper_dir
+          name: api-secret
+          readOnly: true
+  {{- end }}
+{{- end }}
         - mountPath: /etc/turbonomic
           name: turbo-volume
           readOnly: true
@@ -185,12 +207,31 @@ spec:
 {{- end }}
       restartPolicy: Always
       volumes:
+{{ if .Values.global }}
+  {{ if not .Values.global.enableExternalSecrets }}
+    {{/* Kubernetes secrets for encryption keys are disabled, so use the PV legacy behavior instead */}}
       - name: api
         persistentVolumeClaim:
           claimName: {{ .Chart.Name }}
       - name: api-certs
         persistentVolumeClaim:
           claimName: {{ .Chart.Name }}-certs
+  {{- end }}
+{{- end }}
+{{- if .Values.global }}
+  {{- if .Values.global.enableExternalSecrets }}
+    {{/* Kubernetes secrets are enabled for auth. Attach one secret for the directory of secret files. */}}
+      - name: master-key-secret
+        secret:
+          secretName: master-key-secret
+          optional: true
+    {{/* Optionally mount the legacy encryption key to be read in as part of upgrades. */}}
+      - name: api-secret
+        secret:
+          secretName: api-secret
+          optional: true
+  {{- end }}
+{{- end }}
       - name: turbo-volume
         configMap:
           name: global-properties-{{ .Release.Name }}
@@ -228,3 +269,4 @@ spec:
   selector:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+  sessionAffinity: ClientIP

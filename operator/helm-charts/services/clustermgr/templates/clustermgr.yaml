@@ -80,6 +80,9 @@ spec:
           readOnly: true
         - mountPath: /tmp
           name: clustermgr-tmpfs0
+        - mountPath: /home/turbonomic/data
+          name: clustermgr-secret
+          readOnly: true
 {{- if .Values.global }}
   {{- if or .Values.dbSecretName .Values.global.dbSecretName }}
         - mountPath: /vault/secrets
@@ -118,6 +121,10 @@ spec:
           optional: true
       - name: clustermgr-tmpfs0
         emptyDir: {}
+      - name: clustermgr-secret
+        secret:
+          secretName: clustermgr-secret
+          optional: true
 {{- if .Values.global }}
   {{- if or .Values.dbSecretName .Values.global.dbSecretName }}
       - name: db-creds

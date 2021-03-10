@@ -1,0 +1,205 @@
+{{- if .Values.graph.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Chart.Name }}-graph
+  labels:
+    zone: public
+    app.kubernetes.io/name: {{ .Chart.Name }}-graph
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  podManagementPolicy: Parallel
+  replicas: 1
+  revisionHistoryLimit: 10
+  serviceName: {{ .Chart.Name }}-graph
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Chart.Name }}-graph
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+{{- if .Values.global }}
+  {{- if or .Values.annotations .Values.global.annotations }}
+      annotations:
+    {{- with .Values.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+      labels:
+        zone: public
+        app.kubernetes.io/name: {{ .Chart.Name }}-graph
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+      name: {{ .Chart.Name }}-graph
+    spec:
+{{- if .Values.global }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
+      imagePullSecrets:
+      - name: turbocred
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if or .Values.serviceAccountName .Values.global.serviceAccountName }}
+      serviceAccountName: {{ template "serviceAccountName" . }}
+  {{- end }}
+  {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.affinity }}
+      affinity:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.tolerations }}
+      tolerations:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.securityContext }}
+      securityContext:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+{{- end }}
+      containers:
+{{- if .Values.graph.debug_container }}
+        - command:
+          - sh
+          - -c
+          - |
+            sleep infinity
+          image: busybox
+          name: shell
+          volumeMounts:
+          - mountPath: /data
+            name: graphstate
+{{- end }}
+{{- $image :=  include "datacloud.graphImage" . }}
+{{- $tag := include "datacloud.graphTag" . -}}
+{{- $pullPolicy := include "pullPolicy" . }}
+{{- range $k, $poller := .Values.graph.collectors }}
+        - name: {{ $poller }}
+          command: ["/app/{{ $poller }}"]
+          image: {{ $image }}
+          imagePullPolicy: {{ $pullPolicy }}
+          env:
+          - name: DATACLOUD_GRAPH_STATE_DIR
+            value: /data/{{ $poller }}
+          - name: DATACLOUD_GRAPH_STATE_GC_PASSES
+            value: "50"
+          - name: DATACLOUD_LOG_LEVEL
+            value: {{ $.Values.log_level | quote }}
+          - name: DATACLOUD_HOST
+            value: {{ include "datacloud.host" $ | quote }}
+          - name: DATACLOUD_PROJECT
+            value: {{ include "datacloud.projectID" $ | quote }}
+          - name: DATACLOUD_COLLECTOR_NAME
+            value: {{ $.Values.graph.name | quote }}
+          - name: DATACLOUD_COLLECTOR_VERSION
+            value: {{ $tag | quote }}
+          - name: DATACLOUD_SELFMON_PERIOD
+            value: {{ $.Values.graph.selfmon_period | quote }}
+          - name: KAFKA_HOSTS
+            value: "{{ $.Values.kafka.host }}:{{ $.Values.kafka.port }}"
+          - name: KAFKA_VERSION
+            value: {{ $.Values.kafka.version | quote }}
+          - name: KAFKA_TOPOLOGY_TOPIC
+            value: "{{ $.Release.Namespace }}.{{ $.Values.kafka.topics.topology }}"
+          - name: KAFKA_CONSUMER_GROUP
+            value: "{{ $.Values.kafka.client_id }}-graph"
+          - name: INSTANCE_ID_TYPE
+            value: consul
+          - name: CONSUL_SERVICE_HOST
+            value: {{ $.Values.consul.host | quote }}
+          - name: CONSUL_SERVICE_PORT
+            value: {{ $.Values.consul.port | quote }}
+          - name: ACTIONS_ADDRESS
+            value: "{{ $.Values.api.action.host }}:{{ $.Values.api.action.port }}"
+          - name: COSTS_ADDRESS
+            value: "{{ $.Values.api.cost.host }}:{{ $.Values.api.cost.port }}"
+          - name: GROUPS_ADDRESS
+            value: "{{ $.Values.api.group.host }}:{{ $.Values.api.group.port }}"
+          - name: TOPOLOGY_PROCESSOR_ADDRESS
+            value: "{{ $.Values.api.topology.host }}:{{ $.Values.api.topology.port }}"
+          {{- if eq (include "datacloud.authType" $) "service_account" }}
+          - name: COLLECTOR_SERVICE_ACCOUNT_CREDENTIALS_FILE
+            value: /credentials.json
+          {{- else if eq (include "datacloud.authType" $) "apikey" }}
+          - name: DATACLOUD_GRPC_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "datacloud.apikeySecret" $ }}
+                key: {{ include "datacloud.apikeySecretKey" $ }}
+          {{- else }}
+            {{- fail "credentials.type must be supplied. Supported values are 'service_account' and 'apikey'" }}
+          {{- end }}
+          {{- if $.Values.graph.configmap }}
+          - name: TURBO_CONFIG_FILE
+            value: "/config/config.yaml"
+          {{- end }}
+          {{- range $k, $v := include "datacloud.env" $ | fromYaml }}
+          - name: {{ $k | quote }}
+            value: {{ $v | quote }}
+          {{- end }}
+          {{- with $.Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+          - name: graphstate
+            mountPath: /data
+          {{- if $.Values.graph.configmap }}
+          - name: configyaml
+            mountPath: /config
+          {{- end }}
+          {{- if eq (include "datacloud.authType" $) "service_account" }}
+          - name: credentials
+            mountPath: /credentials.json
+            subPath: {{ include "datacloud.saSecretKey" $ }}
+          {{- end }}
+{{- end }}
+      volumes:
+{{- if .Values.graph.configmap }}
+      - name: configyaml
+        configMap:
+          name: {{ .Values.graph.configmap }}
+{{- end }}
+{{- if eq (include "datacloud.authType" $) "service_account" }}
+      - name: credentials
+        secret:
+          secretName: {{ include "datacloud.saSecret" $ | quote }}
+{{- end }}
+      - name: graphstate
+        persistentVolumeClaim:
+          claimName: graphstate
+  volumeClaimTemplates:
+  - metadata:
+      name: graphstate
+    spec:
+      accessModes:
+      - ReadWriteOnce
+    {{- if .Values.global }}
+      {{- if .Values.global.storageSelector }}
+      selector:
+        matchLabels:
+          partition: {{ .Release.Namespace }}-datacloud-graph
+      {{- end }}
+      {{- if .Values.global.storageClassName }}
+      storageClassName: {{ .Values.global.storageClassName }}
+      {{- end }}
+    {{- end }}
+      resources:
+        requests:
+          storage: {{ $.Values.graph.persistence.size }}
+      volumeMode: Filesystem
+{{- end }}

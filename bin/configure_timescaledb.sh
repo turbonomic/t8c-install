@@ -15,8 +15,8 @@ then
     exit 1
 fi
 
-# Check if timescaledb is installed
-yum list --disablerepo=* installed timescaledb-postgresql-12
+# Check if timescaledb 2 is installed
+yum list --disablerepo=* installed timescaledb-2-postgresql-12
 if [ "$?" -ne 0 ];
 then
     log_msg "TimescaleDB package is not installed. Aborting..."

@@ -30,6 +30,13 @@ data:
         clustermgr_port : 8080
         costHost: cost
         dbHost: db
+        dbs:
+          postgresDefault:
+            host: timescaledb
+            port: {{ .Values.global.externalTimescaleDBPort | default 5432 }}
+          mysqlDefault:
+            host: db
+            port: {{ .Values.global.externalDBPort | default 3306 }}
         groupHost: group
         historyHost: history
         marketHost: market
@@ -56,6 +63,12 @@ data:
         connRetryIntervalSeconds: 10
         # Remote iterator consumers - 10 minutes max wait for next chunk
         com.vmturbo.communication.remote.iterator.timeout: 600000
+{{- if .Values.global }}
+  {{- if .Values.global.enableExternalSecrets }}
+    {{/* Kubernetes secrets are enabled for encryption keys. Pass that information along to the java processes. */}}
+        enableExternalSecrets: true
+  {{- end }}
+{{- end }}
       action-orchestrator:
         identityGeneratorPrefix: 9
         dbSchemaName: action
@@ -168,12 +181,17 @@ data:
         bridgePort: 8120
       extractor:
         dbHost: timescaledb
-        dbPort: 5432
+        dbPort: {{ .Values.global.externalTimescaleDBPort | default 5432 }}
         enableReporting: {{ .Values.reporting.enabled }}
         grafanaAdminPassword: {{ .Values.grafana.adminPassword }}
 {{- if eq (index .Values "grafana" "grafana.ini" "database" "type") "postgres"}}
         grafanaDb:
 {{ toYaml (index .Values "grafana" "grafana.ini" "database") | indent 12 }}
+        dbs: 
+          grafana:
+            databaseName: {{ index .Values "grafana" "grafana.ini" "database" "name" | default "grafana" }}
+            userName: {{ index .Values "grafana" "grafana.ini" "database" "user" | default "grafana_backend" }}
+            password: {{ index .Values "grafana" "grafana.ini" "database" "password" }}
 {{- end }}
 {{- if .Values.properties }}
     customProperties:
