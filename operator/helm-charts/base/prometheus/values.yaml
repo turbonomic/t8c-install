@@ -579,7 +579,7 @@ server:
       # Name of the sidecar container inside Prometheus server pod.
     - name: datacloud-gateway
       # Container image to use. It has to be a version that supports service accounts.
-      image: sevone/prometheus-gateway:b69d80d4
+      image: sevone/prometheus-gateway:c3cc01a8
       # Whether the container image should be pulled every time or only when it's not present.
       imagePullPolicy: IfNotPresent
       # Environment variable definitions to configure the sidecar container.
@@ -714,6 +714,8 @@ server:
         - action: labeldrop # IPs and ports of pods shouldn't be sent to DataCloud for privacy...
           regex: instance # ...reasons but will uniqueness be maintained in the presence of multiple
                     # pods per service? We'll need multiple pods per service for high-availability.
+      queue_config:
+        max_backoff: 2h # Avoid cluttering the logs while internet access is disabled.
 
   ## https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_read
   ##

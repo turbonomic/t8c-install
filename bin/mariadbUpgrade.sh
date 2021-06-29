@@ -26,7 +26,7 @@ fi
 
 # Check the version installed
 dbVersion=$(rpm -qi MariaDB-server | grep Version | head -1| awk -F: '{print $2}' | xargs)
-if [ X${dbVersion} = "X10.5.6" ]
+if [ X${dbVersion} = "X10.5.9" ]
 then
   echo "MariaDB version ${dbVersion} is already installed"
   exit 0
@@ -74,9 +74,9 @@ sudo rm -rf /etc/yum.repos.d/mariadb.repo
 
 sudo bash -c 'cat << EOF > /etc/yum.repos.d/mariadb.repo
 [mariadb]
-name = MariaDB-10.5.6
-baseurl=https://yum.mariadb.org/10.5.6/centos7-amd64
-# alternative: baseurl=https://archive.mariadb.org/mariadb-10.5.6/yum/centos7-amd64
+name = MariaDB-10.5.9
+baseurl=https://yum.mariadb.org/10.5.9/centos7-amd64
+# alternative: baseurl=https://archive.mariadb.org/mariadb-10.5.9/yum/centos7-amd64
 gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1
 EOF'
@@ -148,7 +148,7 @@ else
   exit 1
 fi
 
-LISTENING=$(netstat -an|grep LISTEN|grep 3306|wc -l)
+LISTENING=$(netstat -an|grep LISTEN| grep -w 3306 | wc -l)
 if [ "$LISTENING" -eq '1' ]
 then
   echo
@@ -185,13 +185,13 @@ else
 fi
 
 # Add check for db process running, including some testing in case of start timing issues.
-LISTENING=$(netstat -an|grep LISTEN|grep 3306|wc -l)
+LISTENING=$(netstat -an| grep LISTEN | grep -w 3306 | wc -l)
 if [ "$LISTENING" -ne '1' ]
 then
   increment=1
   while [ $increment -le 5 ]
   do
-    LISTENING=$(netstat -an|grep LISTEN|grep 3306|wc -l)
+    LISTENING=$(netstat -an|grep LISTEN| grep -w 3306 | wc -l)
     if [ "$LISTENING" -ne '1' ]
     then
       sleep 5
@@ -202,7 +202,7 @@ then
   done
 fi
 
-LISTENING=$(netstat -an|grep LISTEN|grep 3306|wc -l)
+LISTENING=$(netstat -an|grep LISTEN | grep -w 3306 | wc -l)
 if [ "$LISTENING" -eq '1' ]
 then
   echo

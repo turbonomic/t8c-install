@@ -65,7 +65,7 @@ fi
 echo ""
 echo "Check if the namespace exists"
 echo "============================="
-checkNameSpace=$(kubectl config get-contexts turbo | grep turbo)
+checkNameSpace=$(kubectl config get-contexts turbo | grep turbo /dev/null 2>&1)
 if [ -z "${checkNameSpace}" ]; then
   echo "Create Namespace"
   echo "----------------"

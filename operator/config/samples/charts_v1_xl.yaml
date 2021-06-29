@@ -18,7 +18,7 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 8.1.6
+    tag: 8.2.4-SNAPSHOT
     externalIP: 10.0.2.15
     externalDbIP: 10.0.2.15
     externalTimescaleDBIP: 10.0.2.15
@@ -41,12 +41,6 @@ spec:
   # Component selector - Probes
   actionscript:
     enabled: true
-  # ActionStream Kafka is in private preview. Please also add:
-  # spec:
-  #   properties:
-  #     global:
-  #       useStableActionIdAsUuid: true
-  # if you plan to enable this.
   actionstream-kafka:
     enabled: false
   appdynamics:

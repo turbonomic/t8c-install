@@ -71,31 +71,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -223,31 +223,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -375,31 +375,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -527,31 +527,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -679,31 +679,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -831,31 +831,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -983,31 +983,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -1135,31 +1135,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -1287,31 +1287,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -1439,31 +1439,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -1591,31 +1591,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -1743,31 +1743,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -1895,31 +1895,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -2047,31 +2047,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -2199,31 +2199,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -2351,31 +2351,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -2503,31 +2503,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -2655,31 +2655,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -2807,31 +2807,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -2959,31 +2959,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -3111,31 +3111,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -3263,31 +3263,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -3415,31 +3415,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -3567,31 +3567,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -3719,31 +3719,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -3871,31 +3871,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -4023,31 +4023,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -4175,31 +4175,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -4327,31 +4327,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -4479,31 +4479,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -4631,31 +4631,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -4783,31 +4783,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {
@@ -4935,31 +4935,31 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "container_memory_working_set_bytes{container_name=\"[[component]]\"}",
+          "expr": "container_memory_working_set_bytes{container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} working set",
+          "legendFormat": "{{container}} working set",
           "refId": "A"
         },
         {
-          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_rss{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} RSS",
+          "legendFormat": "{{container}} RSS",
           "refId": "B"
         },
         {
-          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_cache{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Cache ",
+          "legendFormat": "{{container}} Cache ",
           "refId": "C"
         },
         {
-          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container_name=\"[[component]]\"}",
+          "expr": "container_memory_swap{namespace=\"[[namespace]]\",container=\"[[component]]\"}",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{container_name}} Swap",
+          "legendFormat": "{{container}} Swap",
           "refId": "D"
         },
         {

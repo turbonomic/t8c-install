@@ -55,6 +55,13 @@ else
   sudo rm -rf /mnt/iso/*
 fi
 pushd /mnt/iso/
-sudo curl -o /mnt/iso/online-packages.tar https://download.vmturbo.com/appliance/download/updates/${turboVersion}/online-packages.tar
+read -p "${GREEN}Are you using a proxy to connect to the internet on this Turbonomic instance (y/n)? " CONT
+if [[ "$CONT" =~ ^([yY][eE][sS]|[yY])$ ]]
+then
+    read -p "${WHITE}What is the proxy name or IP and port you use?....example https://proxy.server.com:8080 " P_NAME_PORT
+    sudo curl -o /mnt/iso/online-packages.tar https://download.vmturbo.com/appliance/download/updates/${turboVersion}/online-packages.tar --proxy $P_NAME_PORT
+else
+    sudo curl -o /mnt/iso/online-packages.tar https://download.vmturbo.com/appliance/download/updates/${turboVersion}/online-packages.tar
+fi
 sudo tar -xvf online-packages.tar
 /mnt/iso/turboupgrade.sh

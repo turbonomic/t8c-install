@@ -63,6 +63,36 @@ spec:
             readOnly: true
           - name: varlog
             mountPath: /var/log
+{{- if .Values.global }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
+      imagePullSecrets:
+      - name: turbocred
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.affinity }}
+      affinity:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.tolerations }}
+      tolerations:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.securityContext }}
+      securityContext:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+{{- end }}
+      restartPolicy: Always
       volumes:
       - name: turbo-volume
         configMap:

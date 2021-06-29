@@ -8,7 +8,7 @@ global:
 #  imageUsername: turbouser
 #  imagePassword: turbopassword
   repository: turbonomic
-  tag: 8.1.0
+  tag: 8.2.0
 #  serviceAccountName: t8c-serviceaccount
 #  pullPolicy: IfNotPresent
   customImageNames: true
@@ -73,7 +73,8 @@ global:
     fsGroup: 2000
   certmanager:
     enabled: false
-    certissuer: letsencrypt-prod
+    issuer: letsencrypt
+    kind: ClusterIssuer
   ingress:
     # domain: *.turbonomic.com
     secrets:
@@ -229,6 +230,8 @@ netflow:
   enabled: false
 newrelic:
   enabled: false
+webhook:
+  enabled: false
 weblogic:
   enabled: false
 websphere:
@@ -262,8 +265,6 @@ ucs:
 ucsdirector:
   enabled: false
 udt:
-  enabled: false
-vcd:
   enabled: false
 vcenter:
   enabled: false

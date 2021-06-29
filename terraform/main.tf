@@ -253,6 +253,11 @@ resource "helm_release" "xl" {
   }
 
   set {
+    name  = "webhook.enabled"
+    value = "${var.webhook ? true : false}"
+  }
+
+  set {
     name  = "wmi.enabled"
     value = "${var.wmi ? true : false}"
   }

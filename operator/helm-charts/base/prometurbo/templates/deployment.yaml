@@ -8,17 +8,34 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "prometurbo.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
+{{- if .Values.global }}
+  {{- if or .Values.annotations .Values.global.annotations }}
+      annotations:
+    {{- with .Values.annotations }}
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+    {{- with .Values.global.annotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
       labels:
         app.kubernetes.io/name: {{ include "prometurbo.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
     spec:
+{{- if .Values.global }}
+  {{- if or .Values.serviceAccountName .Values.global.serviceAccountName }}
+      serviceAccountName: {{ template "serviceAccountName" . }}
+  {{- end }}
+{{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: {{ template "prometurbo_image" . }}
@@ -45,6 +62,36 @@ spec:
             readOnly: true
           - name: varlog
             mountPath: /var/log
+{{- if .Values.global }}
+  {{- if .Values.global.registry }}
+    {{- if .Values.global.imagePullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.global.imagePullSecret }}
+    {{- else -}}
+      {{- if and .Values.global.imageUsername .Values.global.imagePassword }}
+      imagePullSecrets:
+      - name: turbocred
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.affinity }}
+      affinity:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.tolerations }}
+      tolerations:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.global.securityContext }}
+      securityContext:
+{{- toYaml . | nindent 8 }}
+  {{- end }}
+{{- end }}
+      restartPolicy: Always
       volumes:
       - name: prometurbo-config
         configMap:

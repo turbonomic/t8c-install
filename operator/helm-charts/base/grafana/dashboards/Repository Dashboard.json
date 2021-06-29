@@ -501,7 +501,7 @@
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{pod_name}}",
+          "legendFormat": "{{pod}}",
           "refId": "A"
         }
       ],

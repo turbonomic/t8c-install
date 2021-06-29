@@ -20,7 +20,7 @@ spec:
       serviceAccountName: t8c-operator
       containers:
       - name: t8c-operator
-        image: turbonomic/t8c-operator:8.1
+        image: turbonomic/t8c-operator:8.2
         imagePullPolicy: Always
         env:
         - name: WATCH_NAMESPACE

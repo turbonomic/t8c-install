@@ -20,7 +20,7 @@ spec:
   # Global settings
   global:
     repository: turbonomic
-    tag: 8.1.6
+    tag: 8.2.3
     externalIP: 10.0.2.15
     externalDbIP: 10.0.2.15
     externalTimescaleDBIP: 10.0.2.15

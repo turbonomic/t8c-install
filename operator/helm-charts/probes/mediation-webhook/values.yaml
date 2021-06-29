@@ -1,4 +1,4 @@
-# Default values for mediation-vcd.
+# Default values for mediation-webhook.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -16,7 +16,7 @@ javaComponentOptions: "-Dorg.eclipse.jetty.websocket.jsr356.ssl-trust-all=true
 
 env:
   - name: component_type
-    value: mediation-vcd
+    value: mediation-webhook
   - name: instance_id
     valueFrom:
       fieldRef:
@@ -32,6 +32,6 @@ env:
 
 resources:
   limits:
-    memory: 32Gi
+    memory: 1Gi
   requests:
     memory: 384Mi

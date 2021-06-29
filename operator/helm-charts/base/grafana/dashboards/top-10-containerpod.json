@@ -422,9 +422,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, container_memory_working_set_bytes{container_name!=\"POD\",container_name!=\"\"})",
+          "expr": "topk(10, container_memory_working_set_bytes{container!=\"POD\",container!=\"\"})",
           "format": "time_series",
-          "legendFormat": "{{pod_name}}",
+          "legendFormat": "{{pod}}",
           "instant": false,
           "intervalFactor": 1,
           "refId": "A"
@@ -512,9 +512,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,rate(container_cpu_usage_seconds_total{container_name!=\"POD\",container_name!=\"\"}[5m])*1000)",
+          "expr": "topk(10,rate(container_cpu_usage_seconds_total{container!=\"POD\",container!=\"\"}[5m])*1000)",
           "format": "time_series",
-          "legendFormat": "{{pod_name}}",
+          "legendFormat": "{{pod}}",
           "hide": false,
           "intervalFactor": 1,
           "refId": "A"

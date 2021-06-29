@@ -60,7 +60,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,sum(container_memory_working_set_bytes{container_name!=\"POD\",container_name!=\"\"}) by (namespace))",
+          "expr": "topk(10,sum(container_memory_working_set_bytes{container!=\"POD\",container!=\"\"}) by (namespace))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -150,7 +150,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,sum(rate(container_cpu_usage_seconds_total{container_name!=\"POD\",container_name!=\"\"}[5m]) * 1000) by (namespace))",
+          "expr": "topk(10,sum(rate(container_cpu_usage_seconds_total{container!=\"POD\",container!=\"\"}[5m]) * 1000) by (namespace))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,

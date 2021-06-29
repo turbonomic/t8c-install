@@ -55,5 +55,6 @@ subsets:
     ports:
     - name: tcp-postgresql
       port: {{ .Values.global.externalTimescaleDBPort | default 5432 }}
+      protocol: TCP
   {{- end -}}
 {{- end }}

@@ -12,6 +12,9 @@ then
   exit
 fi
 
+# Import var from t8cInstall.sh
+avoidMessaging=${avoidMessaging}
+
 # VMTurbo Network Configuration Script
 dump () { 
     echo "interactive: $interactive"
@@ -296,18 +299,29 @@ then
   fi
   echo ""
 
-  echo "Start a secure session (SSH) on your Turbonomic VM as the turbo user and"
-  echo "perform the following steps:"
-  echo "------------------------------------------------------------------------"
-  echo "  Initialize the Kubernetes node and deploy the Turbonomic Appliance"
-  echo "  Execute the script: /opt/local/bin/t8c.sh"
-  echo "  Do not specify sudo when you execute this script."
-  echo "  The script should take up to 20 minutes to complete."
+  if [ -z ${avoidMessaging} ]
+  then
+    echo "** If you are running this as part of the Turbonomic Appliance Setup"
+    echo "perform the following steps: **"
+    echo "------------------------------------------------------------------------"
+    echo "  Initialize the Kubernetes node and deploy the Turbonomic Appliance"
+    echo "  Execute the script: /opt/local/bin/t8c.sh"
+    echo "  Do not specify sudo when you execute this script."
+    echo "  The script should take up to 20 minutes to complete."
 
-  echo "  example:"
-  echo "  $ ssh turbo@${ip_addr}"
-  echo "  $ /opt/local/bin/t8c.sh"
-  echo ""
+    echo "  example:"
+    echo "  $ /opt/local/bin/t8c.sh"
+    echo ""
+
+    echo "** If you have the Turbonomic Appliance Setup already, and are just"
+    echo "changing the IP Address of $(hostname), run this script After the" 
+    echo "network change: **"
+    echo "------------------------------------------------------------------------"
+    echo "  kubeNodeIPChange"
+    echo "  to change the kubernetes networking and certificates"
+    echo "  example: $ sudo /opt/local/bin/kubeNodeIPChange.sh"
+    echo ""
+  fi
 else
   echo ""
   echo "Must be either static or dhcp"

@@ -196,5 +196,6 @@ subsets:
     ports:
     - name: "mysql-db"
       port: {{ .Values.global.externalDbPort | default 3306 }}
+      protocol: TCP
   {{- end -}}
 {{- end }}

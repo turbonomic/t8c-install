@@ -350,13 +350,10 @@ spec:
   secretName: istio-ingressgateway-certs
   issuerRef:
     name: {{ .Values.global.certmanager.issuer }}
+    kind: {{ .Values.global.certmanager.kind }}
   commonName: {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
-  acme:
-    config:
-    - dns01:
-        provider: cloud-dns
-      domains:
-        - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
+  dnsNames:
+  - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
 ---
   {{ else }}
     {{- range .Values.global.ingress.secrets }}

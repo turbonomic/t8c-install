@@ -217,6 +217,10 @@ variable "vplex" {
   default = false
 }
 
+variable "webhook" {
+  default = false
+}
+
 variable "wmi" {
   default = false
 }

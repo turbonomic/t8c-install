@@ -57,12 +57,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=~\"^$namespace$\"}[5m]) * 1000) by (pod_name)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=~\"^$namespace$\"}[5m]) * 1000) by (pod)",
           "format": "time_series",
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{pod_name}}",
+          "legendFormat": "{{pod}}",
           "refId": "A"
         }
       ],
@@ -144,12 +144,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(container_memory_working_set_bytes{container_name!=\"POD\",container_name!=\"\",namespace=~\"^$namespace$\"}) by (pod_name)",
+          "expr": "sum(container_memory_working_set_bytes{container!=\"POD\",container!=\"\",namespace=~\"^$namespace$\"}) by (pod)",
           "format": "time_series",
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{pod_name}}",
+          "legendFormat": "{{pod}}",
           "refId": "A"
         }
       ],
@@ -231,12 +231,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(container_network_receive_bytes_total{namespace=~\"^$namespace$\"}[5m])) by (pod_name)",
+          "expr": "sum(rate(container_network_receive_bytes_total{namespace=~\"^$namespace$\"}[5m])) by (pod)",
           "format": "time_series",
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{pod_name}}",
+          "legendFormat": "{{pod}}",
           "refId": "A"
         }
       ],
@@ -318,12 +318,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(container_network_transmit_bytes_total{namespace=~\"^$namespace$\"}[5m])) by (pod_name)",
+          "expr": "sum(rate(container_network_transmit_bytes_total{namespace=~\"^$namespace$\"}[5m])) by (pod)",
           "format": "time_series",
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{pod_name}}",
+          "legendFormat": "{{pod}}",
           "refId": "A"
         }
       ],

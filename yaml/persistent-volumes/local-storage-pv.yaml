@@ -9,7 +9,7 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: api-certs
@@ -36,7 +36,7 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: api
@@ -63,7 +63,7 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: auth
@@ -90,7 +90,7 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: consul-data
@@ -117,7 +117,7 @@ spec:
     storage: 50Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: kafka-log
@@ -144,7 +144,7 @@ spec:
     storage: 3Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: zookeeper-data
@@ -171,7 +171,7 @@ spec:
     storage: 30Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: rsyslog-syslogdata
@@ -198,7 +198,7 @@ spec:
     storage: 30Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: rsyslog-auditlogdata
@@ -225,7 +225,7 @@ spec:
     storage: 3Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: topology-processor
@@ -252,7 +252,7 @@ spec:
     storage: 2Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: prometheus-alertmanager
@@ -279,7 +279,7 @@ spec:
     storage: 8Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: prometheus-server
@@ -306,7 +306,7 @@ spec:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: turbo-local-storage
   claimRef:
     name: graphstate-datacloud-graph-0

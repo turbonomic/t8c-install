@@ -93,9 +93,9 @@ cd /etc/kubernetes/ssl/etcd/
 ln -s ca.pem ca.crt
 ln -s ca-key.pem ca.key
 
-/usr/local/bin/kubeadm init phase certs etcd-server
-/usr/local/bin/kubeadm init phase certs etcd-peer
-/usr/local/bin/kubeadm init phase certs etcd-healthcheck-client
+/usr/local/bin/kubeadm init phase certs etcd-server 2>/dev/null
+/usr/local/bin/kubeadm init phase certs etcd-peer 2>/dev/null
+/usr/local/bin/kubeadm init phase certs etcd-healthcheck-client 2>/dev/null
 
 mv peer.crt member-node1.pem
 mv peer.key member-node1-key.pem
@@ -115,21 +115,41 @@ mv front-proxy-client.* expired/
 sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/kubeadm-config.yaml
 sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/kubelet.env
 
-/usr/local/bin/kubeadm init phase certs apiserver --config=/etc/kubernetes/kubeadm-config.yaml
-/usr/local/bin/kubeadm init phase certs apiserver-kubelet-client --config=/etc/kubernetes/kubeadm-config.yaml
-/usr/local/bin/kubeadm init phase certs front-proxy-client --config=/etc/kubernetes/kubeadm-config.yaml
+# Check kubernetes version
+kubeVersion=$(kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
+if [ $kubeVersion -ge 20 ]
+then 
+  sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/admin.conf
+  sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/controller-manager.conf
+  sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/scheduler.conf
+  sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/kubelet.conf
+  /usr/local/bin/kubeadm init phase certs apiserver --apiserver-cert-extra-sans 10.233.0.1,127.0.0.1,localhost,lb-apiserver.kubernetes.local,$(hostname).cluster.local 2>/dev/null
+  /usr/local/bin/kubeadm init phase certs apiserver-kubelet-client 2>/dev/null
+  /usr/local/bin/kubeadm init phase certs front-proxy-client 2>/dev/null
+else
+  /usr/local/bin/kubeadm init phase certs apiserver --config=/etc/kubernetes/kubeadm-config.yaml 2>/dev/null
+  /usr/local/bin/kubeadm init phase certs apiserver-kubelet-client --config=/etc/kubernetes/kubeadm-config.yaml 2>/dev/null
+  /usr/local/bin/kubeadm init phase certs front-proxy-client --config=/etc/kubernetes/kubeadm-config.yaml 2>/dev/null
+fi
 
 cd /etc/kubernetes
-/usr/local/bin/kubeadm alpha kubeconfig user --org system:masters --client-name kubernetes-admin  > admin.conf
-/usr/local/bin/kubeadm alpha kubeconfig user --client-name system:kube-controller-manager > controller-manager.conf
-/usr/local/bin/kubeadm alpha kubeconfig user --org system:nodes --client-name system:node:$(hostname) > kubelet.conf
-/usr/local/bin/kubeadm alpha kubeconfig user --client-name system:kube-scheduler > scheduler.conf
-
+if [ $kubeVersion -ge 20 ]
+then 
+  /usr/local/bin/kubeadm init phase kubeconfig admin 2>/dev/null
+  /usr/local/bin/kubeadm init phase kubeconfig kubelet 2>/dev/null
+  /usr/local/bin/kubeadm init phase kubeconfig controller-manager 2>/dev/null
+  /usr/local/bin/kubeadm init phase kubeconfig scheduler 2>/dev/null
+else
+  /usr/local/bin/kubeadm alpha kubeconfig user --org system:masters --client-name kubernetes-admin  > admin.conf 2>/dev/null
+  /usr/local/bin/kubeadm alpha kubeconfig user --client-name system:kube-controller-manager > controller-manager.conf 2>/dev/null
+  /usr/local/bin/kubeadm alpha kubeconfig user --org system:nodes --client-name system:node:$(hostname) > kubelet.conf 2>/dev/null
+  /usr/local/bin/kubeadm alpha kubeconfig user --client-name system:kube-scheduler > scheduler.conf 2>/dev/null
+fi
 systemctl restart kubelet
 
 # Add the ~/.kube/config file
 cp /etc/kubernetes/admin.conf /root/.kube/config
-/usr/local/bin/kubectl config set-context kubernetes-admin@kubernetes --namespace=turbonomic
+/usr/local/bin/kubectl config set-context kubernetes-admin@kubernetes --namespace=turbonomic 2>/dev/null
 cp /root/.kube/config /opt/turbonomic/.kube/config
 
 # Update calico
@@ -162,12 +182,12 @@ printf '\nFinished! kubectl apply commands will follow\n'
 /usr/local/bin/kubectl get cm -n kube-system kube-proxy -o yaml > /etc/kubernetes/kube-proxy.yaml
 sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/kubeadm-config.yaml
 sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/kube-proxy.yaml
-/usr/local/bin/kubectl apply -f /etc/kubernetes/kubeadm-config.yaml
+/usr/local/bin/kubectl apply -f /etc/kubernetes/kubeadm-config.yaml -n kube-system
 /usr/local/bin/kubectl apply -f /etc/kubernetes/kube-proxy.yaml -n kube-system
 
 # Apply the ip change to the instance
 sed -i "s/${oldIP}/${newIP}/g" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
-/usr/local/bin/kubectl apply -f /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml
+/usr/local/bin/kubectl apply -f /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml -n turbonomic
 
 # Update other files, jic
 sed -i "s/${oldIP}/${newIP}/g" /opt/kubespray/inventory/turbocluster/hosts.yml
@@ -175,9 +195,16 @@ sed -i "s/${oldIP}/${newIP}/g" /opt/kubespray/inventory/turbocluster/hosts.yml
 sed -i "s/${oldIP}/${newIP}/g" /opt/kubespray/inventory/turbocluster/hosts.yml
 sed -i "s/${oldIP}/${newIP}/g" /opt/local/etc/turbo.conf
 
+# Set turbo kube context
+su -c "kubectl config set-context $(kubectl config current-context) --namespace=turbonomic" -s /bin/sh turbo
+
 # Reboot the instance:
+echo "#############################################"
+echo "Change Completed, please login through the UI"
+echo "https://${newIP}"
+echo "#############################################"
 echo ""
 echo ""
-echo "################################################"
-echo "Please reboot the server to pick up the changes"
-echo "################################################"
+echo "############################################################"
+echo "Please reboot the server to pick up the changes, if required"
+echo "############################################################"

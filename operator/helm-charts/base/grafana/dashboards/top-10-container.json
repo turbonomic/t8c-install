@@ -60,11 +60,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,container_memory_working_set_bytes{container_name!=\"POD\",container_name!=\"\"})",
+          "expr": "topk(10,container_memory_working_set_bytes{container!=\"POD\",container!=\"\"})",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{namespace}}.{{pod_name}}.{{container_name}}",
+          "legendFormat": "{{namespace}}.{{pod}}.{{container}}",
           "refId": "A"
         }
       ],
@@ -150,11 +150,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,rate(container_cpu_usage_seconds_total{container_name!=\"POD\",container_name!=\"\"}[5m])*1000)",
+          "expr": "topk(10,rate(container_cpu_usage_seconds_total{container!=\"POD\",container!=\"\"}[5m])*1000)",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
-          "legendFormat": "{{namespace}}.{{pod_name}}.{{container_name}}",
+          "legendFormat": "{{namespace}}.{{pod}}.{{container}}",
           "refId": "A"
         }
       ],
@@ -240,9 +240,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(container_fs_writes_bytes_total{container_name!=\"\"}[5m])+rate(container_fs_reads_bytes_total{container_name!=\"\"}[5m]) > 0",
+          "expr": "rate(container_fs_writes_bytes_total{container!=\"\"}[5m])+rate(container_fs_reads_bytes_total{container!=\"\"}[5m]) > 0",
           "format": "time_series",
-          "legendFormat": "{{namespace}}.{{pod_name}}.{{container_name}}",
+          "legendFormat": "{{namespace}}.{{pod}}.{{container}}",
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -329,9 +329,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,container_fs_usage_bytes{container_name!=\"POD\",container_name!=\"\"})",
+          "expr": "topk(10,container_fs_usage_bytes{container!=\"POD\",container!=\"\"})",
           "format": "time_series",
-          "legendFormat": "{{namespace}}.{{pod_name}}.{{container_name}}",
+          "legendFormat": "{{namespace}}.{{pod}}.{{container}}",
           "hide": false,
           "intervalFactor": 1,
           "refId": "A"
@@ -422,9 +422,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,sum(rate(container_network_transmit_bytes_total{name!=\"\"}[5m])) by (namespace,pod_name))",
+          "expr": "topk(10,sum(rate(container_network_transmit_bytes_total{name!=\"\"}[5m])) by (namespace,pod))",
           "format": "time_series",
-          "legendFormat": "{{namespace}}.{{pod_name}}",
+          "legendFormat": "{{namespace}}.{{pod}}",
           "instant": false,
           "intervalFactor": 1,
           "refId": "A"
@@ -512,9 +512,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10,sum(rate(container_network_receive_bytes_total{name!=\"\"}[5m])) by (namespace,pod_name))",
+          "expr": "topk(10,sum(rate(container_network_receive_bytes_total{name!=\"\"}[5m])) by (namespace,pod))",
           "format": "time_series",
-          "legendFormat": "{{namespace}}.{{pod_name}}",
+          "legendFormat": "{{namespace}}.{{pod}}",
           "hide": false,
           "intervalFactor": 1,
           "refId": "A"

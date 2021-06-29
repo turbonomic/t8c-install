@@ -173,17 +173,18 @@ apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
   name: t8c-nginx-gateway
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   secretName: nginx-ingressgateway-certs
   issuerRef:
     name: {{ .Values.global.certmanager.issuer }}
+    kind: {{ .Values.global.certmanager.kind }}
   commonName: {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
-  acme:
-    config:
-    - dns01:
-        provider: cloud-dns
-      domains:
-        - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
+  dnsNames:
+  - {{ .Values.global.ingress.domain | default "*.turbonomic.com" | quote }}
 ---
   {{ else }}
     {{- if .Values.global }}

@@ -27,7 +27,7 @@ spec:
       serviceAccountName: t8c-operator
       containers:
       - name: t8c-operator
-        image: turbonomic/t8c-operator:8.1
+        image: turbonomic/t8c-operator:8.2
         args:
         - "--enable-leader-election"
         - "--leader-election-id=operator"

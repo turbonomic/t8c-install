@@ -19,6 +19,26 @@ spec:
   - name: v1alpha1
     served: true
     storage: false
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            x-kubernetes-preserve-unknown-fields: true
+            properties:
+            type: object
+        type: object
   - name: v1
     served: true
     storage: true
@@ -72,6 +92,9 @@ spec:
                   customImageNames:
                     description: Use custom image names
                     type: boolean
+                  externalArangoDBName:
+                    description: DNS name for external arangodb server
+                    type: string
                   externalIP:
                     description: Static external IP address for ingress LoadBalancer
                     type: string
@@ -87,10 +110,10 @@ spec:
                   externalDbIP:
                     description: IP address for external mysql compliant database server
                     type: string
-                  externalTimescaleName:
+                  externalTimescaleDBName:
                     description: DNS name for external postgresql/timescaledb database server
                     type: string
-                  externalTimescaleIP:
+                  externalTimescaleDBIP:
                     description: IP address for external postgresql/timescaledb compliant database server
                     type: string
                   externalInfluxDBName:
@@ -959,12 +982,6 @@ spec:
                 properties:
                   enabled:
                     description: Enable User Defined Topology mediation
-                    type: boolean
-                type: object
-              vcd:
-                properties:
-                  enabled:
-                    description: Enable VMware Cloud Director mediation
                     type: boolean
                 type: object
               vcenter:
@@ -3542,45 +3559,6 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
-              mediation-vcd:
-                properties:
-                  annotations:
-                    description: component specific pod annotations list
-                    type: object
-                  image:
-                    description: component specific image options
-                    properties:
-                      repository:
-                        description: component container registry and repository name
-                        type: string
-                      tag:
-                        description: component container tag
-                        type: string
-                      pullPolicy:
-                        description: component image pull policy
-                        type: string
-                    type: object
-                  javaComponentOptions:
-                    description: component additional java options
-                    type: string
-                  debug:
-                    description: component debug
-                    type: boolean
-                  resources:
-                    description: component resource configuration
-                    properties:
-                      limits:
-                        description: component limits
-                        properties:
-                          memory:
-                            description: component memory limits
-                            type: string
-                        type: object
-                    type: object
-                  serviceAccountName:
-                    description: component serviceAccountName
-                    type: string
-                type: object
               mediation-vcenter:
                 properties:
                   annotations:
@@ -3997,9 +3975,3 @@ spec:
                     type: object
                 type: object
             type: object
-          status:
-            x-kubernetes-preserve-unknown-fields: true
-            description: Status defines the observed state of Xl
-            type: object
-          subresources:
-            status: {}
