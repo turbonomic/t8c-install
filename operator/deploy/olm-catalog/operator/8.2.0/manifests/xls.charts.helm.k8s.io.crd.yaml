@@ -885,6 +885,12 @@ spec:
                   description: Enable HPE OneView mediation
                   type: boolean
               type: object
+            openstack:
+              properties:
+                enabled:
+                  description: Enable Openstack mediation
+                  type: boolean
+              type: object
             pure:
               properties:
                 enabled:

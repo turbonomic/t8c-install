@@ -229,10 +229,6 @@ dependencies:
     repository: file://../probes/mediation-azurevolumes
     version: 0.1.0
     condition: azure.enabled
-  - name: mediation-cloudfoundry
-    repository: file://../probes/mediation-cloudfoundry
-    version: 0.1.0
-    condition: cloudfoundry.enabled
   - name: mediation-compellent
     repository: file://../probes/mediation-compellent
     version: 0.1.0
@@ -345,14 +341,6 @@ dependencies:
     repository: file://../probes/mediation-oneview
     version: 0.1.0
     condition: oneview.enabled
-  - name: mediation-openstack
-    repository: file://../probes/mediation-openstack
-    version: 0.1.0
-    condition: openstack.enabled
-  - name: mediation-pivotal
-    repository: file://../probes/mediation-pivotal
-    version: 0.1.0
-    condition: pivotal.enabled
   - name: mediation-pure
     repository: file://../probes/mediation-pure
     version: 0.1.0

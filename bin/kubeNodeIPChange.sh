@@ -116,7 +116,7 @@ sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/kubeadm-config.yaml
 sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/kubelet.env
 
 # Check kubernetes version
-kubeVersion=$(kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
+kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
 if [ $kubeVersion -ge 20 ]
 then 
   sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/admin.conf
@@ -196,7 +196,7 @@ sed -i "s/${oldIP}/${newIP}/g" /opt/kubespray/inventory/turbocluster/hosts.yml
 sed -i "s/${oldIP}/${newIP}/g" /opt/local/etc/turbo.conf
 
 # Set turbo kube context
-su -c "kubectl config set-context $(kubectl config current-context) --namespace=turbonomic" -s /bin/sh turbo
+su -c "/usr/local/bin/kubectl config set-context $(/usr/local/bin/kubectl config current-context) --namespace=turbonomic" -s /bin/sh turbo
 
 # Reboot the instance:
 echo "#############################################"

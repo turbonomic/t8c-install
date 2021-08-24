@@ -305,12 +305,12 @@ then
     echo "perform the following steps: **"
     echo "------------------------------------------------------------------------"
     echo "  Initialize the Kubernetes node and deploy the Turbonomic Appliance"
-    echo "  Execute the script: /opt/local/bin/t8c.sh"
+    echo "  Execute the script: /opt/local/bin/t8cInstall.sh"
     echo "  Do not specify sudo when you execute this script."
     echo "  The script should take up to 20 minutes to complete."
 
     echo "  example:"
-    echo "  $ /opt/local/bin/t8c.sh"
+    echo "  $ /opt/local/bin/t8cInstall.sh"
     echo ""
 
     echo "** If you have the Turbonomic Appliance Setup already, and are just"

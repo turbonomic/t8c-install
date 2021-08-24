@@ -85,10 +85,6 @@ variable "azurevolumes" {
   default = false
 }
 
-variable "cloudfoundry" {
-  default = false
-}
-
 variable "compellent" {
   default = false
 }
@@ -154,14 +150,6 @@ variable "nutanix" {
 }
 
 variable "oneview" {
-  default = false
-}
-
-variable "openstack" {
-  default = false
-}
-
-variable "pivotal" {
   default = false
 }
 

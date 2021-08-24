@@ -71,6 +71,7 @@ data:
 {{- end }}
       action-orchestrator:
         identityGeneratorPrefix: 9
+        enableReporting: {{ .Values.reporting.enabled }}
         dbSchemaName: action
       api:
         identityGeneratorPrefix: 5

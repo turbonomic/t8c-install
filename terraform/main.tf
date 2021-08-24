@@ -88,11 +88,6 @@ resource "helm_release" "xl" {
   }
 
   set {
-    name  = "cloudfoundry.enabled"
-    value = "${var.cloudfoundry ? true : false}"
-  }
-
-  set {
     name  = "compellent.enabled"
     value = "${var.compellent ? true : false}"
   }
@@ -175,16 +170,6 @@ resource "helm_release" "xl" {
   set {
     name  = "oneview.enabled"
     value = "${var.oneview ? true : false}"
-  }
-
-  set {
-    name  = "openstack.enabled"
-    value = "${var.openstack ? true : false}"
-  }
-
-  set {
-    name  = "pivotal.enabled"
-    value = "${var.pivotal ? true : false}"
   }
 
   set {

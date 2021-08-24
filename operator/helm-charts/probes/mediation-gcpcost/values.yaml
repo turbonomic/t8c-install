@@ -12,7 +12,8 @@ image:
   pullPolicy: IfNotPresent
 
 javaComponentOptions: "-Dorg.eclipse.jetty.websocket.jsr356.ssl-trust-all=true
-    -DLog4jContextSelector=com.vmturbo.mediation.common.context.ThreadGroupPrefixContextSelector"
+    -DLog4jContextSelector=com.vmturbo.mediation.common.context.ThreadGroupPrefixContextSelector
+    -Dhttps.protocols=TLSv1.2"
 
 env:
   - name: component_type

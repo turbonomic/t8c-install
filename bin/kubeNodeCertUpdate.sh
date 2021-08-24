@@ -30,7 +30,7 @@ fi
 echo "Starting to renew Kubernetes certificates..."
 cd /etc/kubernetes/;  ln -s ssl pki;
 # Check kubernetes version
-kubeVersion=$(kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
+kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
 if [ $kubeVersion -ge 20 ]
 then
   /usr/local/bin/kubeadm certs renew apiserver 2>/dev/null

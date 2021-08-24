@@ -762,12 +762,6 @@ spec:
                     description: Enable baremetal mediation
                     type: boolean
                 type: object
-              cloudfoundry:
-                properties:
-                  enabled:
-                    description: Enable Cloud Foundry mediation
-                    type: boolean
-                type: object
               compellent:
                 properties:
                   enabled:
@@ -910,12 +904,6 @@ spec:
                 properties:
                   enabled:
                     description: Enable HPE OneView mediation
-                    type: boolean
-                type: object
-              openstack:
-                properties:
-                  enabled:
-                    description: Enable Openstack mediation
                     type: boolean
                 type: object
               pivotal:
@@ -2155,45 +2143,6 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
-              mediation-cloudfoundry:
-                properties:
-                  annotations:
-                    description: component specific pod annotations list
-                    type: object
-                  image:
-                    description: component specific image options
-                    properties:
-                      repository:
-                        description: component container registry and repository name
-                        type: string
-                      tag:
-                        description: component container tag
-                        type: string
-                      pullPolicy:
-                        description: component image pull policy
-                        type: string
-                    type: object
-                  javaComponentOptions:
-                    description: component additional java options
-                    type: string
-                  debug:
-                    description: component debug
-                    type: boolean
-                  resources:
-                    description: component resource configuration
-                    properties:
-                      limits:
-                        description: component limits
-                        properties:
-                          memory:
-                            description: component memory limits
-                            type: string
-                        type: object
-                    type: object
-                  serviceAccountName:
-                    description: component serviceAccountName
-                    type: string
-                type: object
               mediation-compellent:
                 properties:
                   annotations:
@@ -3091,85 +3040,7 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
-              mediation-openstack:
-                properties:
-                  annotations:
-                    description: component specific pod annotations list
-                    type: object
-                  image:
-                    description: component specific image options
-                    properties:
-                      repository:
-                        description: component container registry and repository name
-                        type: string
-                      tag:
-                        description: component container tag
-                        type: string
-                      pullPolicy:
-                        description: component image pull policy
-                        type: string
-                    type: object
-                  javaComponentOptions:
-                    description: component additional java options
-                    type: string
-                  debug:
-                    description: component debug
-                    type: boolean
-                  resources:
-                    description: component resource configuration
-                    properties:
-                      limits:
-                        description: component limits
-                        properties:
-                          memory:
-                            description: component memory limits
-                            type: string
-                        type: object
-                    type: object
-                  serviceAccountName:
-                    description: component serviceAccountName
-                    type: string
-                type: object
               mediation-oracle:
-                properties:
-                  annotations:
-                    description: component specific pod annotations list
-                    type: object
-                  image:
-                    description: component specific image options
-                    properties:
-                      repository:
-                        description: component container registry and repository name
-                        type: string
-                      tag:
-                        description: component container tag
-                        type: string
-                      pullPolicy:
-                        description: component image pull policy
-                        type: string
-                    type: object
-                  javaComponentOptions:
-                    description: component additional java options
-                    type: string
-                  debug:
-                    description: component debug
-                    type: boolean
-                  resources:
-                    description: component resource configuration
-                    properties:
-                      limits:
-                        description: component limits
-                        properties:
-                          memory:
-                            description: component memory limits
-                            type: string
-                        type: object
-                    type: object
-                  serviceAccountName:
-                    description: component serviceAccountName
-                    type: string
-                type: object
-              mediation-pivotal:
                 properties:
                   annotations:
                     description: component specific pod annotations list

@@ -92,12 +92,14 @@ class CustomResource:
                 return default
             data = data[p]
 
-        return data[key]
+        return data[key] if key in data else default
 
 
 class EmbeddedReporting:
     grafana_admin_password_path = 'spec grafana adminPassword'
     grafana_db_password_path = 'spec grafana grafana.ini database password'
+    grafana_database_type_path = 'spec grafana grafana.ini database type'
+    timescaledb_path = 'spec global externalTimescaleDBIP'
 
     def __init__(self, custom_resource):
         self.custom_resource = custom_resource
@@ -107,6 +109,17 @@ class EmbeddedReporting:
         self.custom_resource.set_value('spec reporting enabled', True)
         self.custom_resource.set_value('spec timescaledb enabled', True)
         self.custom_resource.set_value('spec extractor enabled', True)
+
+        # set timescaleDBIP if it hasn't been set.
+        if self.custom_resource.get_value(EmbeddedReporting.timescaledb_path) == None:
+            # externalIP represents the OVAs IP
+            externalIP = self.custom_resource.get_value('spec global externalIP')
+            # use externalIP for timescaleDB IP
+            self.custom_resource.set_value(EmbeddedReporting.timescaledb_path, externalIP)
+
+        # set database-type if it hasn't been set.
+        if self.custom_resource.get_value(EmbeddedReporting.grafana_database_type_path) == None:
+            self.custom_resource.set_value(EmbeddedReporting.grafana_database_type_path, 'postgres')
 
         self.custom_resource.set_value(EmbeddedReporting.grafana_admin_password_path, grafana_admin_password)
         self.custom_resource.set_value(EmbeddedReporting.grafana_db_password_path, grafana_db_password)
@@ -125,6 +138,8 @@ class EmbeddedReporting:
             self.check_property_enabled("timescaledb", warnings)
             self.check_password(EmbeddedReporting.grafana_admin_password_path, warnings)
             self.check_password(EmbeddedReporting.grafana_db_password_path, warnings)
+            self.check_property_present(EmbeddedReporting.grafana_database_type_path, warnings)
+            self.check_property_present(EmbeddedReporting.timescaledb_path, warnings)
 
         try:
             self.custom_resource.validate()
@@ -136,6 +151,10 @@ class EmbeddedReporting:
     def check_property_enabled(self, component, warnings_list):
         if not self.custom_resource.get_value('spec {} enabled'.format(component), False):
             warnings_list.append("spec.{}.enabled should be true".format(component))
+
+    def check_property_present(self, path, warnings_list):
+        if self.custom_resource.get_value(path) == None:
+            warnings_list.append("Missing field: {}".format(path))
 
     def check_password(self, path, warnings):
         pass_warn = validate_password(self.custom_resource.get_value(path))
@@ -204,6 +223,12 @@ def validate_password(password_input):
         return "Password should not contain # or ;"
     return None
 
+# Checks to see if a service is running.
+def is_service_running(service_name):
+    ACTIVE_SERVICE = 'active (running)'
+    check_service_status = 'service {} status'.format(service_name)
+    stdout_value, stderr_value = subprocess.Popen(check_service_status, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
+    return True if ACTIVE_SERVICE in str(stdout_value) else False
 
 def main():
     default_cr = '/opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml'
@@ -216,7 +241,17 @@ def main():
     parser.add_argument("--no-apply", help="Skip applying the CR after modification.", action="store_true", dest="no_apply")
     parser.add_argument("--validate", help="Don't make any changes, but lint the CR to check for common errors.",
                         action="store_true", dest="validate")
+    parser.add_argument("--no-timescaledb", help="Skip the precondition of needing timescaledb enabled.",
+                        action="store_true", dest="no_timescaledb")
     args = parser.parse_args()
+
+    # precondition(s)
+    if not args.no_timescaledb:
+        # 1. timescaledb must be installed and running as a service natively.
+        timescaledb_name = 'postgresql-12.service'
+        if not is_service_running(timescaledb_name):
+            print("Embedded Reporting requires TimescaleDB to be installed. Please install TimescaleDB and rerun enable_reporting.py.")
+            return
 
     # File to modify - can be overwritten by passing cr file as an arg to the python script
     custom_resource_file = args.file
