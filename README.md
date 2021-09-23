@@ -58,7 +58,7 @@ Other make targets include (more info below):
 
 ## Pushing Your Turbonomic Platform Operator Image
 
-If you are using a local, single-node Kubernetes cluster like
+If you are using a local, single-node Kubernetes cluster like [kind](https://kind.sigs.k8s.io/),
 [minikube](https://minikube.sigs.k8s.io/) or [Docker Desktop](https://www.docker.com/products/docker-desktop),
 you only need to build the `turbonomic/t8c-operator` image.
 You can skip the rest of this section.
