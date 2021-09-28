@@ -555,6 +555,15 @@ spec:
                   serviceAccountName:
                     description: component serviceAccountName
                     type: string
+                  httpsRedirect:
+                    description: true if non-SSL requests should be redirected to corresponding secure URLs
+                    type: boolean
+                  nginxIsPrimaryIngress:
+                    description: |-
+                      true if nginx is acting as primary ingress for the appliance (typical of OVA installations),
+                      as opposed to being downstream of some other ingress mechanism as in something like an
+                      OpenShift deployemnt
+                    type: boolean
                 type: object
               rsyslog:
                 properties:
@@ -2260,7 +2269,7 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
-              mediation-gcp:
+              mediation-gcpcost:
                 properties:
                   annotations:
                     description: component specific pod annotations list
@@ -2299,7 +2308,7 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
-              mediation-gcpcost:
+              mediation-gcpbilling:
                 properties:
                   annotations:
                     description: component specific pod annotations list

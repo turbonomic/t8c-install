@@ -17,7 +17,7 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 8.3.1
+    tag: 8.3.2
     #externalIP: 10.0.2.15
     #externalDbIP: 10.0.2.15
     #externalTimescaleDBIP: 10.0.2.15

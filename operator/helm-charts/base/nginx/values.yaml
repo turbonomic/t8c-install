@@ -23,4 +23,7 @@ env:
   - name: WORKER_PROCESSES
     value: "2"
 
+httpsRedirect: true
+nginxIsPrimaryIngress: true
+
 resources: {}

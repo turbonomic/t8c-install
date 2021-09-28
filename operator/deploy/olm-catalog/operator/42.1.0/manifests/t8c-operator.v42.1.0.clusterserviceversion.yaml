@@ -2,17 +2,17 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   annotations:
-    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"customImageNames": false,"externalArangoDBName": "arangodb","repository": "registry.connect.redhat.com/turbonomic","tag":"8.3.1"}}}]'
+    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"customImageNames": false,"externalArangoDBName": "arangodb","repository": "registry.connect.redhat.com/turbonomic","tag":"8.3.2"}}}]'
     capabilities: Basic Install
     categories: Monitoring
     certified: "false"
-    containerImage: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:3e1006cb49da957503fcd3505b5d19b05c4670237ff34da1c3ae11529f1d7e3e
+    containerImage: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:9c259d44484f3b8a41324dee1ffac597b24b9518cd3baeb392db530c9223a77a
     createdAt: "2019-07-01T00:00:00.000Z"
     description: Turbonomic Workload Automation for Multicloud simultaneously optimizes performance, compliance, and cost in real-time. Workloads are precisely resourced, automatically, to perform while satisfying business constraints.
     olm.properties: '[{"type": "olm.maxOpenShiftVersion", "value": "4.8"}]'
     repository: https://github.com/turbonomic/t8c-install/tree/master/operator
     support: Turbonomic, Inc.
-  name: t8c-operator.v42.0.0
+  name: t8c-operator.v42.1.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -56,7 +56,7 @@ spec:
                 serviceAccountName: t8c-operator
                 containers:
                 - name: t8c-operator
-                  image: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:3e1006cb49da957503fcd3505b5d19b05c4670237ff34da1c3ae11529f1d7e3e
+                  image: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:9c259d44484f3b8a41324dee1ffac597b24b9518cd3baeb392db530c9223a77a
                   imagePullPolicy: Always
                   env:
                   - name: WATCH_NAMESPACE
@@ -198,5 +198,5 @@ spec:
   maturity: alpha
   provider:
     name: Turbonomic, Inc.
-  replaces: t8c-operator.v8.2.0
-  version: 42.0.0
+  replaces: t8c-operator.v42.0.0
+  version: 42.1.0

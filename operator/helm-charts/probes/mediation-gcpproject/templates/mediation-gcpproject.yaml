@@ -39,7 +39,7 @@ spec:
       - name: {{ .Chart.Name }}
 {{- if .Values.global }}
   {{- if .Values.global.customImageNames }}
-        image: {{ template "gcp_image" . }}
+        image: {{ template "gcpproject_image" . }}
   {{- else }}
         image: {{ template "image" . }}
   {{- end }}
@@ -78,9 +78,9 @@ spec:
           name: turbo-volume
           readOnly: true
         - mountPath: /tmp
-          name: mediation-gcp-tmpfs0
+          name: mediation-gcpproject-tmpfs0
         - mountPath: /etc/targets
-          name: gcp-secrets
+          name: gcpproject-secrets
           readOnly: true
 {{- if .Values.global }}
   {{- if .Values.global.registry }}
@@ -113,11 +113,11 @@ spec:
         configMap:
           name: global-properties-{{ .Release.Name }}
           optional: true
-      - name: mediation-gcp-tmpfs0
+      - name: mediation-gcpproject-tmpfs0
         emptyDir: {}
-      - name: gcp-secrets
+      - name: gcpproject-secrets
         secret:
-          secretName: "gcp"
+          secretName: "gcpproject"
           optional: true
   selector:
     matchLabels:
@@ -135,11 +135,11 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
-  - name: http-mediation-gcp
+  - name: http-mediation-gcpproject
     port: 8080
 {{- if .Values.global }}
   {{- if or .Values.debug .Values.global.debug }}
-  - name: tcp-mediation-gcp-debug
+  - name: tcp-mediation-gcpproject-debug
     port: 8000
   {{- end -}}
 {{- end }}

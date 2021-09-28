@@ -8,7 +8,7 @@ global:
 #  imageUsername: turbouser
 #  imagePassword: turbopassword
   repository: turbonomic
-  tag: 8.3.0
+  tag: 8.3.2
 #  serviceAccountName: t8c-serviceaccount
 #  pullPolicy: IfNotPresent
   customImageNames: true

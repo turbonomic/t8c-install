@@ -1,4 +1,31 @@
-{{- if .Values.openshiftingress.enabled }}
+{{- if and .Values.openshiftingress.enabled .Values.nginxingress.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: nginx
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ .Values.global.ingress.domain }}
+  to:
+    kind: Service
+    name: nginx
+  {{- if .Values.nginx.httpsRedirect }}
+  port:
+    targetPort: https-nginx
+  tls:
+    termination: passthrough
+  {{- else }}
+  port:
+    targetPort: http-nginx
+  tls:
+    termination: edge
+  {{- end }}
+    insecureEdgeTerminationPolicy: Redirect
+---
+{{- else if .Values.openshiftingress.enabled }}
 {{- if .Values.global.ingress.domain }}
 apiVersion: route.openshift.io/v1
 kind: Route

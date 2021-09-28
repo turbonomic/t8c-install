@@ -44,6 +44,7 @@ data:
         reportingHost: reporting
         repositoryHost: repository
         topologyProcessorHost: topology-processor
+        extractorHost: extractor
         arangoDBNamespace : {{ .Release.Namespace }}
         # Auth
         authRetryDelaySecs: 10
