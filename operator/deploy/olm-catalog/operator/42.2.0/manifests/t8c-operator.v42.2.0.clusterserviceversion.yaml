@@ -2,17 +2,16 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   annotations:
-    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"tag":"8.2.5"}}}]'
+    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"customImageNames": false,"externalArangoDBName": "arangodb","repository": "registry.connect.redhat.com/turbonomic","tag":"8.3.4"}}}]'
     capabilities: Basic Install
     categories: Monitoring
     certified: "false"
-    containerImage: turbonomic/t8c-operator:8.2
+    containerImage: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:d5164e6dd24a0feff10cab62530cafff1bc92d0e8ec2d16c6f4d880c6e2f50bd
     createdAt: "2019-07-01T00:00:00.000Z"
     description: Turbonomic Workload Automation for Multicloud simultaneously optimizes performance, compliance, and cost in real-time. Workloads are precisely resourced, automatically, to perform while satisfying business constraints.
-    olm.properties: '[{"type": "olm.maxOpenShiftVersion", "value": "4.8"}]'
     repository: https://github.com/turbonomic/t8c-install/tree/master/operator
     support: Turbonomic, Inc.
-  name: t8c-operator.v8.2.0
+  name: t8c-operator.v42.2.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -56,7 +55,7 @@ spec:
                 serviceAccountName: t8c-operator
                 containers:
                 - name: t8c-operator
-                  image: turbonomic/t8c-operator:8.2
+                  image: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:d5164e6dd24a0feff10cab62530cafff1bc92d0e8ec2d16c6f4d880c6e2f50bd
                   imagePullPolicy: Always
                   env:
                   - name: WATCH_NAMESPACE
@@ -185,7 +184,7 @@ spec:
       type: SingleNamespace
     - supported: false
       type: MultiNamespace
-    - supported: true
+    - supported: false
       type: AllNamespaces
   links:
     - name: Turbonomic, Inc.
@@ -198,5 +197,5 @@ spec:
   maturity: alpha
   provider:
     name: Turbonomic, Inc.
-  replaces: t8c-operator.v8.1.0
-  version: 8.2.0
+  replaces: t8c-operator.v42.1.0
+  version: 42.2.0

@@ -83,25 +83,31 @@ specify the StorageClassName to use for persistent volumes:
 ````
 spec:
   global:
-    storageClassName: rook-ceph-cephfs-internal
+    storageClassName: ocs-storagecluster-ceph-rbd
 ````
 Alternatively you can designate a default StorageClass:
 
 ````
-kubectl patch storageclass rook-ceph-cephfs-internal -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+kubectl patch storageclass ocs-storagecluster-ceph-rbd -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ````
 
 ## Leveraging a custom ingress instead of the default nginx shipped with turbonomic
 
-If the cluster has a preferred ingress setup, the default ingress can be disabled:
+If the cluster has a preferred ingress setup, the default ingress can be disabled,
+and use Openshift application routes to the ui/api can be created by the operator:
 ````
 spec:
   nginxingress:
     enabled: false
+  openshiftingress:
+    enabled: true
 ````
-For example, Openshift application routes to the ui/api can be created by the operator:
+Or put the nginx component behind an Openshift application route
 ````
 spec:
+  nginx:
+    nginxIsPrimaryIngress: false
+    httpsredirect: false
   openshiftingress:
     enabled: true
 ````
