@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
   labels:
-    zone: internal
+    zone: secure
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -25,7 +25,7 @@ spec:
   {{- end }}
 {{- end }}
       labels:
-        zone: internal
+        zone: secure
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -37,8 +37,14 @@ spec:
 {{- end }}
       containers:
       - name: {{ .Chart.Name }}
+{{- if .Values.global }}
+  {{- if .Values.global.customImageNames }}
+        image: {{ template "ibmstorage_flashsystem_image" . }}
+  {{- else }}
         image: {{ template "image" . }}
+  {{- end }}
         imagePullPolicy: {{ template "pullPolicy" . }}
+{{- end }}
         env:
 {{ template "java.setJVMEnvironmentOptions" . }}
 {{ toYaml .Values.env | indent 8 }}
@@ -54,12 +60,12 @@ spec:
           httpGet:
             port: 8080
             path: /health
-{{- include "common.getLivenessThresholds" . | indent 10 }}
+          periodSeconds: 60
+          failureThreshold: 60
         readinessProbe:
           httpGet:
             port: 8080
             path: /health
-{{- include "common.getReadinessThresholds" . | indent 10 }}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
         securityContext:
@@ -68,28 +74,14 @@ spec:
             drop:
             - ALL
         volumeMounts:
-{{ if .Values.global }}
-  {{ if .Values.global.disableSameTrustStore }}
-        - mountPath: /vault/trust
-          name: ml-datastore-truststore-secret
-          readOnly: true
-  {{- else }}
-        - mountPath: /vault/trust
-          name: common-truststore-secret
-          readOnly: true
-  {{- end }}
-{{- end }}
-        - mountPath: /vault/key
-          name: ml-datastore-keystore-secret
-          readOnly: true
-        - mountPath: /vault/mtlsSecrets
-          name: ml-datastore-mtls-secret
-          readOnly: true
         - mountPath: /etc/turbonomic
           name: turbo-volume
           readOnly: true
         - mountPath: /tmp
-          name: ml-datastore-tmpfs0
+          name: mediation-ibmstorage-flashsystem-tmpfs0
+        - mountPath: /etc/targets
+          name: ibmstorage-flashsystem-secrets
+          readOnly: true
 {{- if .Values.global }}
   {{- if .Values.global.registry }}
     {{- if .Values.global.imagePullSecret }}
@@ -121,24 +113,12 @@ spec:
         configMap:
           name: global-properties-{{ .Release.Name }}
           optional: true
-      - name: ml-datastore-truststore-secret
-        secret:
-          secretName: ml-datastore-truststore-secret
-          optional: true
-      - name: common-truststore-secret
-        secret:
-          secretName: common-truststore-secret
-          optional: true
-      - name: ml-datastore-keystore-secret
-        secret:
-          secretName: ml-datastore-keystore-secret
-          optional: true
-      - name: ml-datastore-mtls-secret
-        secret:
-          secretName: ml-datastore-mtls-secret
-          optional: true
-      - name: ml-datastore-tmpfs0
+      - name: mediation-ibmstorage-flashsystem-tmpfs0
         emptyDir: {}
+      - name: ibmstorage-flashsystem-secrets
+        secret:
+          secretName: "ibmstorage-flashsystem"
+          optional: true
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}
@@ -149,17 +129,17 @@ kind: Service
 metadata:
   name: {{ .Chart.Name }}
   labels:
-    zone: internal
+    zone: secure
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
-  - name: http-ml-datastore
+  - name: http-mediation-ibmstorage-flashsystem
     port: 8080
 {{- if .Values.global }}
   {{- if or .Values.debug .Values.global.debug }}
-  - name: tcp-ml-datastore-debug
+  - name: tcp-mediation-ibmstorage-flashsystem-debug
     port: 8000
   {{- end -}}
 {{- end }}

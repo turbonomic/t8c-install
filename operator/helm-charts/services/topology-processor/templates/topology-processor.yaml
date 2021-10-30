@@ -109,6 +109,23 @@ spec:
             drop:
             - ALL
         volumeMounts:
+{{ if .Values.global }}
+  {{ if .Values.global.disableSameTrustStore }}
+        - mountPath: /vault/trust
+          name: topology-processor-truststore-secret
+          readOnly: true
+  {{- else }}
+        - mountPath: /vault/trust
+          name: common-truststore-secret
+          readOnly: true
+  {{- end }}
+{{- end }}
+        - mountPath: /vault/key
+          name: topology-processor-keystore-secret
+          readOnly: true
+        - mountPath: /vault/mtlsSecrets
+          name: topology-processor-mtls-secret
+          readOnly: true
         - mountPath: /home/turbonomic/data
           name: topology-processor
 {{- if .Values.global }}
@@ -178,6 +195,22 @@ spec:
       - name: turbo-volume
         configMap:
           name: global-properties-{{ .Release.Name }}
+          optional: true
+      - name: topology-processor-truststore-secret
+        secret:
+          secretName: topology-processor-truststore-secret
+          optional: true
+      - name: common-truststore-secret
+        secret:
+          secretName: common-truststore-secret
+          optional: true
+      - name: topology-processor-keystore-secret
+        secret:
+          secretName: topology-processor-keystore-secret
+          optional: true
+      - name: topology-processor-mtls-secret
+        secret:
+          secretName: topology-processor-mtls-secret
           optional: true
       - name: topology-processor-tmpfs0
         emptyDir: {}

@@ -151,6 +151,23 @@ spec:
             - ALL
         volumeMounts:
 {{ if .Values.global }}
+  {{ if .Values.global.disableSameTrustStore }}
+        - mountPath: /vault/trust
+          name: api-truststore-secret
+          readOnly: true
+  {{- else }}
+        - mountPath: /vault/trust
+          name: common-truststore-secret
+          readOnly: true
+  {{- end }}
+{{- end }}
+        - mountPath: /vault/key
+          name: api-keystore-secret
+          readOnly: true
+        - mountPath: /vault/mtlsSecrets
+          name: api-mtls-secret
+          readOnly: true          
+{{ if .Values.global }}
   {{ if not .Values.global.enableExternalSecrets }}
     {{/* Kubernetes secrets for encryption keys are disabled, so use the PV legacy behavior instead */}}
         - mountPath: /home/turbonomic/data
@@ -236,6 +253,22 @@ spec:
         configMap:
           name: global-properties-{{ .Release.Name }}
           optional: true
+      - name: api-truststore-secret
+        secret:
+          secretName: api-truststore-secret
+          optional: true
+      - name: common-truststore-secret
+        secret:
+          secretName: common-truststore-secret
+          optional: true
+      - name: api-keystore-secret
+        secret:
+          secretName: api-keystore-secret
+          optional: true
+      - name: api-mtls-secret
+        secret:
+          secretName: api-mtls-secret
+          optional: true          
       - name: api-tmpfs0
         emptyDir: {}
   selector:

@@ -110,6 +110,23 @@ spec:
             - ALL
         volumeMounts:
 {{ if .Values.global }}
+  {{ if .Values.global.disableSameTrustStore }}
+        - mountPath: /vault/trust
+          name: auth-truststore-secret
+          readOnly: true
+  {{- else }}
+        - mountPath: /vault/trust
+          name: common-truststore-secret
+          readOnly: true
+  {{- end }}
+{{- end }}
+        - mountPath: /vault/key
+          name: auth-keystore-secret
+          readOnly: true
+        - mountPath: /vault/mtlsSecrets
+          name: auth-mtls-secret
+          readOnly: true
+{{ if .Values.global }}
   {{ if not .Values.global.enableExternalSecrets }}
     {{/* Kubernetes secrets are disabled for auth, so use the PV legacy behavior instead */}}
         - mountPath: /home/turbonomic/data
@@ -180,6 +197,22 @@ spec:
       - name: turbo-volume
         configMap:
           name: global-properties-{{ .Release.Name }}
+          optional: true
+      - name: auth-truststore-secret
+        secret:
+          secretName: auth-truststore-secret
+          optional: true
+      - name: common-truststore-secret
+        secret:
+          secretName: common-truststore-secret
+          optional: true
+      - name: auth-keystore-secret
+        secret:
+          secretName: auth-keystore-secret
+          optional: true
+      - name: auth-mtls-secret
+        secret:
+          secretName: auth-mtls-secret
           optional: true
 {{- if .Values.global }}
   {{- if .Values.global.enableExternalSecrets }}

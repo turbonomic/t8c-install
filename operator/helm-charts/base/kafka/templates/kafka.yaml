@@ -80,9 +80,15 @@ spec:
         env:
         - name: KAFKA_HEAP_OPTS
           value: {{ .Values.java.options | quote }}
-{{- if .Values.global.javaEnvironmentOptions }}
+{{- if .Values.global }}
+  {{- if .Values.global.javaEnvironmentOptions }}
         - name: KAFKA_OPTS
           value: {{ .Values.global.javaEnvironmentOptions | quote }}
+  {{- end }}
+  {{- if or .Values.logtostdout .Values.global.logtostdout }}
+        - name: LOG_TO_STDOUT
+          value: "true"
+  {{- end }}
 {{- end }}
 {{ toYaml .Values.env | indent 8 }}
         ports:
@@ -105,6 +111,23 @@ spec:
         volumeMounts:
         - mountPath: /home/kafka
           name: kafka-log
+{{ if .Values.global }}
+  {{ if .Values.global.disableSameTrustStore }}
+        - mountPath: /vault/trust
+          name: kafka-truststore-secret
+          readOnly: true
+  {{- else }}
+        - mountPath: /vault/trust
+          name: common-truststore-secret
+          readOnly: true
+  {{- end }}
+{{- end }}
+        - mountPath: /vault/key
+          name: kafka-keystore-secret
+          readOnly: true
+        - mountPath: /vault/mtlsSecrets
+          name: kafka-mtls-secret
+          readOnly: true          
         - mountPath: /tmp
           name: kafka-tmpfs0
 {{- if .Values.global }}
@@ -141,6 +164,22 @@ spec:
       - name: kafka-log
         persistentVolumeClaim:
           claimName: {{ .Chart.Name }}-log
+      - name: kafka-truststore-secret
+        secret:
+          secretName: kafka-truststore-secret
+          optional: true
+      - name: common-truststore-secret
+        secret:
+          secretName: common-truststore-secret
+          optional: true
+      - name: kafka-keystore-secret
+        secret:
+          secretName: kafka-keystore-secret
+          optional: true
+      - name: kafka-mtls-secret
+        secret:
+          secretName: kafka-mtls-secret
+          optional: true
       - name: kafka-tmpfs0
         emptyDir: {}
   selector:

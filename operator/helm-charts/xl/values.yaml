@@ -25,7 +25,6 @@ global:
 #              10.100.0.10 # eks DNS
 #              10.0.0.10 # aks DNS
 #              10.23.240.10 # gke DNS
-#  externalArangoDBName: xl-arangodb.us-east-1.elb.amazonaws.com
 #  externalConsul: xl-consul.ca-central-1.rds.amazonaws.com
 #  externalDBName: xl-hackaton.cmachd0izjog.ca-central-1.rds.amazonaws.com
 #  externalInfluxDBName: xl-influxdb.us-east-1.elb.amazonaws.com
@@ -122,36 +121,57 @@ prometheus:
 prometheus-mysql-exporter:
   enabled: false
 grafana:
-  # We expect the grafana admin password to be set in the CR file, like:
-  # grafana:
-  #   adminPassword: somePassword
+  enabled: false
+  ## We generate grafana.ini by merging selected structures from `grafana.ini.defaults` based on
+  ## deployment mode, with values specified in the CR file. Any grafana.ini parameter can be
+  ## overridden in the CR file, whether it's mentioned here or not.
   grafana.ini:
-    users:
-      # Disallow explicit user creation.
-      allow_sign_up: false
-      auto_assign_org_role: Editor
-      default_theme: light
-    server:
-      # This needs to be in sync with the UI, and the NGINX configuration.
-      root_url: "https://%(domain)s/reports"
-      serve_from_sub_path: true
-    auth.proxy:
-      enabled: true
-    database:
-      # SQLite by default, overridable to postgres.
-      type: sqlite3
-
-      # The following fields are configured for postgres, and pretty much ignored when the type
-      # is SQLite. We also expect the password to use for the grafana user to be set in the CR file.
-      # In order for the user to configure the postgres backend for Grafana, we need:
-      # grafana:
-      #   grafana.ini:
-      #     database:
-      #       type: postgres
-      #       password: somePassword
-      host: timescaledb
-      name: grafana
-      user: grafana_backend
+    database: {}
+  grafana.ini.defaults:
+    # common defaults for all deployments
+    _base:
+      analytics:
+        check_for_updates: true
+      auth.proxy:
+        enabled: true
+        headers: Name:X-WEBAUTH-NAME
+      database:
+        name: grafana
+        user: grafana_backend
+      grafana_net:
+        url: https://grafana.net
+      log:
+        mode: console
+      reporting:
+        rendering_timeout: 300s
+      server:
+        # This needs to be in sync with the UI, and the NGINX configuration.
+        root_url: "https://%(domain)s/reports"
+        serve_from_sub_path: true
+      users:
+        # Disallow explicit user creation.
+        allow_sign_up: false
+        auto_assign_org_role: Editor
+        default_theme: light
+    # defaults for embedded_reporting (called "_default" here because, for backward compat we will
+    # recognize a missing deploymentMode as meaning an embedded-reporting deployment.
+    _default:
+      database:
+        type: postgres
+        host: timescaledb
+        port: 5432
+      live:
+        allowed_origins: http://localhost:3000
+      plugin.grafana-image-renderer:
+        rendering_mode: reusable
+    # defaults for saas-reporting
+    SAAS:
+      database:
+        type: mysql
+        host: db
+        port: 3306
+      plugins:
+        allow_loading_unsigned_plugins: turbonomic-datacloud-grafana-datasource
 chronograf:
   enabled: false
 datacloud:
@@ -205,6 +225,8 @@ horizon:
 hyperflex:
   enabled: false
 hyperv:
+  enabled: false
+ibmstorage-flashsystem:
   enabled: false
 instana:
   enabled: false

@@ -10,8 +10,10 @@ image:
   pullPolicy: IfNotPresent
 
 env:
-  - name: DB_MEM_PCT_FOR_BUFFER_POOL
-    value: "80"
+  - name: component_type
+    value: db
+  - name: instance_id
+    value: db-1
 
 livenessFailureThreshold: 1440
 
@@ -20,6 +22,6 @@ persistence:
 
 resources:
   limits:
-    memory: 4Gi
+    memory: 12Gi
   requests:
     memory: 1Gi

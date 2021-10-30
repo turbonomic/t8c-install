@@ -140,6 +140,8 @@ containers:
       - name: config
         mountPath: "/etc/grafana/grafana.ini"
         subPath: grafana.ini
+      - name: turbo-volume
+        mountPath: "/etc/turbonomic"
       {{- if .Values.ldap.enabled }}
       - name: ldap
         mountPath: "/etc/grafana/ldap.toml"
@@ -238,13 +240,11 @@ the configmap (which maps to the /etc/grafana/grafana.ini file) doesn't work rel
 with special characters.
 */}}
       {{- if not .Values.env.GF_DATABASE_PASSWORD }}
-      {{- if eq (index .Values "grafana.ini" "database" "type") "postgres"}}
       - name: GF_DATABASE_PASSWORD
         valueFrom:
           secretKeyRef:
             name: {{ .Values.admin.existingSecret | default (include "grafana.fullname" .) }}
             key: {{ .Values.admin.dbPasswordKey | default "db-password" }}
-      {{- end }}
       {{- end }}
       {{- if not .Values.env.GF_SECURITY_ADMIN_USER }}
       - name: GF_SECURITY_ADMIN_USER
@@ -318,6 +318,10 @@ volumes:
   - name: config
     configMap:
       name: {{ template "grafana.fullname" . }}
+  - name: turbo-volume
+    configMap:
+      name: global-properties-{{ .Release.Name }}
+      optional: true
 {{- range .Values.extraConfigmapMounts }}
   - name: {{ .name }}
     configMap:

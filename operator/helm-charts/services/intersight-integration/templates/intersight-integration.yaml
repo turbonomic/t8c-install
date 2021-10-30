@@ -68,6 +68,23 @@ spec:
             drop:
             - ALL
         volumeMounts:
+{{ if .Values.global }}
+  {{ if .Values.global.disableSameTrustStore }}
+        - mountPath: /vault/trust
+          name: intersight-integration-truststore-secret
+          readOnly: true
+  {{- else }}
+        - mountPath: /vault/trust
+          name: common-truststore-secret
+          readOnly: true
+  {{- end }}
+{{- end }}
+        - mountPath: /vault/key
+          name: intersight-integration-keystore-secret
+          readOnly: true
+        - mountPath: /vault/mtlsSecrets
+          name: intersight-integration-mtls-secret
+          readOnly: true
         - mountPath: /etc/turbonomic
           name: turbo-volume
           readOnly: true
@@ -103,6 +120,22 @@ spec:
       - name: turbo-volume
         configMap:
           name: global-properties-{{ .Release.Name }}
+          optional: true
+      - name: intersight-integration-truststore-secret
+        secret:
+          secretName: intersight-integration-truststore-secret
+          optional: true
+      - name: common-truststore-secret
+        secret:
+          secretName: common-truststore-secret
+          optional: true
+      - name: intersight-integration-keystore-secret
+        secret:
+          secretName: intersight-integration-keystore-secret
+          optional: true
+      - name: intersight-integration-mtls-secret
+        secret:
+          secretName: intersight-integration-mtls-secret
           optional: true
       - name: intersight-integration-tmpfs0
         emptyDir: {}

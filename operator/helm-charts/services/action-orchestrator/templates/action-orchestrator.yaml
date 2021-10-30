@@ -72,6 +72,23 @@ spec:
         - mountPath: /etc/turbonomic
           name: turbo-volume
           readOnly: true
+{{ if .Values.global }}
+  {{ if .Values.global.disableSameTrustStore }}
+        - mountPath: /vault/trust
+          name: action-orchestrator-truststore-secret
+          readOnly: true
+  {{- else }}
+        - mountPath: /vault/trust
+          name: common-truststore-secret
+          readOnly: true
+  {{- end }}
+{{- end }}
+        - mountPath: /vault/key
+          name: action-orchestrator-keystore-secret
+          readOnly: true
+        - mountPath: /vault/mtlsSecrets
+          name: action-orchestrator-mtls-secret
+          readOnly: true
         - mountPath: /tmp
           name: action-orchestrator-tmpfs0
 {{- if .Values.global }}
@@ -109,6 +126,22 @@ spec:
       - name: turbo-volume
         configMap:
           name: global-properties-{{ .Release.Name }}
+          optional: true
+      - name: action-orchestrator-truststore-secret
+        secret:
+          secretName: action-orchestrator-truststore-secret
+          optional: true
+      - name: common-truststore-secret
+        secret:
+          secretName: common-truststore-secret
+          optional: true
+      - name: action-orchestrator-keystore-secret
+        secret:
+          secretName: action-orchestrator-keystore-secret
+          optional: true
+      - name: action-orchestrator-mtls-secret
+        secret:
+          secretName: action-orchestrator-mtls-secret
           optional: true
       - name: action-orchestrator-tmpfs0
         emptyDir: {}

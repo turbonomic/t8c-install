@@ -13,12 +13,18 @@ data:
   plugins: {{ join "," .Values.plugins }}
 {{- end }}
   grafana.ini: |
+  {{- $deploymentMode := index .Values "global" "deploymentMode" | default "_default" }}
+    # grafana config generated for deployment mode '{{- $deploymentMode -}}'
+  {{ $iniValues := mergeOverwrite (index .Values "grafana.ini")
+                                  (index .Values "grafana.ini.defaults" "_base")
+                                  (index .Values "grafana.ini.defaults" $deploymentMode) -}}
 {{- range $key, $value := index .Values "grafana.ini" }}
-    [{{ $key }}]
-    {{- range $elem, $elemVal := $value }}
-    {{ $elem }} = {{ $elemVal }}
-    {{- end }}
+    [{{- $key -}}]
+{{- range $elem, $elemVal := $value }}
+    {{ $elem }} = {{ or (and (not (kindIs "invalid" $elemVal)) (toString $elemVal))
+        (index $iniValues $key $elem) }}
 {{- end }}
+{{ end -}}
 
 {{- if .Values.datasources }}
 {{ $root := . }}

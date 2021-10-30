@@ -1,9 +1,5 @@
 dependencies:
 # Base dependencies
-  - name: arangodb
-    repository: file://../base/arangodb
-    version: 0.1.0
-    condition: control.enabled,platform.enabled
   - name: consul
     repository: file://../base/consul
     version: 0.1.0
@@ -273,6 +269,10 @@ dependencies:
     repository: file://../probes/mediation-hyperv
     version: 0.1.0
     condition: hyperv.enabled
+  - name: mediation-ibmstorage-flashsystem
+    repository: file://../probes/mediation-ibmstorage-flashsystem
+    version: 0.1.0
+    condition: ibmstorage-flashsystem.enabled
   - name: mediation-instana
     repository: file://../probes/mediation-instana
     version: 0.1.0

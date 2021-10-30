@@ -144,7 +144,7 @@ spec:
     spec:
       containers:
       - name: istio-proxy
-        image: docker.io/istio/proxyv2:1.7.2
+        image: docker.io/istio/proxyv2:1.11.4
         imagePullPolicy: IfNotPresent
         args:
         - proxy

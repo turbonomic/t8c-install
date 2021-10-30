@@ -285,27 +285,27 @@ plugins: []
 ## Configure grafana datasources
 ## ref: http://docs.grafana.org/administration/provisioning/#datasources
 ##
-datasources:
-  datasources.yaml:
-    apiVersion: 1
-    datasources:
-    - name: Prometheus
-      type: prometheus
-      url: http://prometheus-server:9090
-      access: proxy
-      isDefault: true
-    - name: InfluxDB
-      type: influxdb
-      url: http://influxdb:8086
-      access: proxy
-      database: metron
-      isDefault: false
-    - name: Loki
-      type: loki
-      url: http://loki:3100
-      access: proxy
-      database: metron
-      isDefault: false
+#datasources:
+#  datasources.yaml:
+#    apiVersion: 1
+#    datasources:
+#    - name: Prometheus
+#      type: prometheus
+#      url: http://prometheus-server:9090
+#      access: proxy
+#      isDefault: true
+#    - name: InfluxDB
+#      type: influxdb
+#      url: http://influxdb:8086
+#      access: proxy
+#      database: metron
+#      isDefault: false
+#    - name: Loki
+#      type: loki
+#      url: http://loki:3100
+#      access: proxy
+#      database: metron
+#      isDefault: false
 
 ## Configure notifiers
 ## ref: http://docs.grafana.org/administration/provisioning/#alert-notification-channels
@@ -330,18 +330,18 @@ notifiers: {}
 ##
 ## `path` must be /var/lib/grafana/dashboards/<provider_name>
 ##
-dashboardProviders:
-  dashboardproviders.yaml:
-    apiVersion: 1
-    providers:
-    - name: 'default'
-      orgId: 1
-      folder: 'System'
-      type: file
-      disableDeletion: false
-      editable: true
-      options:
-        path: /var/lib/grafana/dashboards/default
+#dashboardProviders:
+#  dashboardproviders.yaml:
+#    apiVersion: 1
+#    providers:
+#    - name: 'default'
+#      orgId: 1
+#      folder: 'System'
+#      type: file
+#      disableDeletion: false
+#      editable: true
+#      options:
+#        path: /var/lib/grafana/dashboards/default
 
 ## Configure grafana dashboard to import
 ## NOTE: To use dashboards you must also enable/configure dashboardProviders
@@ -349,46 +349,46 @@ dashboardProviders:
 ##
 ## dashboards per provider, use provider name as key.
 ##
-dashboards:
-  default:
-    Action-Orchestrator-Dashboard:
-      file: dashboards/Action Orchestrator Dashboard.json
-    Component-Memory-Dashboard:
-      file: dashboards/Component Memory.json
-    History-Dashboard:
-      file: dashboards/History Dashboard.json
-    Kubernetes-Dashboard:
-      file: dashboards/Kubernetes Cluster.json
-    gRPC-Metrics:
-      file: dashboards/gRPC Metrics.json
-    Market-Dashboard:
-      file: dashboards/Market Dashboard.json
-    Messaging-Metrics:
-      file: dashboards/Messaging Metrics.json
-    Repository-Dashboard:
-      file: dashboards/Repository Dashboard.json
-    Statistical-Summary:
-      file: dashboards/Statistical Summary.json
-    System-Latencies:
-      file: dashboards/System Latencies.json
-    Topology-Processor-Dashboard:
-      file: dashboards/Topology Processor Dashboard.json
-    Top-10-Container-Dashboard:
-      file: dashboards/top-10-container.json
-    Top-10-ContainerPod-Dashboard:
-      file: dashboards/top-10-containerpod.json
-    Top-10-Namespace:
-      file: dashboards/top-10-namespace.json
-    Kubernetes-Node-Resource-Consumption:
-      file: dashboards/kubernetes-node-resource-consumption_rev3.json
-    Kubernetes-Node-Resource-Consumption-Individual:
-      file: dashboards/kubernetes-node-resource-consumption_individual.json
-    Kubernetes-Pods-Individual:
-      file: dashboards/kubernetes-pods_individual.json
-    Namespace-Monitoring-Individual:
-      file: dashboards/namespace-monitoring_individual.json
-    Kubernetes-Dashboard-Lemur:
-      file: dashboards/Kubernetes Cluster Lemur.json
+#dashboards:
+#  default:
+#    Action-Orchestrator-Dashboard:
+#      file: dashboards/Action Orchestrator Dashboard.json
+#    Component-Memory-Dashboard:
+#      file: dashboards/Component Memory.json
+#    History-Dashboard:
+#      file: dashboards/History Dashboard.json
+#    Kubernetes-Dashboard:
+#      file: dashboards/Kubernetes Cluster.json
+#    gRPC-Metrics:
+#      file: dashboards/gRPC Metrics.json
+#    Market-Dashboard:
+#      file: dashboards/Market Dashboard.json
+#    Messaging-Metrics:
+#      file: dashboards/Messaging Metrics.json
+#    Repository-Dashboard:
+#      file: dashboards/Repository Dashboard.json
+#    Statistical-Summary:
+#      file: dashboards/Statistical Summary.json
+#    System-Latencies:
+#      file: dashboards/System Latencies.json
+#    Topology-Processor-Dashboard:
+#      file: dashboards/Topology Processor Dashboard.json
+#    Top-10-Container-Dashboard:
+#      file: dashboards/top-10-container.json
+#    Top-10-ContainerPod-Dashboard:
+#      file: dashboards/top-10-containerpod.json
+#    Top-10-Namespace:
+#      file: dashboards/top-10-namespace.json
+#    Kubernetes-Node-Resource-Consumption:
+#      file: dashboards/kubernetes-node-resource-consumption_rev3.json
+#    Kubernetes-Node-Resource-Consumption-Individual:
+#      file: dashboards/kubernetes-node-resource-consumption_individual.json
+#    Kubernetes-Pods-Individual:
+#      file: dashboards/kubernetes-pods_individual.json
+#    Namespace-Monitoring-Individual:
+#      file: dashboards/namespace-monitoring_individual.json
+#    Kubernetes-Dashboard-Lemur:
+#      file: dashboards/Kubernetes Cluster Lemur.json
 #    prometheus-stats:
 #      gnetId: 2
 #      revision: 2
@@ -406,23 +406,6 @@ dashboards:
 ##
 dashboardsConfigMaps: {}
 #  default: ""
-
-## Grafana's primary configuration
-## NOTE: values in map will be converted to ini format
-## ref: http://docs.grafana.org/installation/configuration/
-##
-grafana.ini:
-  paths:
-    data: /var/lib/grafana/data
-    logs: /var/log/grafana
-    plugins: /var/lib/grafana/plugins
-    provisioning: /etc/grafana/provisioning
-  analytics:
-    check_for_updates: true
-  log:
-    mode: console
-  grafana_net:
-    url: https://grafana.net
 
 ## LDAP Authentication can be enabled with the following values on grafana.ini
 ## NOTE: Grafana will fail to start if the value for ldap.toml is invalid

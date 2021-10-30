@@ -69,6 +69,13 @@ data:
     {{/* Kubernetes secrets are enabled for encryption keys. Pass that information along to the java processes. */}}
         enableExternalSecrets: true
   {{- end }}
+  {{- if .Values.global.deploymentMode }}
+     {{/* this was formerly in properties.global in CR file, but now it's needed internally in
+          grafana chart, so it's been moved to just global. But it's still needed as a runtime
+          proprerty in grafana pod, and for backward compatiblity.
+      */}}
+        deploymentMode: {{ .Values.global.deploymentMode }}
+  {{- end }}
 {{- end }}
       action-orchestrator:
         identityGeneratorPrefix: 9
@@ -186,7 +193,7 @@ data:
         dbPort: {{ .Values.global.externalTimescaleDBPort | default 5432 }}
         enableReporting: {{ .Values.reporting.enabled }}
         grafanaAdminPassword: {{ .Values.grafana.adminPassword }}
-{{- if eq (index .Values "grafana" "grafana.ini" "database" "type") "postgres"}}
+{{- if index .Values "grafana" "grafana.ini" "database" "type" }}
         grafanaDb:
 {{ toYaml (index .Values "grafana" "grafana.ini" "database") | indent 12 }}
         dbs: 

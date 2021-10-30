@@ -35,8 +35,6 @@ image:
   pullSecrets: []
 
 credentials:
-  type: apikey
-  
   # type: "service_account" # or "apikey"
   # secret_name: ""
   # secret_key: ""

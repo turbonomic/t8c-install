@@ -75,6 +75,23 @@ spec:
             drop:
             - ALL
         volumeMounts:
+{{ if .Values.global }}
+  {{ if .Values.global.disableSameTrustStore }}
+        - mountPath: /vault/trust
+          name: cost-truststore-secret
+          readOnly: true
+  {{- else }}
+        - mountPath: /vault/trust
+          name: common-truststore-secret
+          readOnly: true
+  {{- end }}
+{{- end }}
+        - mountPath: /vault/key
+          name: cost-keystore-secret
+          readOnly: true
+        - mountPath: /vault/mtlsSecrets
+          name: cost-mtls-secret
+          readOnly: true
         - mountPath: /etc/turbonomic
           name: turbo-volume
           readOnly: true
@@ -115,6 +132,22 @@ spec:
       - name: turbo-volume
         configMap:
           name: global-properties-{{ .Release.Name }}
+          optional: true
+      - name: cost-truststore-secret
+        secret:
+          secretName: cost-truststore-secret
+          optional: true
+      - name: common-truststore-secret
+        secret:
+          secretName: common-truststore-secret
+          optional: true
+      - name: cost-keystore-secret
+        secret:
+          secretName: cost-keystore-secret
+          optional: true
+      - name: cost-mtls-secret
+        secret:
+          secretName: cost-mtls-secret
           optional: true
       - name: cost-tmpfs0
         emptyDir: {}

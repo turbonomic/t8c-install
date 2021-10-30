@@ -68,6 +68,23 @@ spec:
             drop:
             - ALL
         volumeMounts:
+{{ if .Values.global }}
+  {{ if .Values.global.disableSameTrustStore }}
+        - mountPath: /vault/trust
+          name: ml-training-truststore-secret
+          readOnly: true
+  {{- else }}
+        - mountPath: /vault/trust
+          name: common-truststore-secret
+          readOnly: true
+  {{- end }}
+{{- end }}
+        - mountPath: /vault/key
+          name: ml-training-keystore-secret
+          readOnly: true
+        - mountPath: /vault/mtlsSecrets
+          name: ml-training-mtls-secret
+          readOnly: true
         - mountPath: /etc/turbonomic
           name: turbo-volume
           readOnly: true
@@ -103,6 +120,22 @@ spec:
       - name: turbo-volume
         configMap:
           name: global-properties-{{ .Release.Name }}
+          optional: true
+      - name: ml-training-truststore-secret
+        secret:
+          secretName: ml-training-truststore-secret
+          optional: true
+      - name: common-truststore-secret
+        secret:
+          secretName: common-truststore-secret
+          optional: true
+      - name: ml-training-keystore-secret
+        secret:
+          secretName: ml-training-keystore-secret
+          optional: true
+      - name: ml-training-mtls-secret
+        secret:
+          secretName: ml-training-mtls-secret
           optional: true
       - name: ml-training-tmpfs0
         emptyDir: {}
