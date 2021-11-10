@@ -2,15 +2,19 @@
 
 The Turbonomic Platform Operator (t8c-operator) makes it easy for Turbonomic
 Administrators to deploy and operate Turbonomic Platform deployments in a Kubernetes
-infrastructure. Packaged as a container, it uses the [operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+infrastructure. The t8c-operator leverages the [operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
 to manage Turbonomic-specific [custom resource](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/),
 following best practices to manage all the underlying Kubernetes objects for you. 
 
 The Turbonomic Platform is a namespace bound application,
 it is assumed to be deployed in its own namespace.
 One can create multiple namespaces for separate instances of the Turbonomic Platform even within the same kubernetes cluster.
-This guide is intended to help new users get up and running with the
-Turbonomic Platform Operator. It is divided into the following sections:
+The following guide is intended to help new users get up and running with the
+Turbonomic Platform Operator in a default standard configuration, and does not explain options that may be required for your environment or use case. 
+
+NOTE For the Documentation on how to deploy the Turbonomic Platform on kubernetes, use this project's wiki [here](https://github.com/turbonomic/t8c-install/wiki).
+
+This readme is divided into the following sections:
 
 * [Installing the Turbonomic Platform Operator](#installing-the-turbonomic-platform-operator)
 * [Prerequisites for Deploying on Openshift](#prerequisites-for-deploying-on-openshift)
@@ -28,7 +32,7 @@ kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/maste
 ````
 
 ## Prerequisites for Deploying on Openshift
-
+Please refer to [Prerequisites](https://github.com/turbonomic/t8c-install/wiki/2.-Prerequisites#pre-requisites) and [OCP Security Context](https://github.com/turbonomic/t8c-install/wiki/4.-Turbonomic-Multinode-Deployment-Steps#openshift-security-context)
 If you are deploying on Openshift, you need to use the group id from the uid-range assigned to the project:
 ````
 spec:
@@ -48,7 +52,9 @@ Create or modify the Turbonomic custom resource, to deploy an instance of Turbon
 ````
 kubectl apply -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml -n turbonomic
 ````
-Verify the health of the deployed application using the built-in readiness function
+For information on common parameters to configure, please refer to [Turbonomic Deployment Documentation - Configure the CR](https://github.com/turbonomic/t8c-install/wiki/4.-Turbonomic-Multinode-Deployment-Steps#configure-the-turbonomic-instance-the-custom-resource)
+
+Verify the health of the deployed components using the built-in readiness function
 ````
 $ kubectl get pods -n turbonomic
 NAME                                     READY   STATUS    RESTARTS   AGE
@@ -78,6 +84,7 @@ zookeeper-67d68bb4d7-hdrwr               1/1     Running   0          17d
 
 ## Using a custom StorageClass instead of the default one
 
+For more information, please refer to [Storage Class Requirements](https://github.com/turbonomic/t8c-install/wiki/Storage-Class-Requirements)
 If you are deploying into a cluster, where there is no default StorageClass defined, you can
 specify the StorageClassName to use for persistent volumes:
 ````
@@ -93,6 +100,7 @@ kubectl patch storageclass ocs-storagecluster-ceph-rbd -p '{"metadata": {"annota
 
 ## Leveraging a custom ingress instead of the default nginx shipped with turbonomic
 
+For details on ingress options and annotations, refer to [NGINX Service Configuration Options](https://github.com/turbonomic/t8c-install/wiki/4.-Turbonomic-Multinode-Deployment-Steps#-nginx-service-configuration-options) or [Platform Provided Ingress](https://github.com/turbonomic/t8c-install/wiki/Platform-Provided-Ingress-&-OpenShift-Routes)
 If the cluster has a preferred ingress setup, the default ingress can be disabled,
 and use Openshift application routes to the ui/api can be created by the operator:
 ````
@@ -112,9 +120,12 @@ spec:
     enabled: true
 ````
 
+## Prerequisites
+Please refer to [Prerequisites](https://github.com/turbonomic/t8c-install/wiki/2.-Prerequisites#pre-requisites) and [Sizing Your Deployment](https://github.com/turbonomic/t8c-install/wiki/3.-Sizing-your-Deployment)
+
 ### Supported Kubernetes Versions
 
-    OpenShift release 3.4 or higher, Kubernetes version 1.8 or higher including any k8s upstream compliant distribution
+    OpenShift release 3.11 or higher, Kubernetes version 1.11 or higher including any k8s upstream compliant distribution
 
 ### Minimum Specifications for a Kubernetes cluster
 
