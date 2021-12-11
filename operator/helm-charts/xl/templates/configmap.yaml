@@ -37,6 +37,9 @@ data:
           mysqlDefault:
             host: db
             port: {{ .Values.global.externalDBPort | default 3306 }}
+          mariadbDefault:
+            host: db
+            port: {{ .Values.global.externalDBPort | default 3306 }}
         groupHost: group
         historyHost: history
         marketHost: market

@@ -16,24 +16,18 @@ NOTE For the Documentation on how to deploy the Turbonomic Platform on kubernete
 
 This readme is divided into the following sections:
 
-* [Installing the Turbonomic Platform Operator](#installing-the-turbonomic-platform-operator)
 * [Prerequisites for Deploying on Openshift](#prerequisites-for-deploying-on-openshift)
+* [Installing the Turbonomic Platform Operator](#installing-the-turbonomic-platform-operator)
 * [Create a Turbonomic Platform Deployment](#create-turbonomic-deployments)
 * [Delete the Turbonomic Deployment and the Turbonomic Platform Operator](#delete-turbonomic-deployments)
-
-## Installing the Turbonomic Platform Operator
-````
-kubectl create ns turbonomic
-kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/service_account.yaml -n turbonomic
-kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/role.yaml -n turbonomic
-kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/role_binding.yaml -n turbonomic
-kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/crds/charts_v1alpha1_xl_crd.yaml
-kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/operator.yaml -n turbonomic
-````
 
 ## Prerequisites for Deploying on Openshift
 Please refer to [Prerequisites](https://github.com/turbonomic/t8c-install/wiki/2.-Prerequisites#pre-requisites) and [OCP Security Context](https://github.com/turbonomic/t8c-install/wiki/4.-Turbonomic-Multinode-Deployment-Steps#openshift-security-context)
 If you are deploying on Openshift, you need to use the group id from the uid-range assigned to the project:
+````bash
+oc get ns turbonomic -o yaml|grep uid-range
+    openshift.io/sa.scc.uid-range: 1000630000/10000
+````
 ````
 spec:
   global:
@@ -42,8 +36,70 @@ spec:
 ````
 
 Or you can change the security context of the project to the 'anyuid' SCC
-````
+````bash
 oc adm policy add-scc-to-group anyuid system:serviceaccounts:turbonomic
+````
+
+## Using a custom StorageClass instead of the default one
+
+For more information, please refer to [Storage Class Requirements](https://github.com/turbonomic/t8c-install/wiki/Storage-Class-Requirements)
+If you are deploying into a cluster, where there is no default StorageClass defined, you can
+specify the StorageClassName to use for persistent volumes:
+````
+spec:
+  global:
+    storageClassName: ocs-storagecluster-ceph-rbd
+````
+Alternatively you can designate a default StorageClass:
+
+````
+kubectl patch storageclass ocs-storagecluster-ceph-rbd -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+````
+
+## Installing the Turbonomic Platform Operator with Operator Lifecycle Manager (OLM)
+```bash
+export NS=turbonomic
+oc new-project ${NS}
+oc project ${NS}
+
+echo "Installing Turbonomic Platform Operator"
+cat << EOF | oc -n ${NS} apply -f -
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: Xl.v1.charts.helm.k8s.io
+  name: turbonomic-mkk5d
+  namespace: ${NS}
+spec:
+  targetNamespaces:
+  - ${NS}
+EOF
+
+cat << EOF | oc -n ${NS} apply -f -
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    operators.coreos.com/t8c-certified.turbonomic: ""
+  name: t8c-certified
+  namespace: ${NS}
+spec:
+  name: t8c-certified
+  source: certified-operators
+  sourceNamespace: openshift-marketplace
+EOF
+until oc get crd xls.charts.helm.k8s.io >> /dev/null 2>&1; do sleep 5; done
+```
+
+## Installing the Turbonomic Platform Operator without Operator Lifecycle Manager (OLM)
+````
+kubectl create ns turbonomic
+kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/service_account.yaml -n turbonomic
+kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/role.yaml -n turbonomic
+kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/role_binding.yaml -n turbonomic
+kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/crds/charts_v1alpha1_xl_crd.yaml
+kubectl create -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/operator.yaml -n turbonomic
 ````
 
 ## Creating Turbonomic Platform Deployment
@@ -80,22 +136,6 @@ repository-795777d875-zbj2n              1/1     Running   0          17d
 rsyslog-76f779b4-z7czj                   1/1     Running   0          17d
 topology-processor-b6bb6bc6d-w4c48       1/1     Running   0          17d
 zookeeper-67d68bb4d7-hdrwr               1/1     Running   0          17d
-````
-
-## Using a custom StorageClass instead of the default one
-
-For more information, please refer to [Storage Class Requirements](https://github.com/turbonomic/t8c-install/wiki/Storage-Class-Requirements)
-If you are deploying into a cluster, where there is no default StorageClass defined, you can
-specify the StorageClassName to use for persistent volumes:
-````
-spec:
-  global:
-    storageClassName: ocs-storagecluster-ceph-rbd
-````
-Alternatively you can designate a default StorageClass:
-
-````
-kubectl patch storageclass ocs-storagecluster-ceph-rbd -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ````
 
 ## Leveraging a custom ingress instead of the default nginx shipped with turbonomic
@@ -159,7 +199,16 @@ Delete the Turbonomic custom resource, to destroy an instance of Turbonomic with
 kubectl delete -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml -n turbonomic
 ````
 
-You can stop and remove the operator by running
+You can stop and remove the operator by running with OLM
+```
+export NS=turbonomic
+# Remove the turbonomic operator subscription
+oc delete Subscription t8c-certified -n ${NS}
+oc delete ClusterServiceVersion t8c-operator.v42.4.0 -n ${NS}
+oc delete ns ${NS}
+```
+
+You can stop and remove the operator by running without OLM
 ````
 kubectl delete -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/operator.yaml -n turbonomic
 kubectl delete -f https://raw.githubusercontent.com/turbonomic/t8c-install/master/operator/deploy/role_binding.yaml -n turbonomic

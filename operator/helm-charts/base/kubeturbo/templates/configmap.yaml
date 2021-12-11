@@ -24,6 +24,11 @@ data:
           "opsManagerPassword": "{{ .Values.restAPIConfig.opsManagerPassword }}"
         }
       },
+      {{- if .Values.featureGates }}
+      "featureGates": {
+        "disabledFeatures": [{{ .Values.featureGates.disabledFeatures }}]
+      }
+      {{- end }}
       "HANodeConfig": {
         "nodeRoles": [{{ .Values.HANodeConfig.nodeRoles }}]
       {{- if .Values.targetConfig }}
