@@ -1,6 +1,6 @@
 #!/bin/bash
-#Upgrade pre-check script - September 29, 2021
-#Author: CS
+#Upgrade pre-check script - December 17, 2021
+#Author: CS/JS
 echo " "
 RED=`tput setaf 1`
 WHITE=`tput setaf 7`
@@ -16,7 +16,7 @@ ECC=0 # Endpoints connectivity checks details
 trap 'tput sgr0' EXIT
 
 usage () {
-   echo "v2.06"
+   echo "v2.08"
    echo ""
    echo "Usage:"
    echo ""
@@ -39,7 +39,7 @@ check_space(){
         df -h | egrep -v "overlay|shm"
         echo " "
     fi
-    if [[ $(printf %s "${VARSPACE}" | grep "/var$" | awk {'print $4'}) > 15728640 ]]; then
+    if [[ $(printf %s "${VARSPACE}" | grep "/var$" | awk {'print $4'}) -ge 15728640 ]]; then
         if [[ ${VERBOSE} = 1 ]]; then
             echo "${GREEN}There's enough disk space in /var to proceed with the upgrade."
         fi
@@ -53,7 +53,7 @@ check_space(){
             sudo docker system df
             echo "${WHITE}To reclaim space from un-used docker images above you need to confirm the previous version of Turbonomic images installed:"
             echo "Run the command ${YELLOW}'sudo docker images | grep turbonomic/auth'${WHITE} to find the previous versions."
-            echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 8.1.0 | awk '{print \$3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'8.1.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space."
+            echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 8.2.0 | awk '{print \$3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'8.1.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space."
             echo "${WHITE}***************************"
         fi
         echo "${RED}Disk space checks FAILED"
@@ -65,7 +65,7 @@ check_space(){
 check_internet(){
     echo "${WHITE}****************************"
     echo "${WHITE}Checking endpoints connectivity for ONLINE upgrade ONLY..."
-    URL_LIST=( https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.3.2/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
+    URL_LIST=( https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.4.1/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
     NOT_REACHABLE_LIST=()
     read -p "${GREEN}Are you using a proxy to connect to the internet on this Turbonomic instance (y/n)? " CONT
     if [[ "${CONT}" =~ ^([yY][eE][sS]|[yY])$ ]]
@@ -139,7 +139,7 @@ check_database(){
                     if [[ ${VERBOSE} = 1 ]]; then
                         echo "${RED}The version of MariaDB is below version 10.5.12 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide."
                     fi
-                    echo "${RED}MariaDB checks FAILED"
+                    echo "${RED}MariaDB version check FAILED"
                 fi
                 ;;
         unknown)
@@ -152,7 +152,7 @@ check_database(){
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${RED}MariaDB service is not running....please resolve before upgrading."
                 fi
-                echo "${RED}MariaDB checks FAILED"
+                echo "${RED}MariaDB service check FAILED"
                 ;;
     esac
     echo "${WHITE}****************************"
@@ -194,7 +194,7 @@ check_kubernetes_certs(){
             CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
             NOW_EPOCH=$(date +%s)
             # compare with today in epoch
-            if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+            if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
                 EXPIRED_CERTS+=( ${CERT} )
             fi
         done
@@ -210,7 +210,7 @@ check_kubernetes_certs(){
             CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
             NOW_EPOCH=$(date +%s)
             # compare with today in epoch
-            if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+            if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
                 EXPIRED_CERTS+=( ${CERT} )
             fi
         done
@@ -230,7 +230,7 @@ check_kubernetes_certs(){
                 CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
                 NOW_EPOCH=$(date +%s)
                 # compare with today in epoch
-                if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+                if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
                     EXPIRED_CERTS+=( ${CERT} )
                 fi
             fi
@@ -484,4 +484,3 @@ else
 fi
 echo " "
 echo "End of Upgrade Pre-Check"
-

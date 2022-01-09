@@ -1,5 +1,5 @@
 {{- if .Values.istioingress.enabled }}
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
   name: t8c-gateway
@@ -31,7 +31,7 @@ spec:
       serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
       privateKey: /etc/istio/ingressgateway-certs/tls.key
 ---
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: ui
@@ -127,7 +127,6 @@ metadata:
       app.kubernetes.io/managed-by: {{ .Release.Service }}
       istio: t8c-ingressgateway-{{ .Release.Name }}
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}
@@ -144,8 +143,7 @@ spec:
     spec:
       containers:
       - name: istio-proxy
-        image: docker.io/istio/proxyv2:1.11.4
-        imagePullPolicy: IfNotPresent
+        image: docker.io/istio/proxyv2:1.12.1
         args:
         - proxy
         - router
@@ -156,10 +154,9 @@ spec:
         - --log_output_level=default:info
         - --serviceCluster
         - t8c-istio-ingressgateway
-        - --trust-domain=cluster.local
         env:
         - name: JWT_POLICY
-          value: first-party-jwt
+          value: third-party-jwt
         - name: PILOT_CERT_PROVIDER
           value: istiod
         - name: CA_ADDR
@@ -192,34 +189,25 @@ spec:
         - name: SERVICE_ACCOUNT
           valueFrom:
             fieldRef:
-              apiVersion: v1
               fieldPath: spec.serviceAccountName
-        - name: CANONICAL_SERVICE
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.labels['service.istio.io/canonical-name']
-        - name: CANONICAL_REVISION
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.labels['service.istio.io/canonical-revision']
         - name: ISTIO_META_WORKLOAD_NAME
           value: t8c-istio-ingressgateway
         - name: ISTIO_META_OWNER
           value: kubernetes://api/apps/v1/namespaces/{{ .Release.Namespace }}/deployments/t8c-istio-ingressgateway
         - name: ISTIO_META_MESH_ID
           value: cluster.local
+        - name: TRUST_DOMAIN
+          value: cluster.local
+        - name: ISTIO_META_UNPRIVILEGED_POD
+          value: "true"
         - name: ISTIO_META_ROUTER_MODE
-          value: sni-dnat
+          value: standard
         - name: ISTIO_META_CLUSTER_ID
           value: Kubernetes
         ports:
         - containerPort: 15021
         - containerPort: 8080
         - containerPort: 8443
-        - containerPort: 31400
-        - containerPort: 15443
         - containerPort: 15090
           name: http-envoy-prom
         readinessProbe:
@@ -235,10 +223,12 @@ spec:
             cpu: 10m
             memory: 40Mi
         securityContext:
-          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
           capabilities:
             drop:
               - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
         volumeMounts:
         - mountPath: /etc/istio/proxy
           name: istio-envoy
@@ -246,8 +236,11 @@ spec:
           name: config-volume
         - mountPath: /var/run/secrets/istio
           name: istiod-ca-cert
-        - mountPath: /var/run/ingress_gateway
-          name: gatewaysdsudspath
+        - mountPath: /var/run/secrets/tokens
+          name: istio-token
+          readOnly: true
+        - mountPath: /var/lib/istio/data
+          name: istio-data
         - mountPath: /etc/istio/pod
           name: podinfo
         - mountPath: /etc/istio/ingressgateway-certs
@@ -256,47 +249,46 @@ spec:
         - mountPath: /etc/istio/ingressgateway-ca-certs
           name: ingressgateway-ca-certs
           readOnly: true
-      restartPolicy: Always
-      serviceAccount: t8c-operator
       securityContext:
         fsGroup: 1337
         runAsGroup: 1337
         runAsNonRoot: true
         runAsUser: 1337
+      serviceAccountName: t8c-operator
       volumes:
       - configMap:
-          defaultMode: 420
           name: istio-ca-root-cert
         name: istiod-ca-cert
       - downwardAPI:
-          defaultMode: 420
           items:
             - fieldRef:
-                apiVersion: v1
                 fieldPath: metadata.labels
               path: labels
             - fieldRef:
-                apiVersion: v1
                 fieldPath: metadata.annotations
               path: annotations
         name: podinfo
       - emptyDir: {}
         name: istio-envoy
       - emptyDir: {}
-        name: gatewaysdsudspath
+        name: istio-data
+      - name: istio-token
+        projected:
+          sources:
+            - serviceAccountToken:
+                audience: istio-ca
+                expirationSeconds: 43200
+                path: istio-token
       - configMap:
-          defaultMode: 420
           name: istio
           optional: true
         name: config-volume
       - name: ingressgateway-certs
         secret:
-          defaultMode: 420
           optional: true
           secretName: istio-ingressgateway-certs
       - name: ingressgateway-ca-certs
         secret:
-          defaultMode: 420
           optional: true
           secretName: istio-ingressgateway-ca-certs
 ---
@@ -338,7 +330,7 @@ spec:
 ---
   {{- end }}
   {{- if .Values.global.certmanager.enabled }}
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: t8c-istio-gateway

@@ -17,11 +17,10 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 8.4.0
+    tag: 8.4.3
     #externalIP: 10.0.2.15
     #externalDbIP: 10.0.2.15
     #externalTimescaleDBIP: 10.0.2.15
-    externalArangoDBName: arango.turbo.svc.cluster.local
     #enableExternalSecrets: true
 
 # Component selector - Probes
@@ -39,6 +38,8 @@ spec:
 #    enabled: true
 #  dynatrace:
 #    enabled: true
+#  gcp:
+#    enabled: true
 #  hpe3par:
 #    enabled: true
 #  horizon:
@@ -46,6 +47,8 @@ spec:
 #  hyperflex:
 #    enabled: false
 #  hyperv:
+#    enabled: true
+#  ibmstorage-flashsystem:
 #    enabled: true
 #  netapp:
 #    enabled: true
@@ -88,4 +91,10 @@ spec:
 #  websphere:
 #    enabled: false
 #  weblogic:
+#    enabled: false
+#  xen:
+#    enabled: false
+#  instana:
+#    enabled: true
+#  jboss:
 #    enabled: false

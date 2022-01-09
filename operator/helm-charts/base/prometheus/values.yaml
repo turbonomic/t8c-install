@@ -608,7 +608,7 @@ server:
       # Name of the sidecar container inside Prometheus server pod.
     - name: datacloud-gateway-graph
       # Container image to use. It has to be a version that supports service accounts.
-      image: sevone/prometheus-gateway:graph-e1c8cc18
+      image: sevone/prometheus-gateway:graph-a293ffb6
       # Whether the container image should be pulled every time or only when it's not present.
       imagePullPolicy: IfNotPresent
       # Environment variable definitions to configure the sidecar container.
@@ -649,6 +649,9 @@ server:
           # when items enter and leave the knowledge graph to maintain the temporal index.
         - name: GATEWAY_COLLECTOR_DATACLOUD_PERSIST_SNAPSHOT
           value: "false"
+          # Disable self-monitoring to save memory by not creating an in-memory badgerdb.
+        - name: DATACLOUD_SELFMON_PERIOD
+          value: 0s
       volumeMounts:
         - name: datacloud-service-account # must match the name of the secret volume below.
           mountPath: "/var/run/secrets/datacloud/serviceaccount"
@@ -672,7 +675,7 @@ server:
   ##
   image:
     repository: prom/prometheus
-    tag: v2.19.2
+    tag: v2.32.0
     pullPolicy: IfNotPresent
 
   #nameOverride: ""

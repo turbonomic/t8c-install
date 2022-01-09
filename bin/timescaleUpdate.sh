@@ -18,7 +18,13 @@ log_msg "Stopped timescale DB"
 log_msg "Trying to remove timescaledb 1.7.5 loader package to prevent 2.0.1 installation failure, see timescale issue 2967."
 sudo yum erase -y --disablerepo="*" timescaledb-loader-postgresql-12-1.7.5-0.el7.x86_64
 
-sudo yum install --disablerepo="*" --enablerepo="timescale_timescaledb" -y timescaledb-2-postgresql-12-2.0.1-0.el7.x86_64 timescaledb-2-loader-postgresql-12-2.0.1-0.el7.x86_64 timescaledb-tools-0.10.1-0.el7.x86_64
+# Check if the RPMs are on the mounted iso
+if [ -d /mnt/iso/rpm/ ]
+then
+  sudo yum localinstall --disablerepo="*" -y /mnt/iso/rpm/timescaledb*.rpm
+else
+  sudo yum install --disablerepo="*" --enablerepo="timescale_timescaledb" -y timescaledb-2-postgresql-12-2.0.1-0.el7.x86_64 timescaledb-2-loader-postgresql-12-2.0.1-0.el7.x86_64 timescaledb-tools-0.10.1-0.el7.x86_64
+fi
 log_msg "Installed timescaledb 2"
 
 sudo systemctl start postgresql-12

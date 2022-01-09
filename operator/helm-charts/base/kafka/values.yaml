@@ -14,7 +14,7 @@ image:
 # a maximum heap of 2G when container memory limit is set to 20G:
 # "-Xms1G -XX:MaxRAMPercentage=10.0"
 java:
-  options: "-Xms16m -XX:+UseG1GC -XX:MaxRAMPercentage=25.0"
+  options: "-XX:MaxRAMPercentage=25.0"
 
 env:
   - name: BROKER_ID

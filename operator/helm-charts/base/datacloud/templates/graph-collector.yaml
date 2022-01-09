@@ -87,7 +87,7 @@ spec:
 {{- $image :=  include "datacloud.graphImage" . }}
 {{- $tag := include "datacloud.graphTag" . -}}
 {{- $pullPolicy := include "pullPolicy" . }}
-{{- range $k, $poller := .Values.graph.collectors }}
+{{- range $poller, $pollerConfig := .Values.graph.collectors }}
         - name: {{ $poller }}
           command: ["/app/{{ $poller }}"]
           image: {{ $image }}
@@ -151,9 +151,14 @@ spec:
           - name: {{ $k | quote }}
             value: {{ $v | quote }}
           {{- end }}
+          {{- if $pollerConfig.resources }}
+          resources:
+            {{- toYaml $pollerConfig.resources | nindent 12 }}
+          {{- else -}}
           {{- with $.Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- end }}
           volumeMounts:
           - name: graphstate

@@ -32,8 +32,10 @@ data:
         dbHost: db
         dbs:
           postgresDefault:
-            host: timescaledb
-            port: {{ .Values.global.externalTimescaleDBPort | default 5432 }}
+            # host should be postgres rather than timescaledb, since we want components (like TP)
+            # to use postgres rather than timescaledb, if configured correctly
+            host: postgres
+            port: 5432
           mysqlDefault:
             host: db
             port: {{ .Values.global.externalDBPort | default 3306 }}
@@ -204,6 +206,9 @@ data:
             databaseName: {{ index .Values "grafana" "grafana.ini" "database" "name" | default "grafana" }}
             userName: {{ index .Values "grafana" "grafana.ini" "database" "user" | default "grafana_backend" }}
             password: {{ index .Values "grafana" "grafana.ini" "database" "password" }}
+          postgresDefault:
+            host: timescaledb
+            port: {{ .Values.global.externalTimescaleDBPort | default 5432 }}
 {{- end }}
 {{- if .Values.properties }}
     customProperties:

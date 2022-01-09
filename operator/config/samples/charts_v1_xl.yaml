@@ -18,11 +18,11 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 8.4.0
+    tag: 8.4.3
     externalIP: 10.0.2.15
     externalDbIP: 10.0.2.15
     externalTimescaleDBIP: 10.0.2.15
-    externalArangoDBName: arango.turbo.svc.cluster.local
+    enableExternalSecrets: true
 
   grafana:
     # Grafana is disabled by default. To enable it, uncomment:
@@ -32,10 +32,6 @@ spec:
       database:
         # Store data in sqlite3 (no persistence across restarts) by default. To persist, uncomment:
         type: postgres
-
-        # The password. TODO - figure out the correct/ideal way to deploy this without risking
-        # losing/resetting the password on upgrade.
-        # See: https://github.com/helm/charts/issues/5167
         password: grafana
 
   # Component selector - Probes
@@ -53,6 +49,8 @@ spec:
     enabled: true
   dynatrace:
     enabled: true
+  gcp:
+    enabled: true
   hpe3par:
     enabled: true
   horizon:
@@ -60,6 +58,8 @@ spec:
   hyperflex:
     enabled: false
   hyperv:
+    enabled: true
+  ibmstorage-flashsystem:
     enabled: true
   kubeturbo:
     enabled: true
@@ -115,4 +115,8 @@ spec:
   weblogic:
     enabled: false
   xen:
+    enabled: false
+  instana:
+    enabled: true
+  jboss:
     enabled: false

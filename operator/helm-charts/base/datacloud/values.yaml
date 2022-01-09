@@ -42,13 +42,6 @@ credentials:
 
 env: {}
 
-flat:
-  enabled: false
-  image:
-    name: datacloud
-    repository: ""
-    tag: ""
-
 graph:
   enabled: true
   image:
@@ -57,12 +50,18 @@ graph:
     tag: ""
   name: turbonomic-graph
   collectors:
-  - topology
-  - actions
-  - costs
-  - groups
-  - expenses
-  - targets
+    topology:
+      resources: {}
+    actions:
+      resources: {}
+    costs:
+      resources: {}
+    groups:
+      resources: {}
+    expenses:
+      resources: {}
+    targets:
+      resources: {}
   persistence:
     size: 10Gi
   selfmon_period: 1m

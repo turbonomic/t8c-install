@@ -1,0 +1,25 @@
+{{- if and (eq .Values.service.type "ClusterIP") .Values.service.clusterIP }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "postgresql.fullname" . }}-headless
+  labels:
+    zone: secure
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- with .Values.service.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: tcp-postgresql
+    port: {{ template "postgresql.port" . }}
+    targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

@@ -109,6 +109,10 @@ variable "hyperv" {
   default = false
 }
 
+variable "ibmstorage-flashsystem" {
+  default = false
+}
+
 variable "istio" {
   default = false
 }
@@ -218,5 +222,9 @@ variable "xtremio" {
 }
 
 variable "udt" {
+  default = false
+}
+
+variable "gcpsa" {
   default = false
 }

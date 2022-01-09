@@ -50,6 +50,10 @@ spec:
           value: grafana.{{ .Release.Namespace }}.svc.cluster.local
 {{ toYaml .Values.env | indent 8 }}
 {{- if .Values.global }}
+  {{- if .Values.global.blockRemoteProbes }}
+        - name: BLOCK_REMOTE_PROBES
+          value: "{{ .Values.global.blockRemoteProbes }}"
+  {{- end }}
   {{- if or .Values.logtostdout .Values.global.logtostdout }}
         - name: LOG_TO_STDOUT
           value: "true"
@@ -177,7 +181,7 @@ spec:
 {{- if .Values.global}}
 ---
   {{- if .Values.global.certmanager.enabled }}
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: t8c-nginx-gateway
