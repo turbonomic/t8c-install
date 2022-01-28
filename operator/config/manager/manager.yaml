@@ -27,10 +27,10 @@ spec:
       serviceAccountName: t8c-operator
       containers:
       - name: t8c-operator
-        image: turbonomic/t8c-operator:42.5
+        image: turbonomic/t8c-operator:42.6
         args:
-        - "--enable-leader-election"
-        - "--leader-election-id=operator"
+        - --leader-elect
+        - --leader-election-id=operator
         imagePullPolicy: Always
         livenessProbe:
           httpGet:

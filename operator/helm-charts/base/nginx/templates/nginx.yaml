@@ -54,6 +54,10 @@ spec:
         - name: BLOCK_REMOTE_PROBES
           value: "{{ .Values.global.blockRemoteProbes }}"
   {{- end }}
+  {{- if .Values.global.whiteListIps }}
+        - name: WHITE_LIST_IPS
+          value: {{ join " " .Values.global.whiteListIps }}
+  {{- end }}
   {{- if or .Values.logtostdout .Values.global.logtostdout }}
         - name: LOG_TO_STDOUT
           value: "true"

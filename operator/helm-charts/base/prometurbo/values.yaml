@@ -39,6 +39,8 @@ targetTypeSuffix: Turbonomic
 args:
   # logging level
   logginglevel: 2
+  # When set to true, ignore merging a commodity if a commodity of the same type already exists
+  ignoreCommodityIfPresent: false
 
 # Prometheus servers and metrics to scrape
 prometheusServers:

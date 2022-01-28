@@ -17,6 +17,8 @@ spec:
   # Each version can be enabled/disabled by Served flag.
   # One and only one version must be marked as the storage version.
   - name: v1alpha1
+    served: true
+    storage: false
     schema:
       openAPIV3Schema:
         properties:
@@ -33,21 +35,17 @@ spec:
           metadata:
             type: object
           spec:
-            type: object
-            x-kubernetes-preserve-unknown-fields: true
-          status:
-            description: Status defines the observed state of Xl
+            properties:
             type: object
             x-kubernetes-preserve-unknown-fields: true
         type: object
-    served: true
-    storage: false
-    subresources:
-      status: {}
   - name: v1
+    served: true
+    storage: true
     schema:
       openAPIV3Schema:
         description: Xl is the Schema for the xls API
+        type: object
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -1197,20 +1195,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1284,20 +1270,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1335,20 +1309,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1386,20 +1348,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1437,20 +1387,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1488,20 +1426,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1539,20 +1465,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1590,20 +1504,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1641,20 +1543,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1692,20 +1582,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1743,20 +1621,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1796,20 +1662,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1847,20 +1701,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1898,20 +1740,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -1949,20 +1779,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2000,20 +1818,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2051,20 +1857,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2102,20 +1896,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2153,20 +1935,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2204,20 +1974,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2255,20 +2013,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2306,20 +2052,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2357,20 +2091,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2408,20 +2130,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2459,20 +2169,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2510,20 +2208,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2561,20 +2247,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2612,20 +2286,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2663,20 +2325,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2714,20 +2364,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2765,20 +2403,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2816,20 +2442,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2867,20 +2481,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2918,20 +2520,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -2969,20 +2559,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3020,20 +2598,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3071,20 +2637,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3122,20 +2676,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3173,20 +2715,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3224,20 +2754,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3275,20 +2793,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3326,20 +2832,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3377,20 +2871,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3428,20 +2910,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3479,20 +2949,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3530,20 +2988,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3581,20 +3027,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3632,20 +3066,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3683,20 +3105,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3734,20 +3144,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3785,20 +3183,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3836,20 +3222,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3887,20 +3261,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3938,20 +3300,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -3989,20 +3339,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4040,20 +3378,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4091,20 +3417,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4142,20 +3456,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4193,20 +3495,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4244,20 +3534,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4295,20 +3573,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4346,20 +3612,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4397,20 +3651,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4448,20 +3690,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4499,20 +3729,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4550,20 +3768,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4601,20 +3807,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4652,20 +3846,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4703,20 +3885,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4754,20 +3924,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4805,20 +3963,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4856,20 +4002,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4907,20 +4041,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -4958,20 +4080,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -5009,20 +4119,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -5060,20 +4158,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -5111,20 +4197,8 @@ spec:
                         description: component image pull policy
                         type: string
                     type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
                   javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
+                    description: component additional java options
                     type: string
                   debug:
                     description: component debug
@@ -5261,12 +4335,3 @@ spec:
                 x-kubernetes-preserve-unknown-fields: true
             type: object
             x-kubernetes-preserve-unknown-fields: true
-          status:
-            description: Status defines the observed state of Xl
-            type: object
-            x-kubernetes-preserve-unknown-fields: true
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}

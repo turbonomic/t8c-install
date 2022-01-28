@@ -237,6 +237,10 @@ dependencies:
     repository: file://../probes/mediation-dynatrace
     version: 0.1.0
     condition: dynatrace.enabled
+  - name: mediation-flexera
+    repository: file://../probes/mediation-flexera
+    version: 0.1.0
+    condition: flexera.enabled
   - name: mediation-gcpcost
     repository: file://../probes/mediation-gcpcost
     version: 0.1.0

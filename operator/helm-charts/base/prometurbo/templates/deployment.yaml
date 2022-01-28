@@ -53,6 +53,9 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - --v={{ .Values.args.logginglevel }}
+{{- if .Values.args.ignoreCommodityIfPresent }}
+            - --ignoreCommodityIfPresent=true
+{{- end }}
           volumeMounts:
           - name: turbodif-config
             mountPath: /etc/turbodif
