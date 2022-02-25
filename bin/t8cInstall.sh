@@ -465,6 +465,7 @@ mkdir -p ${localStorageDataDirectory}topology-processor
 mkdir -p ${localStorageDataDirectory}prometheus-alertmanager
 mkdir -p ${localStorageDataDirectory}prometheus-server
 mkdir -p ${localStorageDataDirectory}graphstate-datacloud-graph
+mkdir -p ${localStorageDataDirectory}data-postgres
 chown -R turbo.turbo $localStorageDataDirectory
 chmod -R 777 $localStorageDataDirectory
 

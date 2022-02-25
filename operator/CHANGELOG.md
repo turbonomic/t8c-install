@@ -3,6 +3,9 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.7
+1. Listen and redirect from HTTP to HTTPS with Istio VirtualGateway
+
 42.6
 1. Provide whitelist ip filtering for nginx into remoteMediation path for remote probe-tp communication
 2. Created the probe for Flexera integration

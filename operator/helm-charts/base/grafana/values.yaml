@@ -1,8 +1,8 @@
 rbac:
-  create: true
-  pspEnabled: true
+  create: false
+  pspEnabled: false
   pspUseAppArmor: true
-  namespaced: false
+  namespaced: true
   extraRoleRules: []
   # - apiGroups: []
   #   resources: []
@@ -12,7 +12,7 @@ rbac:
   #   resources: []
   #   verbs: []
 serviceAccount:
-  create: true
+  create: false
   name:
   nameTest:
 #  annotations:

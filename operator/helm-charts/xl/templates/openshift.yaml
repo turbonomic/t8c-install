@@ -267,6 +267,8 @@ spec:
     termination: edge
 ---
 {{- end }}
+  {{- if .Values.global }}
+    {{- if not .Values.global.blockRemoteProbes }}
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
@@ -284,4 +286,6 @@ spec:
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
+    {{- end }}
+  {{- end }}
 {{- end }}

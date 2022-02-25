@@ -15,7 +15,7 @@ dependencies:
   - name: postgresql
     repository: file://../base/timescaledb
     version: 8.9.6
-    condition: timescaledb.enabled,reporting.enabled
+    condition: timescaledb.enabled
   - name: postgres
     repository: file://../base/postgres
     version: 8.9.6
@@ -136,7 +136,7 @@ dependencies:
   - name: grafana
     repository: file://../base/grafana
     version: 5.1.27
-    condition: grafana.enabled,reporting.enabled
+    condition: grafana.enabled
   - name: kubeturbo
     repository: file://../base/kubeturbo
     version: 1.0.0
@@ -165,10 +165,6 @@ dependencies:
     repository: file://../probes/mediation-actionscript
     version: 0.1.0
     condition: actionscript.enabled
-  - name: mediation-aix
-    repository: file://../probes/mediation-aix
-    version: 0.1.0
-    condition: aix.enabled
   - name: mediation-acims
     repository: file://../probes/mediation-acims
     version: 0.1.0
