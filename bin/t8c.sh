@@ -297,6 +297,7 @@ then
     sudo mkdir -p ${localStorageDataDirectory}prometheus-alertmanager
     sudo mkdir -p ${localStorageDataDirectory}prometheus-server
     sudo mkdir -p ${localStorageDataDirectory}graphstate-datacloud-graph
+    sudo mkdir -p ${localStorageDataDirectory}data-postgres
     sudo chown -R turbo.turbo $localStorageDataDirectory
     sudo chmod -R 777 $localStorageDataDirectory
     echo ""

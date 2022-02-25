@@ -205,11 +205,8 @@ spec:
         - name: ISTIO_META_CLUSTER_ID
           value: Kubernetes
         ports:
-        - containerPort: 15021
         - containerPort: 8080
         - containerPort: 8443
-        - containerPort: 15090
-          name: http-envoy-prom
         readinessProbe:
           httpGet:
             path: /healthz/ready
@@ -250,10 +247,10 @@ spec:
           name: ingressgateway-ca-certs
           readOnly: true
       securityContext:
-        fsGroup: 1337
-        runAsGroup: 1337
+        fsGroup: {{ .Values.global.securityContext.fsGroup | default 1337 }}
+        runAsUser: {{ .Values.global.securityContext.fsGroup | default 1337 }}
+        runAsGroup: {{ .Values.global.securityContext.fsGroup | default 1337 }}
         runAsNonRoot: true
-        runAsUser: 1337
       serviceAccountName: t8c-operator
       volumes:
       - configMap:
@@ -317,16 +314,12 @@ spec:
   - {{ .Values.global.externalIP }}
     {{ end }}
   ports:
-  - name: status-port
-    port: 15020
   - name: http2
     port: 80
-    targetPort: 8000
+    targetPort: 8080
   - name: https
     port: 443
     targetPort: 8443
-  - name: tls
-    port: 15443
 ---
   {{- end }}
   {{- if .Values.global.certmanager.enabled }}
