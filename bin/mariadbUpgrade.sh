@@ -7,6 +7,7 @@
 serverIp=$(ifconfig eth0 | grep 'inet' |egrep -v 'inet6' | cut -d: -f2 | awk '{ print $2}')
 databaseIp=$(grep externalDbIP /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml | egrep -v '#' | awk '{print $2}')
 databaseName=$(grep externalDBName /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml | egrep -v '#' | awk '{print $2}')
+databaseUpgradeVersion="10.5.13"
 
 # Check to see if the database is remote from the server
 if [ -z "${databaseIp+x}" ]
@@ -26,16 +27,54 @@ fi
 
 # Check the version installed
 dbVersion=$(rpm -qi MariaDB-server | grep Version | head -1| awk -F: '{print $2}' | xargs)
-if [ X${dbVersion} = "X10.5.13" ]
+if [ X${dbVersion} = "X${databaseUpgradeVersion}" ]
 then
   echo "MariaDB version ${dbVersion} is already installed"
   exit 0
+fi
+
+# Change the mariadb.repo to support the upgrade
+sudo rm -rf /etc/yum.repos.d/mariadb.repo
+
+sudo bash -c "cat <<EOF > /etc/yum.repos.d/mariadb.repo
+[mariadb]
+name = MariaDB-$databaseUpgradeVersion
+baseurl=https://yum.mariadb.org/${databaseUpgradeVersion}/centos7-amd64
+# alternative: baseurl=https://archive.mariadb.org/mariadb-${databaseUpgradeVersion}/yum/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+EOF"
+
+sudo yum clean all
+
+# Check if we are doing an offline or online upgrade
+if [ -d /mnt/iso/mariadb_rpm ]
+then
+  echo "This is going to be on offline mariadb upgrade"
+else
+  # Check if the mariadb is reachable
+  sudo yum repolist mariadb > /tmp/yumcheck
+  result=$(grep repolist /tmp/yumcheck | awk '{print $2}')
+  echo $result
+  if [ $result -eq 0 ]
+  then
+    echo "***********************************************************"
+    echo "You seem to not have access to the mariadb yum repository." 
+    echo "Please open the firewall or use the offline upgrade method!"
+    echo "***********************************************************"
+    exit 1
+  else
+    echo "This is going to be on online mariadb upgrade"
+  fi
 fi
 
 # Run the upgrade script
 echo
 echo "Enter the mysql password:"
 dbPassword=$(systemd-ask-password password:)
+
+# Get Major DB version
+dbMajorVersion=$(mysql -u root --password=${dbPassword} -e "SHOW VARIABLES LIKE 'version';"  | grep 10 | awk '{print $2}' | awk -F. '{print $1$2}')
 
 # Check to ensure the password is correct
 mysql -uroot -p${dbPassword} -e"quit" > /dev/null 2>&1
@@ -69,21 +108,13 @@ do
 done
 echo
 
-# Change the mariadb.repo to support the upgrade
-sudo rm -rf /etc/yum.repos.d/mariadb.repo
-
-sudo bash -c 'cat << EOF > /etc/yum.repos.d/mariadb.repo
-[mariadb]
-name = MariaDB-10.5.13
-baseurl=https://yum.mariadb.org/10.5.13/centos7-amd64
-# alternative: baseurl=https://archive.mariadb.org/mariadb-10.5.13/yum/centos7-amd64
-gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-gpgcheck=1
-EOF'
-
+# Continue with the upgrade
 sudo systemctl stop mariadb
-sudo yum erase --disablerepo=* MariaDB-server MariaDB-shared -y >/dev/null
-
+if [ X${dbMajorVersion} = "X101" ]
+then
+  echo "run uninstall"
+  sudo yum erase --disablerepo=* MariaDB-server MariaDB-shared -y >/dev/null
+fi
 
 # Perform the Mariadb upgrade
 mariadbRpms="/mnt/iso/mariadb_rpm"
@@ -216,6 +247,9 @@ else
 fi
 
 # Test the database
+# Show the database version now running
+echo "Running mariadb version:"
+mysql -u root --password=${dbPassword} -e "SHOW VARIABLES LIKE 'version';"
 
 # Scale Up Turbonomic Application when it is confirmed the database is running properly
 echo

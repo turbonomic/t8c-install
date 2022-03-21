@@ -49,10 +49,6 @@ variable "actionscript" {
   default = false
 }
 
-variable "aix" {
-  default = false
-}
-
 variable "appdynamics" {
   default = false
 }

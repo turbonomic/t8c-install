@@ -43,11 +43,6 @@ resource "helm_release" "xl" {
   }
 
   set {
-    name  = "aix.enabled"
-    value = "${var.aix ? true : false}"
-  }
-
-  set {
     name  = "appdynamics.enabled"
     value = "${var.appdynamics ? true : false}"
   }

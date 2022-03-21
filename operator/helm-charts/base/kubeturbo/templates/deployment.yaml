@@ -34,7 +34,7 @@ spec:
       serviceAccountName: turbo-user
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ template "kubeturbo_image" . }}
+          image: {{ template "image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
           - --turboconfig=/etc/kubeturbo/turbo.config

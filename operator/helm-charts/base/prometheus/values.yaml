@@ -1785,7 +1785,9 @@ serverFiles:
               turbo_api_call_latency_seconds_count|\
               turbo_api_call_latency_seconds_sum|\
               turbo_component_uptime_seconds|\
-              turbo_oid_expiration_execution_seconds|\
+              turbo_oid_expiration_execution_seconds_sum|\
+              turbo_oid_expiration_execution_seconds_count|\
+              turbo_oid_expiration_execution_seconds_bucket|\
               turbo_expired_entities_total"
 
       # Scrape config for XL telemetry. Loosely based on 'xl' job.
