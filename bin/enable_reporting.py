@@ -3,8 +3,14 @@
 import argparse
 import os
 import subprocess
+from subprocess import CompletedProcess
 import sys
 import time
+import json
+from typing import Callable
+from datetime import datetime, timedelta
+import logging
+from getpass import getpass
 
 from ruamel.yaml import YAML
 
@@ -163,7 +169,7 @@ class EmbeddedReporting:
 
 
 # Restarts API pod to apply new configuration changes when grafana and extractor pods finished creation/deletion
-def apply_and_wait(custom_resource_file, timeout, polling_interval_s):
+def apply_and_wait(custom_resource_file, timeout: timedelta, polling_interval: timedelta):
     # apply config changes in kubernetes and restart required containers containers
     apply_command = 'kubectl apply -f {}'.format(custom_resource_file)
     print("Applying CR file {}".format(custom_resource_file))
@@ -172,31 +178,63 @@ def apply_and_wait(custom_resource_file, timeout, polling_interval_s):
     print("Waiting for changes to take effect...")
     time.sleep(10)
 
-    current_time = 0
-    is_result_success = False
-
-    restart_api_pod_command = "kubectl delete pod $(kubectl get pod | grep api- | awk '{print $1}')"
-
-    while current_time < timeout:
-        check_ready_pods = 'kubectl get pods -n turbonomic | egrep -c \'grafana.*1/|extractor.*1/\''
+    def pods_are_ready() -> bool:
+        check_ready_pods = "kubectl get pods -n turbonomic | egrep -c 'grafana.*1/|extractor.*1/'"
         stdout_value, stderr_value = subprocess.Popen(check_ready_pods, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
         check_ready_pods = int(stdout_value.decode().split("\n")[0])
-        if check_ready_pods >= 2:
-            is_result_success = True
-            print("Restarting api pod to apply configuration changes.")
-            subprocess.call(restart_api_pod_command, shell=True)
-            # Wait a little bit to give the API a head start when its coming back up.
-            time.sleep(10)
-            break
-        print("Changes have not been fully applied. Sleeping for another {} seconds.".format(polling_interval_s))
-        current_time = current_time + polling_interval_s
-        time.sleep(polling_interval_s)
+        return check_ready_pods >= 2
 
-    if is_result_success:
-        print("Changes have been successfully applied. Embedded reporting is now enabled.")
+    successful = wait_until_ready(ready=pods_are_ready, timeout=timeout, period=polling_interval)
+
+    if successful:
+        print("Grafana/Extractor pods are ready.")
     else:
         print("Grafana/Extractor pods are not created after timeout - Exiting")
         sys.exit(1)
+
+    print("Restarting api pod to apply configuration changes.")
+
+    restart_api_pod_command = "kubectl delete pod -n turbonomic $(kubectl get pod -n turbonomic | grep api- | awk '{print $1}')"
+    subprocess.call(restart_api_pod_command, shell=True)
+
+    print("Waiting for api pod to become ready...")
+
+    def api_pod_is_ready() -> bool:
+        _command = "kubectl get deploy api -n turbonomic -o json"
+        result: CompletedProcess = subprocess.run(_command, shell=True, stdout=subprocess.PIPE)
+        status: dict = json.loads(result.stdout)['status']
+        return status.get('availableReplicas', 0) == 1 and status.get('unavailableReplicas', 0) == 0
+
+    successful = wait_until_ready(api_pod_is_ready, timeout=timeout, period=polling_interval)
+
+    if successful:
+        print("api pod is now ready.")
+        print("Changes have been successfully applied. Embedded reporting is now enabled.")
+    else:
+        print("Timed out while waiting for api pod to become ready. Exiting.")
+
+
+def wait_until_ready(ready: Callable[[], bool], timeout: timedelta, period: timedelta) -> bool:
+    start_time = datetime.now()
+
+    success = False
+    while datetime.now() - start_time < timeout:
+        try:
+            if ready():
+                success = True
+                break
+        except Exception:
+            logging.exception("exception raised while calling ready function")
+
+        time.sleep(period.seconds)
+
+        # print without newline
+        sys.stdout.write(".")
+        sys.stdout.flush()
+
+    # add newline
+    print("")
+    return success
 
 
 def collect_input(prompt, validation_fn):
@@ -222,6 +260,19 @@ def validate_password(password_input):
     if "#" in password_input or ";" in password_input:
         return "Password should not contain # or ;"
     return None
+
+def wait_for_password(msg):
+     while True:
+         if sys.stdin.isatty():
+            password = getpass(msg)
+         else:
+            password = input()
+         warning = validate_password(password)
+         if warning is None:
+             break
+         else:
+             print(warning)
+     return password
 
 # Checks to see if a service is running.
 def is_service_running(service_name):
@@ -278,15 +329,15 @@ def main():
         print("Embedded reporting is already enabled. Please contact support if it is not working.")
         return
 
-    grafana_admin_password = collect_input("Set initial Grafana Administrator password: ", validate_password)
-    grafana_db_password = collect_input("Set Grafana database password: ", validate_password)
+    grafana_admin_password = wait_for_password("Set initial Grafana Administrator password: ")
+    grafana_db_password = wait_for_password("Set Grafana database password: ")
     embedded_reporting.enable(grafana_admin_password, grafana_db_password)
 
     # write out custom resource component
     custom_resource.write()
 
     if not args.no_apply:
-        apply_and_wait(custom_resource_file, 600, 30)
+        apply_and_wait(custom_resource_file, timeout=timedelta(minutes=10), polling_interval=timedelta(seconds=5))
 
 
 if __name__ == "__main__":

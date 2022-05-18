@@ -3,6 +3,9 @@
 # Declare variables to be passed into your templates.
 
 annotations: {}
+labels: {}
+serviceAnnotations: {}
+serviceLabels: {}
 
 replicaCount: 1
 
@@ -27,8 +30,6 @@ env:
     value: "8080"
   - name: kafkaServers
     value: kafka:9092
-  - name: REPOSITORY_ARANGODB_HOST
-    value: arangodb
 
 resources:
   limits:

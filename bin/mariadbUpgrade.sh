@@ -39,7 +39,8 @@ sudo rm -rf /etc/yum.repos.d/mariadb.repo
 sudo bash -c "cat <<EOF > /etc/yum.repos.d/mariadb.repo
 [mariadb]
 name = MariaDB-$databaseUpgradeVersion
-baseurl=https://yum.mariadb.org/${databaseUpgradeVersion}/centos7-amd64
+baseurl = https://archive.mariadb.org/mariadb-${databaseUpgradeVersion}/yum/rhel7-amd64/
+#baseurl=https://yum.mariadb.org/${databaseUpgradeVersion}/centos7-amd64
 # alternative: baseurl=https://archive.mariadb.org/mariadb-${databaseUpgradeVersion}/yum/centos7-amd64
 gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1

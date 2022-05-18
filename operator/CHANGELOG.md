@@ -3,6 +3,12 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.9
+1. Update nginx helm template for hydra configuration.
+
+42.8
+1. ---
+
 42.7
 1. Listen and redirect from HTTP to HTTPS with Istio VirtualGateway
 

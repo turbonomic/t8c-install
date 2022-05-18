@@ -8,7 +8,7 @@ global:
 #  imageUsername: turbouser
 #  imagePassword: turbopassword
   repository: turbonomic
-  tag: 8.5.0
+  tag: 8.5.1
 #  serviceAccountName: t8c-serviceaccount
 #  pullPolicy: IfNotPresent
   customImageNames: true
@@ -16,6 +16,9 @@ global:
   tolerations: []
   affinity: {}
   annotations: {}
+  labels: {}
+  serviceAnnotations: {}
+  serviceLabels: {}
   # setting these to be more tolerant than the k8s defaults, since we run in some pretty resource
   # constrained environments where the readiness probe failures don't really fix anything. We should
   # adjust these back down when we have a horizontally-scaled environment.
@@ -211,6 +214,8 @@ awslambda:
   enabled: false
 azure:
   enabled: false
+  billing:
+    enabled: false
 compellent:
   enabled: false
 dynatrace:

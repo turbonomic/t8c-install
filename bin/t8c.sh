@@ -235,6 +235,34 @@ do
 done
 fi
 
+# OM-81849: Fix vulnerability found associated with some Turbo Services running on the CentOS
+kubeApiServerPod=$(kubectl get pod -n kube-system  | grep apiserver | awk '{print $1}')
+grep "tlsCipherSuites" /var/lib/kubelet/config.yaml
+result=$?
+if [ ${result} -ne 0 ]
+then
+  echo "tlsCipherSuites: [TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256]" >> /var/lib/kubelet/config.yaml
+fi
+grep "\-\-tls\-cipher" /etc/kubernetes/manifests/kube-apiserver.yaml
+result=$?
+if [ ${result} -ne 0 ]
+then
+  sed -i "/apiserver.key/a\
+\    \- --tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256" /etc/kubernetes/manifests/kube-apiserver.yaml
+fi
+kubectl delete pod -n kube-system ${kubeApiServerPod}
+grep "OM-81849" /etc/rc.local
+result=$?
+if [ ${result} -ne 0 ]
+then
+  cat << EOF >> /etc/rc.local
+# OM-81849: Fix vulnerability found associated with some Turbo Services running on the CentOS
+iptables -A INPUT -p tcp --destination-port 10250 -j DROP
+iptables -A INPUT -p tcp --destination-port 6443 -j DROP
+iptables -A INPUT -p tcp --destination-port 3306 -j DROP
+EOF
+fi
+
 # Setup Secure kubernetes api
 echo "export KUBECONFIG=/opt/turbonomic/.kube/config" >> /opt/turbonomic/.bashrc
 if [ ! -d /opt/turbonomic/.kube/ ]

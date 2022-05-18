@@ -60,6 +60,7 @@ spec:
   {{- end }}
 {{- end }}
       labels:
+{{- include "labels" . | nindent 8 }}
         zone: internal
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
@@ -160,7 +161,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Chart.Name }}
+  annotations:
+{{- include "serviceAnnotations" . | nindent 4 }}
   labels:
+{{- include "serviceLabels" . | nindent 4 }}
     zone: internal
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}

@@ -6,6 +6,46 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{- define "labels" -}}
+{{- if .Values.global }}
+  {{- if or .Values.labels .Values.global.labels }}
+    {{- with .Values.labels }}
+{{- toYaml . }}
+    {{- end }}
+    {{- with .Values.global.labels }}
+{{- toYaml . }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "serviceAnnotations" -}}
+  {{- if .Values.global }}
+    {{- if or .Values.serviceAnnotations .Values.global.serviceAnnotations }}
+      {{- with .Values.serviceAnnotations }}
+  {{- toYaml . }}
+      {{- end }}
+      {{- with .Values.global.serviceAnnotations }}
+  {{- toYaml . }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- define "serviceLabels" -}}
+{{- if .Values.global }}
+  {{- if or .Values.serviceLabels .Values.global.serviceLabels }}
+    {{- with .Values.serviceLabels }}
+{{- toYaml . }}
+    {{- end }}
+    {{- with .Values.global.serviceLabels }}
+{{- toYaml . }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).

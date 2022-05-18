@@ -3,6 +3,7 @@ kind: Xl
 metadata:
   name: xl-release
 spec:
+  # This configuration file is used for production.
   # Default values copied from <project_dir>/helm-charts/xl/values.yaml
 
   # Default values for xl.
@@ -17,7 +18,7 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 8.5.0
+    tag: 8.5.3
     #externalIP: 10.0.2.15
     #externalDbIP: 10.0.2.15
     #externalTimescaleDBIP: 10.0.2.15

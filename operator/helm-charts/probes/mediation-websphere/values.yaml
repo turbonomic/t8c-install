@@ -3,6 +3,9 @@
 # Declare variables to be passed into your templates.
 
 annotations: {}
+labels: {}
+serviceAnnotations: {}
+serviceLabels: {}
 
 replicaCount: 1
 

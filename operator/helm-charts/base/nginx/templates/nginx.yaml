@@ -25,6 +25,7 @@ spec:
   {{- end }}
 {{- end }}
       labels:
+{{- include "labels" . | nindent 8 }}
         zone: public
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
@@ -48,8 +49,18 @@ spec:
           value: topology-processor.{{ .Release.Namespace }}.svc.cluster.local
         - name: GRAFANA
           value: grafana.{{ .Release.Namespace }}.svc.cluster.local
+        - name: AUTH
+          value: auth.{{ .Release.Namespace }}.svc.cluster.local
+        - name: HYDRA_PUBLIC
+          value: hydra-public.{{ .Release.Namespace }}.svc.cluster.local
 {{ toYaml .Values.env | indent 8 }}
 {{- if .Values.global }}
+  {{- if .Values.global.featureFlags }}
+    {{- if .Values.global.featureFlags.enableTpProbeSecurity }}
+        - name: ENABLE_TP_PROBE_SECURITY
+          value: "{{ .Values.global.featureFlags.enableTpProbeSecurity }}"
+    {{- end }}
+  {{- end }}
   {{- if .Values.global.blockRemoteProbes }}
         - name: BLOCK_REMOTE_PROBES
           value: "{{ .Values.global.blockRemoteProbes }}"
@@ -150,17 +161,19 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Chart.Name }}
+  annotations:
+{{- include "serviceAnnotations" . | nindent 4 }}
+{{- if .Values.global }}
+  {{- with .Values.global.ingress.annotations }}
+{{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
   labels:
+{{- include "serviceLabels" . | nindent 4 }}
     zone: internal
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- if .Values.global }}
-  {{- with .Values.global.ingress.annotations }}
-  annotations:
-{{- toYaml . | nindent 4 }}
-  {{- end }}
-{{- end }}
 spec:
 {{- if .Values.nginxIsPrimaryIngress }}
   type: LoadBalancer
