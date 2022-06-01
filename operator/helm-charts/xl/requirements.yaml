@@ -189,6 +189,10 @@ dependencies:
     repository: file://../probes/mediation-awsbilling
     version: 0.1.0
     condition: aws.enabled
+  - name: mediation-awscloudbilling
+    repository: file://../probes/mediation-awscloudbilling
+    version: 0.1.0
+    condition: aws.enabled
   - name: mediation-awscost
     repository: file://../probes/mediation-awscost
     version: 0.1.0
@@ -241,6 +245,10 @@ dependencies:
     repository: file://../probes/mediation-flexera
     version: 0.1.0
     condition: flexera.enabled
+  - name: mediation-tanium
+    repository: file://../probes/mediation-tanium
+    version: 0.1.0
+    condition: tanium.enabled
   - name: mediation-gcpcost
     repository: file://../probes/mediation-gcpcost
     version: 0.1.0

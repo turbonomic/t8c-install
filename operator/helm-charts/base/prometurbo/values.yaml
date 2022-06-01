@@ -391,6 +391,7 @@ businessApplications:
       - mediation-appdynamics
       - mediation-appinsights
       - mediation-awsbilling
+      - mediation-awscloudbilling
       - mediation-awscost
       - mediation-azure
       - mediation-azurecost

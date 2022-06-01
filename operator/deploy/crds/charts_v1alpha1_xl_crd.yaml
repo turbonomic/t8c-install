@@ -814,6 +814,12 @@ spec:
                   description: Enable Istio mediation
                   type: boolean
               type: object
+            jboss:
+              properties:
+                enabled:
+                  description: Enable JBoss mediation
+                  type: boolean
+              type: object
             jvm:
               properties:
                 enabled:
@@ -856,24 +862,6 @@ spec:
                   description: Enable New Relic mediation
                   type: boolean
               type: object
-            weblogic:
-              properties:
-                enabled:
-                  description: Enable Weblogic mediation
-                  type: boolean
-              type: object
-            websphere:
-              properties:
-                enabled:
-                  description: Enable WebSphere mediation
-                  type: boolean
-              type: object
-            jboss:
-              properties:
-                enabled:
-                  description: Enable JBoss mediation
-                  type: boolean
-              type: object
             nutanix:
               properties:
                 enabled:
@@ -908,6 +896,12 @@ spec:
               properties:
                 enabled:
                   description: Enable SNMP mediation
+                  type: boolean
+              type: object
+            tanium:
+              properties:
+                enabled:
+                  description: Enable Tanium mediation
                   type: boolean
               type: object
             terraform:
@@ -968,6 +962,18 @@ spec:
               properties:
                 enabled:
                   description: Enable EMC VPLEX mediation
+                  type: boolean
+              type: object
+            weblogic:
+              properties:
+                enabled:
+                  description: Enable Weblogic mediation
+                  type: boolean
+              type: object
+            websphere:
+              properties:
+                enabled:
+                  description: Enable WebSphere mediation
                   type: boolean
               type: object
             wmi:
@@ -1728,6 +1734,45 @@ spec:
                   type: string
               type: object
             mediation-awsbilling:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                javaComponentOptions:
+                  description: component additional java options
+                  type: string
+                debug:
+                  description: component debug
+                  type: boolean
+                resources:
+                  description: component resource configuration
+                  properties:
+                    limits:
+                      description: component limits
+                      properties:
+                        memory:
+                          description: component memory limits
+                          type: string
+                      type: object
+                  type: object
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object
+            mediation-awscloudbilling:
               properties:
                 annotations:
                   description: component specific pod annotations list
@@ -3366,6 +3411,45 @@ spec:
                   type: string
               type: object
             mediation-snmp:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                javaComponentOptions:
+                  description: component additional java options
+                  type: string
+                debug:
+                  description: component debug
+                  type: boolean
+                resources:
+                  description: component resource configuration
+                  properties:
+                    limits:
+                      description: component limits
+                      properties:
+                        memory:
+                          description: component memory limits
+                          type: string
+                      type: object
+                  type: object
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object
+            mediation-tanium:
               properties:
                 annotations:
                   description: component specific pod annotations list

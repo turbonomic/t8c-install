@@ -222,6 +222,8 @@ dynatrace:
   enabled: false
 flexera:
   enabled: false
+tanium:
+  enabled: false
 gcp:
   enabled: false
 hpe3par:

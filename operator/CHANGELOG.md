@@ -3,6 +3,9 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.10
+1. Created the probe for Tanium integration
+
 42.9
 1. Update nginx helm template for hydra configuration.
 
