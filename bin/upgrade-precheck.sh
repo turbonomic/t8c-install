@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - January 19, 2022
+#Upgrade pre-check script - June 29, 2022
 #Author: CS/JS
 echo " "
 RED=`tput setaf 1`
@@ -141,14 +141,14 @@ check_database(){
                     echo "${WHITE}Checking MariaDB version"
                 fi
                 MVERSION=$(systemctl list-units --all -t service --full --no-legend "mariadb.service" | awk {'print $6'})
-                # Compare version (if 10.5.13 is the output, that means the version is either equals or above this)
-                VERSION_COMPARE=$(echo -e "10.5.13\n${MVERSION}" | sort -V | head -n1)
-                if [[ ${VERSION_COMPARE} = "10.5.13" ]]; then
+                # Compare version (if 10.5.16 is the output, that means the version is either equals or above this)
+                VERSION_COMPARE=$(echo -e "10.5.16\n${MVERSION}" | sort -V | head -n1)
+                if [[ ${VERSION_COMPARE} = "10.5.16" ]]; then
                     echo "${GREEN}MariaDB checks PASSED"
                     SUMMARY+=( "${WHITE}MariaDB checks | ${GREEN}PASSED" )
                 else                    
                     if [[ ${VERBOSE} = 1 ]]; then
-                        echo "${RED}The version of MariaDB is below version 10.5.13 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide."
+                        echo "${RED}The version of MariaDB is below version 10.5.16 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide."
                     fi
                     echo "${RED}MariaDB version check FAILED"
                     SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
@@ -601,9 +601,9 @@ if [[ ${SUMMARY_TABLE} = 1 ]]; then
 fi
 echo " "
 if [[ ${VERBOSE} = 1 ]]; then
-    echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you cannot resolve **please contact Turbonomic support**"
+    echo "${WHITE}Please review and resolve any ${RED}FAILED ${WHITE}issues above before proceeding with the upgrade, if you cannot resolve **please contact Turbonomic support**"
 else
-    echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact Turbonomic support**"
+    echo "${WHITE}Please review and resolve any ${RED}FAILED ${WHITE}issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact Turbonomic support**"
 fi
 echo " "
 echo "End of Upgrade Pre-Check"
