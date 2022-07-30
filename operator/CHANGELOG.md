@@ -3,6 +3,9 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.11
+1. Added hydra to the helm charts.
+
 42.10
 1. Created the probe for Tanium integration
 

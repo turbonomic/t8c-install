@@ -18,84 +18,105 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 8.5.4
-    #externalIP: 10.0.2.15
-    #externalDbIP: 10.0.2.15
-    #externalTimescaleDBIP: 10.0.2.15
-    #enableExternalSecrets: true
+    tag: 8.5.7-SNAPSHOT
+    externalIP: 10.0.2.15
+    externalDbIP: 10.0.2.15
+    externalTimescaleDBIP: 10.0.2.15
+    enableExternalSecrets: true
 
-# Component selector - Probes
-#  actionscript:
-#    enabled: true
-#  actionstream-kafka:
-#    enabled: false
-#  appdynamics:
-#    enabled: true
-#  appinsights:
-#    enabled: true
-#  aws:
-#    enabled: true
-#  azure:
-#    enabled: true
-#  dynatrace:
-#    enabled: true
-#  gcp:
-#    enabled: true
-#  hpe3par:
-#    enabled: true
-#  horizon:
-#    enabled: false
-#  hyperflex:
-#    enabled: false
-#  hyperv:
-#    enabled: true
-#  ibmstorage-flashsystem:
-#    enabled: true
-#  netapp:
-#    enabled: true
-#  nutanix:
-#    enabled: true
-#  oneview:
-#    enabled: true
-#  pure:
-#    enabled: true
-#  scaleio:
-#    enabled: false
-#  servicenow:
-#    enabled: false
-#  ucs:
-#    enabled: true
-#  vcenter:
-#    enabled: true
-#  vmax:
-#    enabled: true
-#  vmm:
-#    enabled: true
-#  wmi:
-#    enabled: true
-#  snmp:
-#    enabled: true
-#  mssql:
-#    enabled: true
-#  mysql:
-#    enabled: false
-#  oracle:
-#    enabled: false
-#  tomcat:
-#    enabled: false
-#  jvm:
-#    enabled: false
-#  newrelic:
-#    enabled: true
-#  udt:
-#    enabled: true
-#  websphere:
-#    enabled: false
-#  weblogic:
-#    enabled: false
-#  xen:
-#    enabled: false
-#  instana:
-#    enabled: true
-#  jboss:
-#    enabled: false
+  grafana:
+    # Grafana is disabled by default. To enable it, uncomment:
+    enabled: false
+    adminPassword: admin
+    grafana.ini:
+      database:
+        # Store data in sqlite3 (no persistence across restarts) by default. To persist, uncomment:
+        type: postgres
+        password: grafana
+
+  # Component selector - Probes
+  actionscript:
+    enabled: true
+  actionstream-kafka:
+    enabled: false
+  appdynamics:
+    enabled: true
+  appinsights:
+    enabled: true
+  aws:
+    enabled: true
+  azure:
+    enabled: true
+  dynatrace:
+    enabled: true
+  gcp:
+    enabled: true
+  hpe3par:
+    enabled: true
+  horizon:
+    enabled: false
+  hyperflex:
+    enabled: false
+  hyperv:
+    enabled: true
+  ibmstorage-flashsystem:
+    enabled: true
+  kubeturbo:
+    enabled: true
+  netapp:
+    enabled: true
+  nutanix:
+    enabled: true
+  oneview:
+    enabled: true
+  prometheus-mysql-exporter:
+    enabled: true
+    mysql:
+      user: root
+      pass: vmturbo
+  prometheus:
+    enabled: true
+  prometurbo:
+    enabled: true
+  pure:
+    enabled: true
+  scaleio:
+    enabled: false
+  servicenow:
+    enabled: false
+  ucs:
+    enabled: true
+  vcenter:
+    enabled: true
+  vmax:
+    enabled: true
+  vmm:
+    enabled: true
+  wmi:
+    enabled: true
+  snmp:
+    enabled: true
+  mssql:
+    enabled: true
+  mysql:
+    enabled: false
+  oracle:
+    enabled: false
+  tomcat:
+    enabled: false
+  jvm:
+    enabled: false
+  newrelic:
+    enabled: true
+  udt:
+    enabled: true
+  websphere:
+    enabled: false
+  weblogic:
+    enabled: false
+  xen:
+    enabled: false
+  instana:
+    enabled: true
+  jboss:
+    enabled: false

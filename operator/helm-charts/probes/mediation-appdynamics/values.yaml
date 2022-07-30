@@ -6,6 +6,8 @@ annotations: {}
 labels: {}
 serviceAnnotations: {}
 serviceLabels: {}
+kubeAuthSecretsVolume: {}
+kubeAuthSecretsVolumeMount: {}
 
 replicaCount: 1
 

@@ -31,6 +31,10 @@ dependencies:
   - name: rsyslog
     repository: file://../base/rsyslog
     version: 0.1.0
+  - name: tunnel
+    repository: file://../base/skupper
+    version: 0.1.0
+    condition: tunnel.enabled
   - name: zookeeper
     repository: file://../base/zookeeper
     version: 0.1.0
@@ -53,6 +57,10 @@ dependencies:
     repository: file://../services/action-orchestrator
     version: 0.1.0
     condition: control.enabled,platform.enabled
+  - name: client-network
+    repository: file://../services/client-network
+    version: 0.1.0
+    condition: client-network.enabled
   - name: clustermgr
     repository: file://../services/clustermgr
     version: 0.1.0
@@ -97,6 +105,12 @@ dependencies:
     repository: file://../services/extractor
     version: 0.1.0
     condition: extractor.enabled # todo: change to platform.enabled once XLR/search is ready
+
+# Security dependencies
+  - name: hydra
+    repository: file://../base/hydra
+    version: 0.23.1
+    condition: hydra.enabled
 
 # Logging dependencies
   - name: elasticsearch

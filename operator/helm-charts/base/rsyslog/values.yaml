@@ -22,4 +22,9 @@ persistence:
   logsize: 30Gi
   auditsize: 30Gi
 
+tunnel:
+  expose: false
+  proxy: tcp
+  address: "remote-rsyslog"
+
 resources: {}

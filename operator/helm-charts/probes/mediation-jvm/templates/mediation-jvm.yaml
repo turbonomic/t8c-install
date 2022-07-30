@@ -84,6 +84,11 @@ spec:
           name: jvm-secrets
           readOnly: true
 {{- if .Values.global }}
+    {{- if .Values.global.jwtAuthenticationEnabled }}
+        {{- include "kubeAuthSecretsVolumeMount" . | indent 8  -}}
+    {{ end }}
+{{ end }}
+{{- if .Values.global }}
   {{- if .Values.global.registry }}
     {{- if .Values.global.imagePullSecret }}
       imagePullSecrets:
@@ -120,6 +125,11 @@ spec:
         secret:
           secretName: "jvm"
           optional: true
+{{- if .Values.global }}
+    {{- if .Values.global.jwtAuthenticationEnabled }}
+        {{- include "kubeAuthSecretsVolume" . | indent 6 -}}
+    {{ end }}
+{{ end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}

@@ -43,9 +43,7 @@ but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else l
 Also, we can't use a single if because lazy evaluation is not an option
 */}}
 {{- if .Values.global }}
-    {{- if and .Values.global.repository .Values.global.tag (eq $repositoryName "turbonomic") (contains "SNAPSHOT" .Values.global.tag ) }}
-        {{- printf "%s/prometurbo:%s" .Values.global.repository $tag -}}
-    {{- else if and .Values.global.repository .Values.global.tag (eq $repositoryName "turbonomic") -}}
+    {{- if and .Values.global.repository .Values.global.tag (eq $repositoryName "turbonomic") (eq $tag "latest") }}
         {{- printf "%s/prometurbo:%s" .Values.global.repository .Values.global.tag -}}
      {{- else -}}
         {{- printf "%s/prometurbo:%s" $repositoryName $tag -}}
@@ -65,9 +63,7 @@ but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else l
 Also, we can't use a single if because lazy evaluation is not an option
 */}}
 {{- if .Values.global }}
-    {{- if and .Values.global.repository .Values.global.tag (eq $repositoryName "turbonomic") (contains "SNAPSHOT" .Values.global.tag ) }}
-        {{- printf "%s/turbodif:%s" .Values.global.repository $tag -}}
-    {{- else if and .Values.global.repository .Values.global.tag (eq $repositoryName "turbonomic") -}}
+    {{- if and .Values.global.repository .Values.global.tag (eq $repositoryName "turbonomic") (eq $tag "latest") }}
         {{- printf "%s/turbodif:%s" .Values.global.repository .Values.global.tag -}}
     {{- else -}}
         {{- printf "%s/turbodif:%s" $repositoryName $tag -}}

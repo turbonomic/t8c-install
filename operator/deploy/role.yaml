@@ -12,6 +12,7 @@ rules:
   - events
   - persistentvolumeclaims
   - pods
+  - pods/exec
   - secrets
   - serviceaccounts
   - services
@@ -84,6 +85,14 @@ rules:
   - virtualservices
   verbs:
   - '*'
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
 - apiGroups:
   - cert-manager.io
   resources:
