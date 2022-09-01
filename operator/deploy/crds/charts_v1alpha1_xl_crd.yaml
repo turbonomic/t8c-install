@@ -323,6 +323,13 @@ spec:
             # Configure platform
             consul:
               properties:
+                persistence:
+                  description: consul persistence options
+                  properties:
+                    size:
+                      description: consul persistent volume size
+                      type: string
+                  type: object
                 annotations:
                   description: component specific pod annotations list
                   type: object
@@ -518,6 +525,14 @@ spec:
                     installations), as opposed to being downstream of some other ingress mechanism
                     as in something like an OpenShift deployemnt
                   type: boolean
+                tunnel:
+                  type: object
+                  properties:
+                    expose:
+                      type: boolean
+                    address:
+                      type: string
+                      description: the name that will be given to the exposed service
               type: object
             rsyslog:
               properties:
@@ -921,18 +936,6 @@ spec:
                   description: Enable actionstream-kafka mediation
                   type: boolean
               type: object
-            acims:
-              properties:
-                enabled:
-                  description: Enable Cisco ACI Multisite mediation
-                  type: boolean
-              type: object
-            apic:
-              properties:
-                enabled:
-                  description: Enable Cisco APIC mediation
-                  type: boolean
-              type: object
             appdynamics:
               properties:
                 enabled:
@@ -1053,12 +1056,6 @@ spec:
                   description: Enable Instana mediation
                   type: boolean
               type: object
-            istio:
-              properties:
-                enabled:
-                  description: Enable Istio mediation
-                  type: boolean
-              type: object
             jboss:
               properties:
                 enabled:
@@ -1093,12 +1090,6 @@ spec:
               properties:
                 enabled:
                   description: Enable NetApp mediation
-                  type: boolean
-              type: object
-            netflow:
-              properties:
-                enabled:
-                  description: Enable netflow mediation
                   type: boolean
               type: object
             newrelic:
@@ -1153,12 +1144,6 @@ spec:
               properties:
                 enabled:
                   description: Enable Terraform mediation
-                  type: boolean
-              type: object
-            tetration:
-              properties:
-                enabled:
-                  description: Enable Cisco Tetration mediation
                   type: boolean
               type: object
             tomat:
@@ -1718,14 +1703,6 @@ spec:
                 serviceAccountName:
                   description: component serviceAccountName
                   type: string
-                tunnel:
-                  type: object
-                  properties:
-                    expose:
-                      type: boolean
-                    address:
-                      type: string
-                      description: the name that will be given to the exposed service
               type: object
 
             # Resources limits - Probes
@@ -1769,84 +1746,6 @@ spec:
                   type: string
               type: object
             mediation-actionstream-kafka:
-              properties:
-                annotations:
-                  description: component specific pod annotations list
-                  type: object
-                image:
-                  description: component specific image options
-                  properties:
-                    repository:
-                      description: component container registry and repository name
-                      type: string
-                    tag:
-                      description: component container tag
-                      type: string
-                    pullPolicy:
-                      description: component image pull policy
-                      type: string
-                  type: object
-                javaComponentOptions:
-                  description: component additional java options
-                  type: string
-                debug:
-                  description: component debug
-                  type: boolean
-                resources:
-                  description: component resource configuration
-                  properties:
-                    limits:
-                      description: component limits
-                      properties:
-                        memory:
-                          description: component memory limits
-                          type: string
-                      type: object
-                  type: object
-                serviceAccountName:
-                  description: component serviceAccountName
-                  type: string
-              type: object
-            mediation-acims:
-              properties:
-                annotations:
-                  description: component specific pod annotations list
-                  type: object
-                image:
-                  description: component specific image options
-                  properties:
-                    repository:
-                      description: component container registry and repository name
-                      type: string
-                    tag:
-                      description: component container tag
-                      type: string
-                    pullPolicy:
-                      description: component image pull policy
-                      type: string
-                  type: object
-                javaComponentOptions:
-                  description: component additional java options
-                  type: string
-                debug:
-                  description: component debug
-                  type: boolean
-                resources:
-                  description: component resource configuration
-                  properties:
-                    limits:
-                      description: component limits
-                      properties:
-                        memory:
-                          description: component memory limits
-                          type: string
-                      type: object
-                  type: object
-                serviceAccountName:
-                  description: component serviceAccountName
-                  type: string
-              type: object
-            mediation-apic:
               properties:
                 annotations:
                   description: component specific pod annotations list
@@ -3172,45 +3071,6 @@ spec:
                   description: component serviceAccountName
                   type: string
               type: object
-            mediation-istio:
-              properties:
-                annotations:
-                  description: component specific pod annotations list
-                  type: object
-                image:
-                  description: component specific image options
-                  properties:
-                    repository:
-                      description: component container registry and repository name
-                      type: string
-                    tag:
-                      description: component container tag
-                      type: string
-                    pullPolicy:
-                      description: component image pull policy
-                      type: string
-                  type: object
-                javaComponentOptions:
-                  description: component additional java options
-                  type: string
-                debug:
-                  description: component debug
-                  type: boolean
-                resources:
-                  description: component resource configuration
-                  properties:
-                    limits:
-                      description: component limits
-                      properties:
-                        memory:
-                          description: component memory limits
-                          type: string
-                      type: object
-                  type: object
-                serviceAccountName:
-                  description: component serviceAccountName
-                  type: string
-              type: object
             mediation-jvm:
               properties:
                 annotations:
@@ -3329,45 +3189,6 @@ spec:
                   type: string
               type: object
             mediation-netapp:
-              properties:
-                annotations:
-                  description: component specific pod annotations list
-                  type: object
-                image:
-                  description: component specific image options
-                  properties:
-                    repository:
-                      description: component container registry and repository name
-                      type: string
-                    tag:
-                      description: component container tag
-                      type: string
-                    pullPolicy:
-                      description: component image pull policy
-                      type: string
-                  type: object
-                javaComponentOptions:
-                  description: component additional java options
-                  type: string
-                debug:
-                  description: component debug
-                  type: boolean
-                resources:
-                  description: component resource configuration
-                  properties:
-                    limits:
-                      description: component limits
-                      properties:
-                        memory:
-                          description: component memory limits
-                          type: string
-                      type: object
-                  type: object
-                serviceAccountName:
-                  description: component serviceAccountName
-                  type: string
-              type: object
-            mediation-netflow:
               properties:
                 annotations:
                   description: component specific pod annotations list
@@ -3758,45 +3579,6 @@ spec:
                   type: string
               type: object
             mediation-terraform:
-              properties:
-                annotations:
-                  description: component specific pod annotations list
-                  type: object
-                image:
-                  description: component specific image options
-                  properties:
-                    repository:
-                      description: component container registry and repository name
-                      type: string
-                    tag:
-                      description: component container tag
-                      type: string
-                    pullPolicy:
-                      description: component image pull policy
-                      type: string
-                  type: object
-                javaComponentOptions:
-                  description: component additional java options
-                  type: string
-                debug:
-                  description: component debug
-                  type: boolean
-                resources:
-                  description: component resource configuration
-                  properties:
-                    limits:
-                      description: component limits
-                      properties:
-                        memory:
-                          description: component memory limits
-                          type: string
-                      type: object
-                  type: object
-                serviceAccountName:
-                  description: component serviceAccountName
-                  type: string
-              type: object
-            mediation-tetration:
               properties:
                 annotations:
                   description: component specific pod annotations list

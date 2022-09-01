@@ -109,10 +109,6 @@ variable "ibmstorage-flashsystem" {
   default = false
 }
 
-variable "istio" {
-  default = false
-}
-
 variable "actionstream-kafka" {
   default = false
 }
@@ -141,10 +137,6 @@ variable "netapp" {
   default = false
 }
 
-variable "netflow" {
-  default = false
-}
-
 variable "nutanix" {
   default = false
 }
@@ -166,10 +158,6 @@ variable "scaleio" {
 }
 
 variable "snmp" {
-  default = false
-}
-
-variable "tetration" {
   default = false
 }
 

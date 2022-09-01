@@ -9,6 +9,12 @@ then
 fi
 log_filename=/tmp/t8c_upgrade_$(date +%Y-%m-%d_%H_%M_%S).log
 sudo mount /dev/cdrom /mnt/iso | tee -a $log_filename 2>&1
+mountResult=$(echo ${PIPESTATUS[0]})
+if [ $mountResult -ne 0 ]; then
+  echo ""
+  echo "Please check if the ISO is mounted, it appears not to be"
+  exit 1
+fi
 
 /mnt/iso/turboload.sh | tee -a $log_filename 2>&1
 isoResult=$?

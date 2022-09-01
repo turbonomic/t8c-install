@@ -158,6 +158,30 @@ spec:
               readOnly: true
             - name: prometheus-merged-config
               mountPath: /etc/merged-config
+        {{- if .Values.global.telemetry.enabled }}
+        - name: {{ .Values.server.kafkaAdapter.name }}
+          image: {{ .Values.server.kafkaAdapter.image.repository }}/prometheus-kafka-adapter:{{ .Values.server.kafkaAdapter.image.tag }}
+          imagePullPolicy: {{ .Values.server.configManager.image.pullPolicy }}
+          args:
+{{ toYaml .Values.server.kafkaAdapter.args | indent 12 }}
+          env:
+            - name: KAFKA_BROKER_LIST
+              value: {{ .Values.server.kafkaAdapter.env.kafkaBrokerList }}
+            - name: KAFKA_TOPIC
+              value: {{ printf "%s.%s" .Release.Namespace .Values.server.kafkaAdapter.env.kafkaTopic }}
+            - name: KAFKA_COMPRESSION
+              value: {{ .Values.server.kafkaAdapter.env.kafkaCompression }}
+            - name: KAFKA_BATCH_NUM_MESSAGES
+              value: {{ quote .Values.server.kafkaAdapter.env.kafkaBatchNumMessages }}
+            - name: SERIALIZATION_FORMAT
+              value: {{ .Values.server.kafkaAdapter.env.serializationFormat }}
+            - name: PORT
+              value: {{ quote .Values.server.kafkaAdapter.env.port }}
+            - name: LOG_LEVEL
+              value: {{ .Values.server.kafkaAdapter.env.logLevel }}
+            - name: GIN_MODE
+              value: {{ .Values.server.kafkaAdapter.env.ginMode }}
+        {{- end }}
 
       {{- if .Values.server.sidecarContainers }}
       {{- toYaml .Values.server.sidecarContainers | nindent 8 }}

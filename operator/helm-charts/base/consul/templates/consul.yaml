@@ -34,7 +34,7 @@ spec:
 {{- end }}
   resources:
     requests:
-      storage: 1Gi
+      storage: {{ .Values.persistence.size }}
 ---
 apiVersion: apps/v1
 kind: Deployment

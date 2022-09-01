@@ -575,87 +575,7 @@ server:
   #   - yournamespace
 
   name: server
-  sidecarContainers:
-      # Name of the sidecar container inside Prometheus server pod.
-    - name: datacloud-gateway
-      # Container image to use. It has to be a version that supports service accounts.
-      image: sevone/prometheus-gateway:384f135e
-      # Whether the container image should be pulled every time or only when it's not present.
-      imagePullPolicy: IfNotPresent
-      # Environment variable definitions to configure the sidecar container.
-      env:
-          # Where to send the telemetry data.
-        - name: HOST
-          value: "datacloud.turbonomic.io:443"
-          # DataCloud project ID as it appears in the URL when you login to the UI. Data will be
-          # sent to this project.
-        - name: PROJECT_ID
-          value: "turbo-telemetry-prod"
-          # Path to a JSON file describing the service account that should be used for
-          # authenticating with DataCloud. The service account should have write-only access.
-        - name: SA_JSON_FILE
-          value: "/var/run/secrets/datacloud/serviceaccount/collector.json"
-          # Logging level for the sidecar container. At info level it logs every write request from
-          # Prometheus. Given such requests will be coming infrequently for telemetry, this seems
-          # appropriate.
-        - name: LOG_LEVEL
-          value: "info"
-      volumeMounts:
-        - name: datacloud-service-account # must match the name of the secret volume below.
-          mountPath: "/var/run/secrets/datacloud/serviceaccount"
-          readOnly: true
-
-      # Name of the sidecar container inside Prometheus server pod.
-    - name: datacloud-gateway-graph
-      # Container image to use. It has to be a version that supports service accounts.
-      image: sevone/prometheus-gateway:graph-a293ffb6
-      # Whether the container image should be pulled every time or only when it's not present.
-      imagePullPolicy: IfNotPresent
-      # Environment variable definitions to configure the sidecar container.
-      env:
-          # Host where to send the telemetry data.
-        - name: GATEWAY_COLLECTOR_DATACLOUD_HOST
-          value: "datacloud.turbonomic.io"
-          # Port to connect
-        - name: GATEWAY_COLLECTOR_DATACLOUD_PORT
-          value: "443"
-          # Address and port to listen new connections. It has to be different than the one
-          # used by the datacloud-gateway sidecar (8123) and Prometheus server (9090).
-        - name: GATEWAY_LISTENADDR
-          value: ":8124"
-          # DataCloud project ID as it appears in the URL when you login to the UI. Data will be
-          # sent to this project.
-        - name: GATEWAY_COLLECTOR_DATACLOUD_PROJECT
-          value: "turbo-telemetry-prod"
-          # Path to a JSON file describing the service account that should be used for
-          # authenticating with DataCloud. The service account should have write-only access.
-        - name: GATEWAY_COLLECTOR_SERVICE_ACCOUNT_CREDENTIALS_FILE
-          value: "/var/run/secrets/datacloud/serviceaccount/collector.json"
-          # Logging level for the sidecar container. At info level it logs every write request from
-          # Prometheus. Given such requests will be coming infrequently for telemetry, this seems
-          # appropriate.
-        - name: LOG_LEVEL
-          value: "info"
-          # Send the necessary metadata every time it is sent to DataCloud backend and should only be
-          # used in cases where you have few timeseries at very long intervals
-        - name: GATEWAY_UNMANAGED
-          value: "true"
-          # Name of the collector in DataCloud
-        - name: GATEWAY_COLLECTOR_DATACLOUD_COLLECTOR_NAME
-          value: "collector"
-          # Normally graph gateway needs to build local state that would survive a restart
-          # and it is only useful to the collector library. With unmanaged, nothing is really
-          # kept track of locally. The necessity of the local state comes from needing to tell DataCloud
-          # when items enter and leave the knowledge graph to maintain the temporal index.
-        - name: GATEWAY_COLLECTOR_DATACLOUD_PERSIST_SNAPSHOT
-          value: "false"
-          # Disable self-monitoring to save memory by not creating an in-memory badgerdb.
-        - name: DATACLOUD_SELFMON_PERIOD
-          value: 0s
-      volumeMounts:
-        - name: datacloud-service-account # must match the name of the secret volume below.
-          mountPath: "/var/run/secrets/datacloud/serviceaccount"
-          readOnly: true
+  sidecarContainers: []
 
   # Prometheus configuration manager sidecar to read configuration from configMap, update it with
   # information from XL and write it where server will read it. Replaces configmap-reload.
@@ -670,6 +590,33 @@ server:
       pullPolicy: IfNotPresent
     args:
       - "60" # seconds between attempts to update the configuration
+
+  # Prometheus to kafka adapter.
+  kafkaAdapter:
+    # Name of the sidecar container inside Prometheus server pod.
+    name: kafka-adapter
+    image:
+      # Repository and tag to use for the prometheus-to-kafka adapter container image.
+      # Image name will always be "prometheus-kafka-adapter"
+      repository: telefonica
+      tag: 1.8.0
+      pullPolicy: IfNotPresent
+    # Additional arguments to use when starting the prometheus-kafka-adapter process.
+    args: []
+    # Most common environment variables set for the prometheus-kafka-adapter process. Explicitly
+    # listed here to work around problems with Helm's list handling. Documentation can be found in
+    # [GitHub](https://github.com/Telefonica/prometheus-kafka-adapter).
+    env:
+      kafkaBrokerList: kafka:9092
+      kafkaTopic: telemetry
+      kafkaCompression: gzip
+      kafkaBatchNumMessages: 100
+      serializationFormat: json
+      port: 8080
+      logLevel: info
+      ginMode: release
+    # Additional environment variables to set for the prometheus-kafka-adapter process.
+    additionalEnv: []
 
   ## Prometheus server container image
   ##
@@ -751,42 +698,7 @@ server:
 
   ## https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write
   ##
-  remoteWrite:
-      # Name of the remote write config, which if specified must be unique among remote write
-      # configs. The name will be used in metrics and logging in place of a generated value to help
-      # users distinguish between remote write configs.
-    - name: "datacloud"
-      # URL of the SevOne DataCloud gateway sidecar
-      url: http://127.0.0.1:8123/api/prometheus/write
-      # Send only telemetry data to DataCloud.
-      write_relabel_configs:
-        - action: keep
-          source_labels: [job]
-          regex: telemetry # relabel regexps are anchored on both ends by default.
-        - action: labeldrop # IPs and ports of pods shouldn't be sent to DataCloud for privacy...
-          regex: instance # ...reasons but will uniqueness be maintained in the presence of multiple
-                    # pods per service? We'll need multiple pods per service for high-availability.
-      queue_config:
-        max_backoff: 2h # Avoid cluttering the logs while internet access is disabled.
-
-    - name: "datacloud-graph"
-      # URL of the SevOne DataCloud gateway sidecar
-      url: http://127.0.0.1:8124/api/prometheus/write
-      # Send only telemetry data to DataCloud.
-      write_relabel_configs:
-        - action: keep
-          source_labels: [job]
-          regex: telemetry-graph # relabel regexps are anchored on both ends by default.
-        - action: labeldrop # IPs and ports of pods shouldn't be sent to DataCloud for privacy...
-          regex: instance # ...reasons but will uniqueness be maintained in the presence of multiple
-                    # pods per service? We'll need multiple pods per service for high-availability.
-        - action: replace
-          source_labels: [job]
-          target_label: job
-          regex: (telemetry)-graph # replace "telemetry-graph" with "telemetry"
-
-      queue_config:
-        max_backoff: 2h # Avoid cluttering the logs while internet access is disabled.
+  remoteWrite: []
 
   ## https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_read
   ##
@@ -1740,67 +1652,6 @@ serverFiles:
               - __meta_kubernetes_namespace
             target_label: namespace
             action: replace
-
-      # Scrape config for XL telemetry. Loosely based on 'xl' job.
-      #
-      - job_name: 'telemetry'
-        scrape_interval: 7d # Send telemetry once a week.
-        sample_limit: 10000 # Currently XL components export ~300 metrics or ~3k time series. 10k
-          # should be big enough to support growth, but still prevent a bug from creating millions
-          # of new time series, flooding DataCloud and incurring high costs.
-        kubernetes_sd_configs:
-          - role: endpoints
-        relabel_configs: &telemetry_relabel_config
-          - action: keep
-            source_labels:
-              - __meta_kubernetes_service_name
-            regex: action-orchestrator|api|auth|clustermgr|cost|group|history|market|ml-datastore|plan-orchestrator|repository|topology-processor
-          - action: drop
-            source_labels:
-              - __meta_kubernetes_endpoint_port_name
-            regex: (tcp-|grpc-|https-).*
-          - action: replace
-            source_labels:
-              - __meta_kubernetes_service_name
-            target_label: service
-        metric_relabel_configs: &telemetry_metric_relabel_config
-          - action: keep
-            source_labels:
-              - __name__
-            # Only send metrics which match regarding this regular expression.
-            # Please seek the security team guidance and review before changing this regular expression.
-            regex: "turbo_cloud_spend_ratio|\
-              turbo_business_accounts|\
-              turbo_plans_total|\
-              turbo_reservations_total|\
-              turbo_current_reservations|\
-              turbo_current_actions|\
-              turbo_completed_actions_total|\
-              turbo_discovered_entities|\
-              turbo_broadcast_entities|\
-              turbo_targets|\
-              turbo_version_info|\
-              turbo_api_calls_total|\
-              turbo_api_call_latency_seconds_bucket|\
-              turbo_api_call_latency_seconds_count|\
-              turbo_api_call_latency_seconds_sum|\
-              turbo_component_uptime_seconds|\
-              turbo_oid_expiration_execution_seconds_sum|\
-              turbo_oid_expiration_execution_seconds_count|\
-              turbo_oid_expiration_execution_seconds_bucket|\
-              turbo_expired_entities_total"
-
-      # Scrape config for XL telemetry. Loosely based on 'xl' job.
-      #
-      - job_name: 'telemetry-graph'
-        scrape_interval: 1d # Send telemetry once a day.
-        sample_limit: 10000 # Currently, XL components export ~300 metrics or ~3k time series. 10k
-          # should be big enough to support growth, but still prevent a bug from creating millions
-          # of new time series, flooding DataCloud and incurring high costs.
-        kubernetes_sd_configs:
-          - role: endpoints
-        relabel_configs: *telemetry_relabel_config # Use reference to telemetry job
-        metric_relabel_configs: *telemetry_metric_relabel_config # Use reference to telemetry job
 
       # Scrape config for XL mysql.
       #

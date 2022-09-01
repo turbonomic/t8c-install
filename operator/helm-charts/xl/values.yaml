@@ -87,6 +87,38 @@ global:
     # - name: nginx-ingressgateway-certs
     #   key:
     #   certificate:
+  telemetry:
+    # This just controls whether the necessary components are there to collect telemetry and store
+    # it locally. Whether telemetry is sent anywhere is controlled by a UI checkbox.
+    enabled: true
+    # How often to collect telemetry. Default if once a day.
+    scrapeInterval: 1d
+    # Currently, XL components export ~300 metrics or ~3k time series. 10k should be big enough to
+    # support growth, but still prevent a bug from creating millions of new time series, flooding
+    # DataCloud and incurring high costs.
+    sampleLimit: 10000
+    # Only send metrics whose name matches this regular expression.
+    # Please seek the security team guidance and review before changing this regular expression.
+    metricsWhiteList: "turbo_cloud_spend_ratio|\
+                        turbo_business_accounts|\
+                        turbo_plans_total|\
+                        turbo_reservations_total|\
+                        turbo_current_reservations|\
+                        turbo_current_actions|\
+                        turbo_completed_actions_total|\
+                        turbo_discovered_entities|\
+                        turbo_broadcast_entities|\
+                        turbo_targets|\
+                        turbo_version_info|\
+                        turbo_api_calls_total|\
+                        turbo_api_call_latency_seconds_bucket|\
+                        turbo_api_call_latency_seconds_count|\
+                        turbo_api_call_latency_seconds_sum|\
+                        turbo_component_uptime_seconds|\
+                        turbo_oid_expiration_execution_seconds_sum|\
+                        turbo_oid_expiration_execution_seconds_count|\
+                        turbo_oid_expiration_execution_seconds_bucket|\
+                        turbo_expired_entities_total"
 
 nginxingress:
   enabled: true
@@ -194,17 +226,11 @@ extractor:
   enabled: false
 hydra:
   enabled: false
-telemetry:
-  secret: eyJzZXJ2aWNlQWNjb3VudCI6eyJuYW1lIjoiY29sbGVjdG9yIiwiZW1haWwiOiJjb2xsZWN0b3JAdHVyYm8tdGVsZW1ldHJ5LXByb2Quc2EuZGF0YWNsb3VkLnQ4Yy5pbyJ9LCJzZXJ2aWNlQWNjb3VudEtleSI6eyJpZCI6IjlmZTdmYmVjMzVkMmE4MmI0MTdiNDZjZDQyZWEyNTVhZjMxYTZlNDUiLCJwdWJsaWNLZXkiOiItLS0tLUJFR0lOIFBVQkxJQyBLRVktLS0tLVxuTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUExRG9EQTkzWWRzMkFxdjBxOWR2blxuM2RPRkprMmphMmxlVTl6Qm9nU3E4UFF5RkEvQUVtcFJXMHN0U3ByYlBFbWdVaEwvSkZERzhSMFdnV1VSNjhIdFxuYjdIYmNJZHNKRGkrMkZsRjEvWWxrb00vS1hkSi9nVDNoYnJnMTU1U2s0MnNpV3VnTE1Nank0KzBzMXBQMHpGTlxuamt6VGl1bDZRZk1GQkxpdUhOeGNKQjFjWE9FWno4dlp0SmxXS3pmcS90QkZjSVkwa0w5UWxEdEJqNkdaYktqcVxuZENIWWxCa2duUURqVFhlbGFteWpDOFhKRmdrTGJzUEVLZEtCdmdneU5hNE14VmprTm9hRHVkUU5QV1d1Ry8yQ1xuc0Nhb0s5ZTBiUjNwRVVFMytuTHlIM3ovSzV0MjY2WmptbkloMExrZW1hQm56SzI2WWpHTHZYc3lBbnJsOVk1blxuM3dJREFRQUJcbi0tLS0tRU5EIFBVQkxJQyBLRVktLS0tLVxuIiwicHJpdmF0ZUtleSI6Ii0tLS0tQkVHSU4gUlNBIFBSSVZBVEUgS0VZLS0tLS1cbk1JSUVwQUlCQUFLQ0FRRUExRG9EQTkzWWRzMkFxdjBxOWR2bjNkT0ZKazJqYTJsZVU5ekJvZ1NxOFBReUZBL0FcbkVtcFJXMHN0U3ByYlBFbWdVaEwvSkZERzhSMFdnV1VSNjhIdGI3SGJjSWRzSkRpKzJGbEYxL1lsa29NL0tYZEpcbi9nVDNoYnJnMTU1U2s0MnNpV3VnTE1Nank0KzBzMXBQMHpGTmprelRpdWw2UWZNRkJMaXVITnhjSkIxY1hPRVpcbno4dlp0SmxXS3pmcS90QkZjSVkwa0w5UWxEdEJqNkdaYktqcWRDSFlsQmtnblFEalRYZWxhbXlqQzhYSkZna0xcbmJzUEVLZEtCdmdneU5hNE14VmprTm9hRHVkUU5QV1d1Ry8yQ3NDYW9LOWUwYlIzcEVVRTMrbkx5SDN6L0s1dDJcbjY2WmptbkloMExrZW1hQm56SzI2WWpHTHZYc3lBbnJsOVk1bjN3SURBUUFCQW9JQkFDaG9PemE3UUlHdU12ZGJcbmFKaVRIQnlTTDJIUm1uSFRDQkN6a1hLRnJQNWZvRUZObG1ack03NU1HLzErYW91YUFScGZYNURNaUhSVDgzc0RcbmdWdi8rbk12eS9ZcThwNGE1OHROaEF6UVl1cjRia2c0M0MrdlJtbUI0VmxzWFpDV2d1bFBRcG9ETlllR2Z3TS9cbkNML1BQVk1Bc2E1Yk1kbm9xV1h5dThQbStPd3ZDaU1Uby9CSEp4b3NleGFPQzVrLzV6ZEtTY1RlUWNGcEI3OTNcbkJJK0ErZ3J5eVR4Uld0bVlIcjdYS1Z1QUU2V0tudzZCYVErTy9oSUt3TUZZNDRibWlERU1tQ2gwQnU3ZWYxT1Vcbm50KzIxVDV1dkJzejd4VXZyTzQzMlhzbzFCb0JhSnA2b2FLaGZtbzRlYktTbzFuQjhTMTRMMStmL0YyWE5IQU9cbjFaT0xzcEVDZ1lFQTd4NDF4VkJDY1ZWNlo1L1RWSm83a0JIeUw0TzdRdERRdjk0amdQOHdWY2VmSURzRW4xQkdcbk9oZE5FQmdTS3p3TmpzMkJEb0dMZ1U1cDl2TU14RllDazlyV005UlFUQ3pDS3Nvb2ZHT2hsVGtHMTNtWVRkb2RcbnlvN250RlNRUW1OLzdxbWRwWmN5ZjkwdFVENzkzVVpoRTZFRmxKQmNkbWp6Sk1JZmRlZmJRTTBDZ1lFQTR6WEZcbkU5VkZqWm9DdDMvQjdyL3R4NlUwYnhoc0dVSmFoWFZJVjdySkEyRmRGdnlVMUhQYW5qeDh1Y2tuUEh5Vk53VEhcbkJicUxQR1RPOFRVT3gwbUlId1huWmZpQ1RhWW0rSnNmbWNWZlVFazFyS0ZYY0pBblYvVGF4WnRxZWl1UXI1ZU1cbmtRR3E1SEZYU09rVkNRVlhla0t3WUw3dC9YVklzb3RXaFhicjIxc0NnWUVBMDRZUDN1bnV2TDcydHZBbFMvUGJcbnVNaUhTd3ptL0dZb0kzSm9TZFowZFkxTzhINEV5c0dDUGlVYW9LQUtnb0J2SmVJWXhqSkdyQzRuZ3JMaW1sUFRcbmwrUEFGTDArQXdTZEJxa3FRMDhIUXkvZEk0T0cvV2R6YnhvWFVlaDBiS1lFSjZXWHRVSVpCQTh0NUl5MG1hZUdcbmZJeTJtUU5USjlRVE1uTWV6WGc2OWdrQ2dZRUFuM2huNEdtNkxZN0JCV1lJQ2Jodi9jWTRMUmxwRmJsNnExMExcbjczZE1DckZWa3dLb3V3eXRqbzVKeEdRb3c4MTFOVzZHK2NCYVpZTWp0Q3hYT1F5bEc1RWJQbmpUakFob0plbEtcbm5yVG5Gd1NyUllUZ1NFTUZPampETEJyTyt2eUV5cG1Gc1drSU50cE9Od0JSSVVtOGdqVTRjazdQM3l0b1lOaG5cblc3bUNCUzBDZ1lCQlBtdFBieUtCbDRXWFRMWDRzQjVITUMwaUNyMVNsVXVDV1hiemZzOUQ4WDZpM3c5S0NkMmRcbllSV0VCSmlYb1NiK05tbDFndURvWHQyZmxmMGpJemlEbEwrS2FvNXJKRWIrVndYY1JmaUtWdkZQN3dRT0l1SnFcbkhOb3IwalI4aE5nWWpLR1YwM2dXdE5pc2ZRc2dHYXRRUFQ2YW1HQjFTMEN3cmhLMEtQVEpwZz09XG4tLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLVxuIn19
 
 # Enable mediation
 actionscript:
   enabled: false
 actionstream-kafka:
-  enabled: false
-acims:
-  enabled: false
-apic:
   enabled: false
 appdynamics:
   enabled: false
@@ -248,8 +274,6 @@ instana:
   enabled: false
 intersight:
   enabled: false
-istio:
-  enabled: false
 mssql:
   enabled: false
 mysql:
@@ -261,8 +285,6 @@ tomcat:
 jvm:
   enabled: false
 netapp:
-  enabled: false
-netflow:
   enabled: false
 newrelic:
   enabled: false
@@ -289,8 +311,6 @@ servicenow:
 snmp:
   enabled: false
 terraform:
-  enabled: false
-tetration:
   enabled: false
 ucs:
   enabled: false

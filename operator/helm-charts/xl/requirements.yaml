@@ -179,14 +179,6 @@ dependencies:
     repository: file://../probes/mediation-actionscript
     version: 0.1.0
     condition: actionscript.enabled
-  - name: mediation-acims
-    repository: file://../probes/mediation-acims
-    version: 0.1.0
-    condition: acims.enabled
-  - name: mediation-apic
-    repository: file://../probes/mediation-apic
-    version: 0.1.0
-    condition: apic.enabled
   - name: mediation-appdynamics
     repository: file://../probes/mediation-appdynamics
     version: 0.1.0
@@ -319,10 +311,6 @@ dependencies:
     repository: file://../probes/mediation-intersightucs
     version: 0.1.0
     condition: intersight.enabled
-  - name: mediation-istio
-    repository: file://../probes/mediation-istio
-    version: 0.1.0
-    condition: istio.enabled
   - name: mediation-actionstream-kafka
     repository: file://../probes/mediation-actionstream-kafka
     version: 0.1.0
@@ -331,10 +319,6 @@ dependencies:
     repository: file://../probes/mediation-netapp
     version: 0.1.0
     condition: netapp.enabled
-  - name: mediation-netflow
-    repository: file://../probes/mediation-netflow
-    version: 0.1.0
-    condition: netflow.enabled
   - name: mediation-newrelic
     repository: file://../probes/mediation-newrelic
     version: 0.1.0
@@ -403,10 +387,6 @@ dependencies:
     repository: file://../probes/mediation-terraform
     version: 0.1.0
     condition: terraform.enabled
-  - name: mediation-tetration
-    repository: file://../probes/mediation-tetration
-    version: 0.1.0
-    condition: tetration.enabled
   - name: mediation-ucs
     repository: file://../probes/mediation-ucs
     version: 0.1.0
