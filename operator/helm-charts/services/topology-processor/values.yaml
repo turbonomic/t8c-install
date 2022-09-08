@@ -30,11 +30,6 @@ env:
   - name: kafkaServers
     value: kafka:9092
 
-tunnel:
-  expose: false
-  proxy: tcp
-  address: "remote-topology-processor"
-
 resources:
   limits:
     memory: 32Gi

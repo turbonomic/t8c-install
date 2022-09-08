@@ -14,9 +14,23 @@ data:
 {{- if eq $key "prometheus.yml" }}
     global:
 {{ $root.Values.server.global | toYaml | trimSuffix "\n" | indent 6 }}
-{{- if $root.Values.server.remoteWrite }}
+{{- if or $root.Values.server.remoteWrite $root.Values.global.telemetry.enabled }}
     remote_write:
+      {{- if $root.Values.global.telemetry.enabled }}
+      - name: "kafka"
+        url: "http://localhost:8080/receive"
+        write_relabel_configs:
+          - action: keep
+            source_labels: [ job ]
+            regex: telemetry
+          - action: labeldrop
+            regex: instance
+        queue_config:
+          max_backoff: 2h
+      {{- end }}
+      {{- if $root.Values.server.remoteWrite }}
 {{ $root.Values.server.remoteWrite | toYaml | indent 4 }}
+      {{- end }}
 {{- end }}
 {{- if $root.Values.server.remoteRead }}
     remote_read:
@@ -41,6 +55,31 @@ data:
 {{- if $root.Values.extraScrapeConfigs }}
 {{ tpl $root.Values.extraScrapeConfigs $root | indent 4 }}
 {{- end -}}
+{{- if $root.Values.global.telemetry.enabled }}
+    - job_name: telemetry
+      scrape_interval: {{ $root.Values.global.telemetry.scrapeInterval }}
+      sample_limit: {{ $root.Values.global.telemetry.sampleLimit }}
+      kubernetes_sd_configs:
+        - role: endpoints
+      relabel_configs:
+        - action: keep
+          source_labels:
+            - __meta_kubernetes_service_name
+          regex: action-orchestrator|api|auth|clustermgr|cost|group|history|market|ml-datastore|plan-orchestrator|repository|topology-processor
+        - action: drop
+          source_labels:
+            - __meta_kubernetes_endpoint_port_name
+          regex: (tcp-|grpc-|https-).*
+        - action: replace
+          source_labels:
+            - __meta_kubernetes_service_name
+          target_label: service
+      metric_relabel_configs:
+        - action: keep
+          source_labels:
+            - __name__
+          regex: {{ $root.Values.global.telemetry.metricsWhiteList }}
+{{- end }}
 {{- if or ($root.Values.alertmanager.enabled) ($root.Values.server.alertmanagers) }}
     alerting:
 {{- if $root.Values.alertRelabelConfigs }}

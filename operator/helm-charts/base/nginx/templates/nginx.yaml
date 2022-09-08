@@ -55,12 +55,6 @@ spec:
           value: hydra-public.{{ .Release.Namespace }}.svc.cluster.local
 {{ toYaml .Values.env | indent 8 }}
 {{- if .Values.global }}
-  {{- if .Values.global.featureFlags }}
-    {{- if .Values.global.featureFlags.enableTpProbeSecurity }}
-        - name: ENABLE_TP_PROBE_SECURITY
-          value: "{{ .Values.global.featureFlags.enableTpProbeSecurity }}"
-    {{- end }}
-  {{- end }}
   {{- if .Values.global.blockRemoteProbes }}
         - name: BLOCK_REMOTE_PROBES
           value: "{{ .Values.global.blockRemoteProbes }}"
@@ -109,6 +103,9 @@ spec:
           name: nginx-run
         - mountPath: /tmp
           name: nginx-tmpfs0
+        - mountPath: /etc/turbonomic
+          name: turbo-volume
+          readOnly: true
 {{- if .Values.global }}
   {{- if .Values.global.registry }}
     {{- if .Values.global.imagePullSecret }}
@@ -152,6 +149,10 @@ spec:
         emptyDir: {}
       - name: nginx-tmpfs0
         emptyDir: {}
+      - name: turbo-volume
+        configMap:
+          name: global-properties-{{ .Release.Name }}
+          optional: true
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}

@@ -12,4 +12,7 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+persistence:
+  size: 1Gi
+
 resources: {}

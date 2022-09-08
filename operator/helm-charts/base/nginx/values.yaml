@@ -30,3 +30,8 @@ httpsRedirect: true
 nginxIsPrimaryIngress: true
 
 resources: {}
+
+tunnel:
+  expose: false
+  proxy: tcp
+  address: "remote-nginx-tunnel"

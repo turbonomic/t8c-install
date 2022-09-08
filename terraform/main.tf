@@ -118,11 +118,6 @@ resource "helm_release" "xl" {
   }
 
   set {
-    name  = "istio.enabled"
-    value = "${var.istio ? true : false}"
-  }
-
-  set {
     name  = "actionstream-kafka.enabled"
     value = "${var.actionstream-kafka ? true : false}"
   }
@@ -168,11 +163,6 @@ resource "helm_release" "xl" {
   }
 
   set {
-    name  = "netflow.enabled"
-    value = "${var.netflow ? true : false}"
-  }
-
-  set {
     name  = "oneview.enabled"
     value = "${var.oneview ? true : false}"
   }
@@ -195,11 +185,6 @@ resource "helm_release" "xl" {
   set {
     name  = "snmp.enabled"
     value = "${var.snmp ? true : false}"
-  }
-
-  set {
-    name  = "tetration.enabled"
-    value = "${var.tetration ? true : false}"
   }
 
   set {
