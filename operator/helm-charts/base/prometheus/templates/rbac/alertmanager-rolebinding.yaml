@@ -1,19 +1,17 @@
 {{- if and .Values.alertmanager.enabled .Values.rbac.create (eq .Values.alertmanager.useClusterRole false) -}}
-{{ range $.Values.alertmanager.namespaces }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    {{- include "prometheus.alertmanager.labels" $ | nindent 4 }}
-  name: {{ template "prometheus.alertmanager.fullname" $ }}
-  namespace: {{ . }}
+    {{- include "prometheus.alertmanager.labels" . | nindent 4 }}
+  name: {{ template "prometheus.alertmanager.fullname" . }}
+  {{ include "prometheus.namespace" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "prometheus.serviceAccountName.alertmanager" $ }}
-{{ include "prometheus.namespace" $ | indent 4 }}
+    name: {{ template "prometheus.serviceAccountName.alertmanager" . }}
+{{ include "prometheus.namespace" . | indent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ template "prometheus.alertmanager.fullname" $ }}
+  name: {{ template "prometheus.alertmanager.fullname" . }}
 {{- end }}
-{{ end }}

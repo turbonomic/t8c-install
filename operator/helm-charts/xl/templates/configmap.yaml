@@ -50,6 +50,8 @@ data:
         repositoryHost: repository
         topologyProcessorHost: topology-processor
         extractorHost: extractor
+        suspendHost: suspend
+        suspendGrpcPort: 9094
         # Auth
         authRetryDelaySecs: 10
         # Consul Key/Value and Service Discovery Utility

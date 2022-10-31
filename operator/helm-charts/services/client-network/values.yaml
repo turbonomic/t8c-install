@@ -1,0 +1,19 @@
+# Default values for client-network-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+annotations: {}
+labels: {}
+serviceAnnotations: {}
+serviceLabels: {}
+
+image:
+  repository: turbonomic
+  tag: latest
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    memory: 1Gi
+  requests:
+    memory: 512Mi

@@ -108,6 +108,12 @@ spec:
                 externalKafkaIP:
                   description: IP address for external kafka server
                   type: string
+                externalRedis:
+                  description: DNS name for external Redis server
+                  type: string
+                externalRedisIP:
+                  description: IP address for external Redis server
+                  type: string
                 externalSyslog:
                   description: DNS name for external syslog server
                   type: string
@@ -612,6 +618,92 @@ spec:
                   description: component serviceAccountName
                   type: string
               type: object
+
+            # Enable suspend service
+            suspend:
+              properties:
+                enabled:
+                  description: Enable suspend components
+                  type: boolean
+              type: object
+            redis:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                env:
+                    description: component environment variable
+                    type: array
+                    items:
+                      type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                persistence:
+                  description: Redis persistence options
+                  properties:
+                    size:
+                      description: Redis persistent volume size
+                      type: string
+                  type: object
+                resources:
+                    description: component resource configuration
+                    type: object
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object  
+            suspend:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                env:
+                    description: component environment variable
+                    type: array
+                    items:
+                      type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                persistence:
+                  description: Suspend persistence options
+                  properties:
+                    size:
+                      description: Suspend persistent volume size
+                      type: string
+                  type: object
+                resources:
+                    description: component resource configuration
+                    type: object
+                customizeConfigMap:
+                  description: allow customize configMap dynamically
+                  type: boolean
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object
+
             tunnel:
               type: object
               properties:
@@ -965,10 +1057,10 @@ spec:
                 enabled:
                   description: Enable Azure mediation
                   type: boolean
-                billing:
+                pricing:
                   properties:
                     enabled:
-                      description: Enable Azure mediation
+                      description: Enable Azure Pricing mediation
                       type: boolean
                   type: object
               type: object
@@ -1036,6 +1128,12 @@ spec:
               properties:
                 enabled:
                   description: Enable Microsoft HyperV mediation
+                  type: boolean
+              type: object
+            ibmpowerhmc:
+              properties:
+                enabled:
+                  description: Enable IBM Power HMC mediation
                   type: boolean
               type: object
             ibmstorage-flashsystem:
@@ -2213,6 +2311,45 @@ spec:
                   description: component serviceAccountName
                   type: string
               type: object
+            mediation-azurepricing:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                javaComponentOptions:
+                  description: component additional java options
+                  type: string
+                debug:
+                  description: component debug
+                  type: boolean
+                resources:
+                  description: component resource configuration
+                  properties:
+                    limits:
+                      description: component limits
+                      properties:
+                        memory:
+                          description: component memory limits
+                          type: string
+                      type: object
+                  type: object
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object
             mediation-azuresp:
               properties:
                 annotations:
@@ -2838,6 +2975,45 @@ spec:
                   type: string
               type: object
             mediation-hyperv:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                javaComponentOptions:
+                  description: component additional java options
+                  type: string
+                debug:
+                  description: component debug
+                  type: boolean
+                resources:
+                  description: component resource configuration
+                  properties:
+                    limits:
+                      description: component limits
+                      properties:
+                        memory:
+                          description: component memory limits
+                          type: string
+                      type: object
+                  type: object
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object
+            mediation-ibmpowerhmc:
               properties:
                 annotations:
                   description: component specific pod annotations list
@@ -4150,5 +4326,15 @@ spec:
                     useSqlForPlans:
                       description: Store plan data in MySQL instead of ArangoDB.
                       type: boolean
+                  type: object
+                rsyslog:
+                  description: rsyslog property overrides
+                  properties:
+                    logMaxFiles:
+                      description: Maximum number of log files retained
+                      type: integer
+                    logMaxSize:
+                      description: Maximum size of log file in bytes before getting rotated
+                      type: integer
                   type: object
               type: object

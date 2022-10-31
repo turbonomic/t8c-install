@@ -1,0 +1,131 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: skupper-site-controller
+  labels:
+    application: skupper-site-controller
+    {{- include "skupper.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    application: skupper-site-controller
+    {{- include "skupper.labels" . | nindent 4 }}
+  name: skupper-site-controller
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - pods
+  - pods/exec
+  - services
+  - secrets
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - delete
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  - daemonsets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - delete
+- apiGroups:
+  - route.openshift.io
+  resources:
+  - routes
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  - roles
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    application: skupper-site-controller
+    {{- include "skupper.labels" . | nindent 4 }}
+  name: skupper-site-controller
+subjects:
+- kind: ServiceAccount
+  name: skupper-site-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: skupper-site-controller
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skupper-site-controller
+  labels:
+    {{- include "skupper.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "skupper.selectorLabels" . | nindent 6 }}
+      application: skupper-site-controller
+  template:
+    metadata:
+      labels:
+        {{- include "skupper.selectorLabels" . | nindent 8 }}
+        application: skupper-site-controller
+    spec:
+      serviceAccountName: skupper-site-controller
+      containers:
+      - name: site-controller
+        {{- $global := dict "global" .Values.global }}
+        image: {{ template "imageString" (merge .Values.skupperSiteController.image $global) }}
+        imagePullPolicy: {{ template "pullPolicyString" (merge .Values.skupperSiteController.image $global) }}
+        env:
+        - name: SKUPPER_SERVICE_CONTROLLER_IMAGE
+          value: {{ template "imageString" (merge .Values.skupperServiceController.image $global) }}
+        - name: SKUPPER_SERVICE_CONTROLLER_IMAGE_PULL_POLICY
+          value: {{ template "pullPolicyString" (merge .Values.skupperServiceController.image $global) }}
+        - name: SKUPPER_CONFIG_SYNC_IMAGE
+          value: {{ template "imageString" (merge .Values.skupperConfigSync.image $global) }}
+        - name: SKUPPER_CONFIG_SYNC_IMAGE_PULL_POLICY
+          value: {{ template "pullPolicyString" (merge .Values.skupperConfigSync.image $global) }}
+        - name: QDROUTERD_IMAGE
+          value: {{ template "imageString" (merge .Values.skupperRouter.image $global) }}
+        - name: QDROUTERD_IMAGE_PULL_POLICY
+          value: {{ template "pullPolicyString" (merge .Values.skupperRouter.image $global) }}
+        - name: WATCH_NAMESPACE
+          valueFrom:
+             fieldRef:
+               fieldPath: metadata.namespace

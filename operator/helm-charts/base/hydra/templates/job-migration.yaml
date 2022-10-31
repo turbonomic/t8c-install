@@ -1,0 +1,83 @@
+{{- if .Values.hydra.autoMigrate }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "hydra.fullname" . }}-automigrate
+  {{- if .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+{{ include "hydra.labels" . | indent 4 }}
+    {{- with .Values.deployment.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- with .Values.job.annotations }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    helm.sh/hook-weight: "1"
+    helm.sh/hook: "pre-install, pre-upgrade"
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded"
+spec:
+  template:
+    {{- with .Values.job.annotations }}
+    metadata: 
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "hydra.job.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.job.automountServiceAccountToken }}
+      containers:
+      - name: {{ .Chart.Name }}-automigrate
+        image: {{ template "image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/util/check_and_provision_db.sh"]
+        args: ["migrate"]
+        env:
+        {{- if .Values.secret.enabled -}}
+          - name: DSN
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "hydra.secretname" . }}
+                key: dsn
+        {{- end }}
+        {{- if .Values.job.lifecycle }}
+        lifecycle:
+{{ tpl .Values.job.lifecycle . | indent 10 }}
+        {{- end }}
+        {{- if .Values.deployment.securityContext }}
+        securityContext:
+          {{- toYaml .Values.deployment.securityContext | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+          - mountPath: /etc/turbonomic
+            name: turbo-volume
+            readOnly: true
+        {{- if .Values.deployment.extraVolumeMounts }}
+{{ toYaml .Values.deployment.extraVolumeMounts | indent 10 }}
+         {{- end }}
+      {{- if .Values.job.extraInitContainers }}
+      {{- if .Values.job.extraContainers }}
+{{ tpl .Values.job.extraContainers . | indent 6 }}
+        {{- end }}
+      initContainers:
+{{ tpl .Values.job.extraInitContainers . | indent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      shareProcessNamespace: {{ .Values.job.shareProcessNamespace }}
+      volumes:
+        - name: turbo-volume
+          configMap:
+            name: global-properties-{{ .Release.Name }}
+            optional: true
+      {{- if .Values.deployment.extraVolumes }}
+{{ toYaml .Values.deployment.extraVolumes | indent 8 }}
+      {{- end }}
+  backoffLimit: {{ .Values.job.spec.backoffLimit }}
+{{- end }}

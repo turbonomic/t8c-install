@@ -106,6 +106,15 @@ dependencies:
     version: 0.1.0
     condition: extractor.enabled # todo: change to platform.enabled once XLR/search is ready
 
+# Suspend services dependencies
+  - name: redis
+    repository: file://../suspend/redis
+    version: 15.7.5
+    condition: suspend.enabled
+  - name: suspend
+    repository: file://../suspend/suspend
+    version: 0.1.0
+    condition: suspend.enabled
 # Security dependencies
   - name: hydra
     repository: file://../base/hydra
@@ -222,7 +231,7 @@ dependencies:
   - name: mediation-azurebilling
     repository: file://../probes/mediation-azurebilling
     version: 0.1.0
-    condition: azure.billing.enabled
+    condition: azure.enabled
   - name: mediation-azurecost
     repository: file://../probes/mediation-azurecost
     version: 0.1.0
@@ -231,6 +240,10 @@ dependencies:
     repository: file://../probes/mediation-azureea
     version: 0.1.0
     condition: azure.enabled
+  - name: mediation-azurepricing
+    repository: file://../probes/mediation-azurepricing
+    version: 0.1.0
+    condition: azure.pricing.enabled
   - name: mediation-azuresp
     repository: file://../probes/mediation-azuresp
     version: 0.1.0
