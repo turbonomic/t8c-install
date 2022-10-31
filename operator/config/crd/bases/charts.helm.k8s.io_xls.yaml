@@ -132,6 +132,12 @@ spec:
                   externalKafkaIP:
                     description: IP address for external kafka server
                     type: string
+                  externalRedis:
+                    description: DNS name for external Redis server
+                    type: string
+                  externalRedisIP:
+                    description: IP address for external Redis server
+                    type: string 
                   externalSyslog:
                     description: DNS name for external syslog server
                     type: string
@@ -816,6 +822,92 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
+ 
+              # Enable suspend service
+              suspend:
+                properties:
+                  enabled:
+                    description: Enable suspend components
+                    type: boolean
+                type: object
+              redis:
+                properties:
+                  annotations:
+                    description: component specific pod annotations list
+                    type: object
+                  env:
+                    description: component environment variable
+                    type: array
+                    items:
+                      type: object
+                  image:
+                    description: component specific image options
+                    properties:
+                      repository:
+                        description: component container registry and repository name
+                        type: string
+                      tag:
+                        description: component container tag
+                        type: string
+                      pullPolicy:
+                        description: component image pull policy
+                        type: string
+                    type: object
+                  persistence:
+                    description: Redis persistence options
+                    properties:
+                      size:
+                        description: Redis persistent volume size
+                        type: string
+                    type: object
+                  resources:
+                    description: component resource configuration
+                    type: object
+                  serviceAccountName:
+                    description: component serviceAccountName
+                    type: string
+                type: object
+              suspend:
+                properties:
+                  annotations:
+                    description: component specific pod annotations list
+                    type: object
+                  env:
+                    description: component environment variable
+                    type: array
+                    items:
+                      type: object
+                  image:
+                    description: component specific image options
+                    properties:
+                      repository:
+                        description: component container registry and repository name
+                        type: string
+                      tag:
+                        description: component container tag
+                        type: string
+                      pullPolicy:
+                        description: component image pull policy
+                        type: string
+                    type: object
+                  persistence:
+                    description: Suspend persistence options
+                    properties:
+                      size:
+                        description: Suspend persistent volume size
+                        type: string
+                    type: object
+                  resources:
+                    description: component resource configuration
+                    type: object
+                  customizeConfigMap:
+                    description: allow customize configMap dynamically
+                    type: boolean
+                  serviceAccountName:
+                    description: component serviceAccountName
+                    type: string
+                type: object
+            
               tunnel:
                 type: object
                 properties:
@@ -1156,6 +1248,12 @@ spec:
                     properties:
                       enabled:
                         description: Enable Azure mediation
+                        type: boolean
+                    type: object
+                  pricing:
+                    properties:
+                      enabled:
+                        description: Enable Azure Pricing mediation
                         type: boolean
                     type: object
                 type: object
@@ -2647,6 +2745,57 @@ spec:
                     type: string
                 type: object
               mediation-azurebilling:
+                properties:
+                  annotations:
+                    description: component specific pod annotations list
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  env:
+                    description: component environment variable
+                    type: array
+                    items:
+                      type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  image:
+                    description: component specific image options
+                    properties:
+                      repository:
+                        description: component container registry and repository name
+                        type: string
+                      tag:
+                        description: component container tag
+                        type: string
+                      pullPolicy:
+                        description: component image pull policy
+                        type: string
+                    type: object
+                  javaBaseOptions:
+                    description: java base options override
+                    type: string
+                  javaComponentOptions:
+                    description: java component options
+                    type: string
+                  javaDebugOptions:
+                    description: java debug options override
+                    type: string
+                  javaMaxRAMPercentage:
+                    description: java max RAM percentage override
+                    type: string
+                  javaOptions:
+                    description: java options override
+                    type: string
+                  debug:
+                    description: component debug
+                    type: boolean
+                  resources:
+                    description: component resource configuration
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  serviceAccountName:
+                    description: component serviceAccountName
+                    type: string
+                type: object
+              mediation-azurepricing:
                 properties:
                   annotations:
                     description: component specific pod annotations list

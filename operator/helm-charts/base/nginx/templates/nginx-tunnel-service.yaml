@@ -1,0 +1,25 @@
+{{- if .Values.tunnel.expose }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-tunnel
+  annotations:
+{{- include "serviceAnnotations" . | nindent 4 }}
+{{- include "skupperExpose" .Values.tunnel | nindent 4 }}
+    meta.helm.sh/release-name: {{ .Release.Name }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+  labels:
+{{- include "serviceLabels" . | nindent 4 }}
+    zone: internal
+    app.kubernetes.io/name: {{ .Chart.Name }}-tunnel
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  ports:
+  - port: 9080
+    protocol: TCP
+    targetPort: 9080
+  selector:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

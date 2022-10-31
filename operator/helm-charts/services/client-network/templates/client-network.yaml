@@ -1,0 +1,116 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+  annotations:
+    {{- include "serviceAnnotations" . | nindent 4 }}
+  labels:
+    zone: internal
+    {{- include "serviceLabels" . | nindent 4 }}
+    {{- include "clientNetwork.selectorLabels" . | nindent 4 }}
+    {{- include "clientNetwork.labels" . | nindent 4 }}
+spec:
+  ports:
+  - name: http-client-network
+    port: 8080
+  selector:
+    {{- include "clientNetwork.selectorLabels" . | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    zone: internal
+    {{- include "clientNetwork.selectorLabels" . | nindent 4 }}
+    {{- include "clientNetwork.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        {{- include "annotations" . | nindent 8 }}
+      labels:
+        {{- include "labels" . | nindent 8 }}
+        zone: internal
+        {{- include "clientNetwork.selectorLabels" . | nindent 8 }}
+        {{- include "clientNetwork.labels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ template "image" . }}
+        imagePullPolicy: {{ template "pullPolicy" . }}
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: SKUPPER_ADDRESS
+          value: https://skupper.$(NAMESPACE):8080
+        - name: SKUPPER_CLIENT_CERTIFICATES
+          value: /etc/certs/tls.crt
+        volumeMounts:
+        - name: skupper-certs
+          mountPath: /etc/certs/
+        - name: skupper-console-users
+          mountPath: /etc/skupper-console-users
+          readOnly: true
+        ports:
+          - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: "/api/v1/health"
+            port: 8080
+            scheme: HTTP
+          {{- include "common.getLivenessThresholds" . | indent 10 }}
+        readinessProbe:
+          httpGet:
+            path: "/api/v1/health"
+            port: 8080
+            scheme: HTTP
+          {{- include "common.getReadinessThresholds" . | indent 10 }}
+        resources:
+          {{ toYaml .Values.resources | nindent 10 }}
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+      {{- include "imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.global }}
+      {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.global.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.global.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.global.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - name: skupper-console-users
+        secret:
+          secretName: skupper-console-users
+          optional: false
+      - name: skupper-certs
+        secret:
+          secretName: skupper-local-ca
+          items:
+          - key: tls.crt
+            path: tls.crt
+{{- end }}
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      {{- include "clientNetwork.selectorLabels" . | nindent 6 }}

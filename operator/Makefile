@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 42.14
+VERSION ?= 42.17
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "preview,fast,stable")
@@ -65,6 +65,9 @@ docker-push:
 operator: xl
 	operator-sdk build "turbonomic/t8c-operator:$(version)"
 
+xl-clean:
+	rm -rf helm-charts/xl/charts/* helm-charts/xl/requirements.lock
+	
 xl:
 	rm -rf helm-charts/xl/charts/* helm-charts/xl/requirements.lock
 	helm dependency update "helm-charts/xl"

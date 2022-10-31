@@ -141,6 +141,9 @@ spec:
             drop:
             - ALL
         volumeMounts:
+        - mountPath: /etc/turbonomic
+          name: turbo-volume
+          readOnly: true
         - mountPath: /home/vmtsyslog
           name: rsyslog-syslogdata
         - mountPath: /var/log/turbonomic
@@ -178,6 +181,10 @@ spec:
 {{- end }}
       restartPolicy: Always
       volumes:
+      - name: turbo-volume
+        configMap:
+          name: global-properties-{{ .Release.Name }}
+          optional: true
       - name: rsyslog-syslogdata
         persistentVolumeClaim:
           claimName: {{ .Chart.Name }}-syslogdata

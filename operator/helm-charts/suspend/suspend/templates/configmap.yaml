@@ -1,0 +1,63 @@
+{{- if not .Values.customizeConfigMap }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: suspend-config
+  namespace: {{ .Release.Namespace | quote }}
+  labels: 
+    {{- include "suspend.labels" . | nindent 4 }}
+data:
+  config.yml: |-
+    ---
+    appname: suspend
+    pmcenv: dev
+    urlscheme: http
+    urlhost: 0.0.0.0
+    urlport: 9093
+    grpcport: 9094
+    kafka:
+      brokers: kafka:9092
+      healthverifiers:
+        - cadence: 10s
+          type: ping
+    engines:
+      discoverer:
+        workers: 1
+        timeout: 60s
+        topic: {{ .Release.Namespace }}.tp-live-topologies
+        healthverifiers:
+          - cadence: 10s
+            type: ping
+      cost:
+        workers: 1
+        timeout: 60s
+        topic: {{ .Release.Namespace }}.topology-vm-on-demand-cost
+        healthverifiers:
+          - cadence: 10s
+            type: ping
+    redis:
+      address: xl-release-redis-master:6379
+      cluster: true
+      tls: false
+      connecttimeout: 2m
+      cachedconnectionslimit: 40
+      cachedconnectionsidletimeout: 2m
+      healthverifiers:
+        - cadence: 10s
+          type: ping
+    database:
+      driver: mysql
+      name: suspend
+      host: db
+      port: 3306
+      maxconns: 10
+      idleconns: 10
+      healthverifiers:
+        - cadence: 10s
+          type: ping
+      migrations:
+        verbose: false
+        dialect: mysql
+    orchestrator:
+      topic: {{ .Release.Namespace }}.action-plans
+{{- end }}

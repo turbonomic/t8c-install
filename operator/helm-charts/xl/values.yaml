@@ -32,6 +32,7 @@ global:
 #  externalDBName: xl-hackaton.cmachd0izjog.ca-central-1.rds.amazonaws.com
 #  externalInfluxDBName: xl-influxdb.us-east-1.elb.amazonaws.com
 #  externalKafka: xl-kafka.us-east-1.elb.amazonaws.com
+#  externalRedis:
 #  externalSyslog: a608c38591a9f11e9ad190efbcf8c7e5-1236730884.us-east-1.elb.amazonaws.com
   elk: false
 #  logtostdout: false
@@ -95,7 +96,7 @@ global:
     scrapeInterval: 1d
     # Currently, XL components export ~300 metrics or ~3k time series. 10k should be big enough to
     # support growth, but still prevent a bug from creating millions of new time series, flooding
-    # DataCloud and incurring high costs.
+    # our data warehouse solution and incurring high costs.
     sampleLimit: 10000
     # Only send metrics whose name matches this regular expression.
     # Please seek the security team guidance and review before changing this regular expression.
@@ -118,7 +119,8 @@ global:
                         turbo_oid_expiration_execution_seconds_sum|\
                         turbo_oid_expiration_execution_seconds_count|\
                         turbo_oid_expiration_execution_seconds_bucket|\
-                        turbo_expired_entities_total"
+                        turbo_expired_entities_total|\
+                        turbo_policies"
 
 nginxingress:
   enabled: true
@@ -150,6 +152,9 @@ tunnel:
 training:
   enabled: false
 client-network:
+  enabled: false
+
+suspend:
   enabled: false
 
 loki:
@@ -247,6 +252,8 @@ awslambda:
 azure:
   enabled: false
   billing:
+    enabled: false
+  pricing:
     enabled: false
 compellent:
   enabled: false

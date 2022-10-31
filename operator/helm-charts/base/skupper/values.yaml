@@ -1,0 +1,77 @@
+
+# [client|server] Used to determine default config values
+mode: client
+
+skupperSiteController:
+  image:
+    repository: turbonomic
+    component: skupper-site-controller
+    tag: latest
+    pullPolicy: IfNotPresent
+
+skupperServiceController:
+  image:
+    repository: turbonomic
+    component: skupper-service-controller
+    tag: latest
+    pullPolicy: IfNotPresent
+
+skupperConfigSync:
+  image:
+    repository: turbonomic
+    component: skupper-config-sync
+    tag: latest
+    pullPolicy: IfNotPresent
+
+skupperRouter:
+  image:
+    repository: turbonomic
+    component: skupper-router
+    tag: latest
+    pullPolicy: IfNotPresent
+
+skupperSite:
+  enabled: true
+  # https://github.com/skupperproject/skupper/blob/master/cmd/site-controller/README.md
+  config:
+    # 'turbonomic-${mode}'
+    name: null
+    console: "true"
+    console-authentication: internal
+    console-user: ""
+    console-password: ""
+    console-ingress: ""
+    # 'none' if client mode, '' otherwise
+    ingress: null
+    ingress-annotations: ""
+    ingress-host: ""
+    routers: ""
+    router-console: "false"
+    router-debug-mode: "false"
+    router-logging: info
+    # 'edge' if client mode, 'interior' otherwise
+    router-mode: null
+    router-cpu: ""
+    router-memory: ""
+    router-cpu-limit: ""
+    router-memory-limit: ""
+    router-pod-affinity: ""
+    router-pod-antiaffinity: ""
+    router-node-selector: ""
+    xp-router-max-frame-size: ""
+    xp-router-max-session-frames: ""
+    router-ingress-host: ""
+    router-service-annotations: ""
+    router-load-balancer-ip: ""
+    service-controller: "true"
+    service-sync: "true"
+    controller-cpu: ""
+    controller-memory: ""
+    controller-cpu-limit: ""
+    controller-memory-limit: ""
+    controller-pod-affinity: ""
+    controller-pod-antiaffinity: ""
+    controller-node-selector: ""
+    controller-ingress-host: ""
+    controller-service-annotations: ""
+    controller-load-balancer-ip: ""

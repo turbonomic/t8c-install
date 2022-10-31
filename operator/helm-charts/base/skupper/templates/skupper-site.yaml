@@ -1,0 +1,28 @@
+{{- if .Values.skupperSite.enabled }}
+apiVersion: v1
+data:
+
+  {{- $defaultIngress := "" }}
+  {{- $defaultRouterMode := "interior" }}
+  {{- if eq .Values.mode "client" }}
+    {{- $defaultIngress = "none" }}
+    {{- $defaultRouterMode = "edge" }}
+  {{- end}}
+  {{- $defaultName := printf "%s-%s" "turbonomic" .Values.mode }}
+
+  {{- $config := deepCopy .Values.skupperSite.config }}
+  {{- $config = set $config "ingress" (get $config "ingress" | default $defaultIngress) }}
+  {{- $config = set $config "router-mode" (get $config "router-mode" | default $defaultRouterMode) }}
+  {{- $config = set $config "name" (get $config "name" | default $defaultName) }}
+
+  {{- range $k, $v := $config }}
+  {{- if ne ($v | toString) "" }}
+  {{ $k }}: {{ $v | quote }}
+  {{- end }}
+  {{- end }}
+kind: ConfigMap
+metadata:
+  name: skupper-site
+  labels:
+    {{- include "skupper.labels" . | nindent 4 }}
+{{- end }}
