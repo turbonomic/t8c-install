@@ -25,9 +25,7 @@ data:
         }
       },
       {{- if .Values.featureGates }}
-      "featureGates": {
-        "disabledFeatures": [{{ .Values.featureGates.disabledFeatures }}]
-      }
+      "featureGates": {{ .Values.featureGates | toJson }},
       {{- end }}
       "HANodeConfig": {
         "nodeRoles": [{{ .Values.HANodeConfig.nodeRoles }}]
