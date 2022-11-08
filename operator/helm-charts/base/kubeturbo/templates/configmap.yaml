@@ -26,8 +26,12 @@ data:
       },
       {{- if .Values.featureGates }}
       "featureGates": {
-        "disabledFeatures": [{{ .Values.featureGates.disabledFeatures }}]
-      }
+        {{$first := true}}
+        {{- range $key, $val := .Values.featureGates }}
+        {{- if $first}}{{$first = false}}{{else}},{{-end}}
+        {{ $key | quote }}: {{ $val }}
+        {{- end }}
+      },
       {{- end }}
       "HANodeConfig": {
         "nodeRoles": [{{ .Values.HANodeConfig.nodeRoles }}]
