@@ -58,14 +58,14 @@ HANodeConfig:
 #   daemonPodNamePatterns: .*ignorePod.*
 
 # The featureGates property defines a map of string-to-boolean values that provides users with a mechanism 
-# to enable # features that are disabled by default. For a list of supported feature gates, see 
+# to enable/disable features. For a list of supported feature gates, see 
 # https://github.com/turbonomic/kubeturbo/blob/master/pkg/features/features.go
 # featureGates:
-#   PersistentVolumes: true
-#   ThrottlingMetrics: false
-#   HonorAzLabelPvAffinity: true
-#   GitopsApps: false
-#   GoMemLimit: true
+#   PersistentVolumes: true (default: true)
+#   ThrottlingMetrics: false (default: true)
+#   HonorAzLabelPvAffinity: true (default: false)
+#   GitopsApps: false (default: true)
+#   GoMemLimit: true (default: false)
 
 args:
   # logging level
