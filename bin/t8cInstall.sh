@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Restore from backup
+nameSpace="turbonomic"
+kubeNameSpace="kube-system"
+
 # Run this as the root user
 if [[ $(/usr/bin/id -u) -ne 0 ]]
 then
@@ -238,7 +242,7 @@ systemctl restart kubelet
 
 # Add the ~/.kube/config file
 cp /etc/kubernetes/admin.conf /root/.kube/config
-/usr/local/bin/kubectl config set-context kubernetes-admin@kubernetes --namespace=turbonomic
+/usr/local/bin/kubectl config set-context kubernetes-admin@kubernetes --namespace=${nameSpace}
 cp /root/.kube/config /opt/turbonomic/.kube/config
 
 # Update calico
@@ -277,12 +281,12 @@ do
 done
 printf '\nFinished! kubectl apply commands will follow\n'
 
-/usr/local/bin/kubectl apply -f /etc/kubernetes/calico-config.yml -n kube-system 2>/dev/null
-/usr/local/bin/kubectl apply -f /etc/kubernetes/calico-kube-controllers.yml -n kube-system 2>/dev/null
+/usr/local/bin/kubectl apply -f /etc/kubernetes/calico-config.yml -n ${kubeNameSpace} 2>/dev/null
+/usr/local/bin/kubectl apply -f /etc/kubernetes/calico-kube-controllers.yml -n ${kubeNameSpace} 2>/dev/null
 
 # Update configmaps
-/usr/local/bin/kubectl get cm -n kube-system kubeadm-config -o yaml > /etc/kubernetes/kubeadm-config.yaml
-/usr/local/bin/kubectl get cm -n kube-system kube-proxy -o yaml > /etc/kubernetes/kube-proxy.yaml
+/usr/local/bin/kubectl get cm -n ${kubeNameSpace} kubeadm-config -o yaml > /etc/kubernetes/kubeadm-config.yaml
+/usr/local/bin/kubectl get cm -n ${kubeNameSpace} kube-proxy -o yaml > /etc/kubernetes/kube-proxy.yaml
 if [ ! -z "${hostName}" ]
 then
   sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/kubeadm-config.yaml
@@ -294,7 +298,7 @@ else
   sed -i "s/${oldIP}/${newIP}/g" /etc/kubernetes/kube-proxy.yaml
 fi
 /usr/local/bin/kubectl apply -f /etc/kubernetes/kubeadm-config.yaml 2>/dev/null
-/usr/local/bin/kubectl apply -f /etc/kubernetes/kube-proxy.yaml -n kube-system 2>/dev/null
+/usr/local/bin/kubectl apply -f /etc/kubernetes/kube-proxy.yaml -n ${kubeNameSpace}  2>/dev/null
 
 # Restart Docker
 systemctl restart docker
@@ -474,13 +478,13 @@ chown -R turbo.turbo $localStorageDataDirectory
 chmod -R 777 $localStorageDataDirectory
 
 # Create the operator
-kubectl create -f ${serviceAccountFile} -n turbonomic
-kubectl create -f ${roleFile} -n turbonomic
-kubectl create -f ${roleBindingFile} -n turbonomic
-kubectl create -f ${crdsFile} -n turbonomic
-kubectl create -f ${operatorFile} -n turbonomic
+kubectl create -f ${serviceAccountFile} -n ${nameSpace}
+kubectl create -f ${roleFile} -n ${nameSpace}
+kubectl create -f ${roleBindingFile} -n ${nameSpace}
+kubectl create -f ${crdsFile} -n ${nameSpace}
+kubectl create -f ${operatorFile} -n ${nameSpace}
 sleep 10
-kubectl create -f ${chartsFile} -n turbonomic
+kubectl create -f ${chartsFile} -n ${nameSpace}
 
 
 # Apply the ip change to the instance
@@ -502,7 +506,7 @@ then
 fi
 
 # Set turbo kube context
-su -c "kubectl config set-context $(kubectl config current-context) --namespace=turbonomic" -s /bin/sh turbo
+su -c "kubectl config set-context $(kubectl config current-context) --namespace=${nameSpace}" -s /bin/sh turbo
 
 # Status
 echo ""
@@ -528,6 +532,12 @@ do
     echo "To check the status of your components, execute the following command:"
     echo "kubectl get pods"
     echo "If some components are still not ready, contact your support representative"
+    echo ""
+    echo "Deployments not Ready:"
+    echo "**********************"
+    /usr/local/bin/kubectl get pods -n ${nameSpace} -o json  | jq -r '.items[] | select(.status.phase != "Running" or ([ .status.conditions[] | select(.type == "Ready" and .status == "False") ] | length ) == 1 ) | .metadata.namespace + "/" + .metadata.name'
+    echo "**********************"
+    echo ""
     echo "==========================================================================="
     exit
   fi
@@ -547,6 +557,12 @@ do
     echo "To check the status of your components, execute the following command:"
     echo "kubectl get pods"
     echo "If some components are still not ready, contact your support representative"
+    echo ""
+    echo "Deployments not Ready:"
+    echo "**********************"
+    /usr/local/bin/kubectl get pods -n ${nameSpace} -o json  | jq -r '.items[] | select(.status.phase != "Running" or ([ .status.conditions[] | select(.type == "Ready" and .status == "False") ] | length ) == 1 ) | .metadata.namespace + "/" + .metadata.name'
+    echo "**********************"
+    echo ""
     echo "==========================================================================="
     exit
   fi
@@ -566,6 +582,13 @@ do
     echo "To check the status of your components, execute the following command:"
     echo "kubectl get pods"
     echo "If some components are still not ready, contact your support representative"
+    echo "Deployments not ready:"
+    echo ""
+    echo "Deployments not Ready:"
+    echo "**********************"
+    /usr/local/bin/kubectl get pods -n ${nameSpace} -o json  | jq -r '.items[] | select(.status.phase != "Running" or ([ .status.conditions[] | select(.type == "Ready" and .status == "False") ] | length ) == 1 ) | .metadata.namespace + "/" + .metadata.name'
+    echo "**********************"
+    echo ""
     echo "==========================================================================="
     exit
   fi
@@ -585,6 +608,13 @@ do
     echo "To check the status of your components, execute the following command:"
     echo "kubectl get pods"
     echo "If some components are still not ready, contact your support representative"
+    echo "Deployments not ready:"
+    echo ""
+    echo "Deployments not Ready:"
+    echo "**********************"
+    /usr/local/bin/kubectl get pods -n ${nameSpace} -o json  | jq -r '.items[] | select(.status.phase != "Running" or ([ .status.conditions[] | select(.type == "Ready" and .status == "False") ] | length ) == 1 ) | .metadata.namespace + "/" + .metadata.name'
+    echo "**********************"
+    echo ""
     echo "==========================================================================="
     exit
   fi
@@ -593,7 +623,7 @@ done
 # Check on the rollout status
 for deploy in $(/usr/local/bin/kubectl get deploy --no-headers | awk '{print $1}')
 do 
-  kubectl rollout status deployment/${deploy} -n turbonomic
+  kubectl rollout status deployment/${deploy} -n ${nameSpace}
 done
 echo
 echo "#################################################"

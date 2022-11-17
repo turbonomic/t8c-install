@@ -317,17 +317,14 @@ install_operator() {
 
   operatorFile=/opt/turbonomic/kubernetes/yaml/t8c-client-operator/operator.yaml
 
-  oldNs=$(grep -m 1 "namespace:" ${operatorFile} | awk '{print $2}')
-  : ${oldNs:?"Bad state: oldNs not defined"}
+  # create the namespace (if it doesn't already exist)
+  kubectl get ns ${namespace} > /dev/null 2>&1 && echo "Namespace ${namespace} already exists." || kubectl create ns ${namespace}
 
-  # set the namespace
-  sed -i -r "s/( +)${oldNs} *$/\1${namespace}/g" $operatorFile
-
-  kubectl apply -f $operatorFile
+  kubectl apply -n ${namespace} -f $operatorFile
 
   echo "Waiting for operator to become ready"
-  kubectl wait deployment t8c-client-operator-controller-manager -n ${namespace} --for condition=Available=true --timeout=120s || {
-    echo "Operator failed to become ready after 120s"
+  kubectl wait deployment t8c-client-operator-controller-manager -n ${namespace} --for condition=Available=true --timeout=300s || {
+    echo "Operator failed to become ready after 300s"
     exit 1
   }
 
@@ -350,13 +347,13 @@ install_operand() {
 
   echo "Waiting for Turbonomic Client deployment to become ready"
 
-  retry_until_successful "kubectl get deployment skupper-router -n ${namespace}" 300 || {
-    echo "skupper-router did not appear after 300s"
+  retry_until_successful "kubectl get deployment skupper-router -n ${namespace}" 600 || {
+    echo "skupper-router did not appear after 600s"
     exit 1
   }
 
-  kubectl wait deployment skupper-router -n $namespace --for condition=Available=true --timeout=300s || {
-    echo "skupper-router did not ready after 300s"
+  kubectl wait deployment skupper-router -n $namespace --for condition=Available=true --timeout=600s || {
+    echo "skupper-router did not ready after 600s"
     exit 1
   }
 

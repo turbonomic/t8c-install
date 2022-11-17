@@ -1,5 +1,5 @@
 packageName: t8c-certified
 channels:
   - name: stable
-    currentCSV: t8c-operator.v42.17.0
+    currentCSV: t8c-operator.v42.18.0
 defaultChannel: stable

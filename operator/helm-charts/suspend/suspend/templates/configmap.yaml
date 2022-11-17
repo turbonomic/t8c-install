@@ -15,6 +15,7 @@ data:
     urlhost: 0.0.0.0
     urlport: 9093
     grpcport: 9094
+    namespace: {{ .Release.Namespace }}
     kafka:
       brokers: kafka:9092
       healthverifiers:
@@ -32,6 +33,21 @@ data:
         workers: 1
         timeout: 60s
         topic: {{ .Release.Namespace }}.topology-vm-on-demand-cost
+        healthverifiers:
+          - cadence: 10s
+            type: ping
+      enforcer:
+        workers: 1
+        schedulesperworkitem: 3
+        timeout: 60s
+        topic: {{ .Release.Namespace }}.effective-suspend-schedules
+        healthverifiers:
+          - cadence: 10s
+            type: ping
+      aostatus:
+        workers: 1
+        timeout: 60s
+        topic: {{ .Release.Namespace }}.action-orchestrator-actions
         healthverifiers:
           - cadence: 10s
             type: ping

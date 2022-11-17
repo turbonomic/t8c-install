@@ -1063,6 +1063,12 @@ spec:
                       description: Enable Azure Pricing mediation
                       type: boolean
                   type: object
+                infra:
+                  properties:
+                    enabled:
+                      description: Enable Azure infra mediation
+                      type: boolean
+                  type: object
               type: object
             baremetal:
               properties:
@@ -1099,6 +1105,12 @@ spec:
                 enabled:
                   description: Enable GCP mediation
                   type: boolean
+                infra:
+                  properties:
+                    enabled:
+                      description: Enable GCP infra mediation
+                      type: boolean
+                  type: object
               type: object
             hpe3par:
               properties:
@@ -1130,10 +1142,10 @@ spec:
                   description: Enable Microsoft HyperV mediation
                   type: boolean
               type: object
-            ibmpowerhmc:
+            powervm:
               properties:
                 enabled:
-                  description: Enable IBM Power HMC mediation
+                  description: Enable IBM PowerVM mediation
                   type: boolean
               type: object
             ibmstorage-flashsystem:
@@ -2350,6 +2362,45 @@ spec:
                   description: component serviceAccountName
                   type: string
               type: object
+            mediation-azureinfra:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                javaComponentOptions:
+                  description: component additional java options
+                  type: string
+                debug:
+                  description: component debug
+                  type: boolean
+                resources:
+                  description: component resource configuration
+                  properties:
+                    limits:
+                      description: component limits
+                      properties:
+                        memory:
+                          description: component memory limits
+                          type: string
+                      type: object
+                  type: object
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object
             mediation-azuresp:
               properties:
                 annotations:
@@ -2818,6 +2869,45 @@ spec:
                   description: component serviceAccountName
                   type: string
               type: object
+            mediation-gcpinfra:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                javaComponentOptions:
+                  description: component additional java options
+                  type: string
+                debug:
+                  description: component debug
+                  type: boolean
+                resources:
+                  description: component resource configuration
+                  properties:
+                    limits:
+                      description: component limits
+                      properties:
+                        memory:
+                          description: component memory limits
+                          type: string
+                      type: object
+                  type: object
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object
             mediation-hds:
               properties:
                 annotations:
@@ -3013,7 +3103,7 @@ spec:
                   description: component serviceAccountName
                   type: string
               type: object
-            mediation-ibmpowerhmc:
+            mediation-powervm:
               properties:
                 annotations:
                   description: component specific pod annotations list

@@ -3,6 +3,13 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.18
+1. Fix IBM PowerVM probe charts
+2. Rename ibmpowerhmc to powervm
+3. Add support for Azure and GCP Infra probes.
+4. Added config needed for enforcer engine of suspend
+5. Added config needed for action orchestrator status listener engine of suspend
+
 42.17
 1. Added support for running Prometheus server using a namespaced role.
 2. Moved out-of-the-box scrape jobs for Prometheus behind feature flags.

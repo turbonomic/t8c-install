@@ -244,6 +244,10 @@ dependencies:
     repository: file://../probes/mediation-azurepricing
     version: 0.1.0
     condition: azure.pricing.enabled
+  - name: mediation-azureinfra
+    repository: file://../probes/mediation-azureinfra
+    version: 0.1.0
+    condition: azure.infra.enabled
   - name: mediation-azuresp
     repository: file://../probes/mediation-azuresp
     version: 0.1.0
@@ -284,6 +288,10 @@ dependencies:
     repository: file://../probes/mediation-gcpbilling
     version: 0.1.0
     condition: gcp.enabled
+  - name: mediation-gcpinfra
+    repository: file://../probes/mediation-gcpinfra
+    version: 0.1.0
+    condition: gcp.infra.enabled
   - name: mediation-hds
     repository: file://../probes/mediation-hds
     version: 0.1.0
@@ -304,6 +312,10 @@ dependencies:
     repository: file://../probes/mediation-hyperv
     version: 0.1.0
     condition: hyperv.enabled
+  - name: mediation-powervm
+    repository: file://../probes/mediation-powervm
+    version: 0.1.0
+    condition: powervm.enabled
   - name: mediation-ibmstorage-flashsystem
     repository: file://../probes/mediation-ibmstorage-flashsystem
     version: 0.1.0

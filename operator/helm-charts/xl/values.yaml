@@ -255,6 +255,8 @@ azure:
     enabled: false
   pricing:
     enabled: false
+  infra:
+    enabled: false
 compellent:
   enabled: false
 dynatrace:
@@ -265,6 +267,8 @@ tanium:
   enabled: false
 gcp:
   enabled: false
+  infra:
+    enabled: false
 hpe3par:
   enabled: false
 hds:
@@ -274,6 +278,8 @@ horizon:
 hyperflex:
   enabled: false
 hyperv:
+  enabled: false
+powervm:
   enabled: false
 ibmstorage-flashsystem:
   enabled: false
