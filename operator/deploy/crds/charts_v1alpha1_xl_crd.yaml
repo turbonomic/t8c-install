@@ -428,6 +428,12 @@ spec:
                   description: component serviceAccountName
                   type: string
               type: object
+            kinesis-kafka-connect:
+              properties:
+                enabled:
+                  description: Enable the Kinesis connector
+                  type: boolean
+              type: object
             influxdb:
               properties:
                 annotations:
@@ -625,46 +631,6 @@ spec:
                 enabled:
                   description: Enable suspend components
                   type: boolean
-              type: object
-            redis:
-              properties:
-                annotations:
-                  description: component specific pod annotations list
-                  type: object
-                env:
-                    description: component environment variable
-                    type: array
-                    items:
-                      type: object
-                image:
-                  description: component specific image options
-                  properties:
-                    repository:
-                      description: component container registry and repository name
-                      type: string
-                    tag:
-                      description: component container tag
-                      type: string
-                    pullPolicy:
-                      description: component image pull policy
-                      type: string
-                  type: object
-                persistence:
-                  description: Redis persistence options
-                  properties:
-                    size:
-                      description: Redis persistent volume size
-                      type: string
-                  type: object
-                resources:
-                    description: component resource configuration
-                    type: object
-                serviceAccountName:
-                  description: component serviceAccountName
-                  type: string
-              type: object  
-            suspend:
-              properties:
                 annotations:
                   description: component specific pod annotations list
                   type: object
@@ -703,6 +669,43 @@ spec:
                   description: component serviceAccountName
                   type: string
               type: object
+            redis:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                env:
+                    description: component environment variable
+                    type: array
+                    items:
+                      type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                persistence:
+                  description: Redis persistence options
+                  properties:
+                    size:
+                      description: Redis persistent volume size
+                      type: string
+                  type: object
+                resources:
+                    description: component resource configuration
+                    type: object
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object  
 
             tunnel:
               type: object

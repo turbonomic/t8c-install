@@ -1,9 +1,15 @@
-#!/usr/local/bin/bash -e
+#!/usr/bin/env bash
+
+set -e
+set -u
+set -o pipefail
 
 # Use this script to launch a kibitzer pod attached to a given component and performing one
 # or more activities.
 
-unset XL_NAME COMPONENT DESCRIBING
+XL_NAME=; COMPONENT=; DESCRIBING=; REPO=; TAG=; PULL_SECRET_NAME=; NAMESPACE=;
+KC=kubectl
+KARGS=()
 
 function usage() {
   cat <<EOF
@@ -26,40 +32,68 @@ Where:
         useful in the case where multiple XL resources are present in the current environment
         (uncommon). This option can be used to select one of those resources for use by
         Kibitzer
+  --repo r
+        use the specified repository name for image retrieval, rather than the one obtained
+        by querying the cluster
   --tag t
         useful when running --describe when there is not a cluster with an XL resource from
         which to obtain a tag for the Kibitzer container. Also useful when running a Kibitzer
         container in a Turbo environment from an old release that predates the needed
         activity or even Kibitzer itself
+  --namespace ns (or --project ns)
+        specify a namespace or OpenShift project name for the job
+  --pull-secret-name name
+        specify the name of a secret that can be used when pulling images
+  --openshift
+        use when working with an openshift cluster. The script will use \`oc\` instead of
+        \`kubectl\` and alter certain other details accordingly
 EOF
 }
 
-if [[ $1 == '--describe' ]]; then
-  DESCRIBING=true
-  shift 1
-else
-  while [[ $1 ]]; do
-    case "$1" in
-    --xl)
-      XL_NAME="$2"
-      shift 2
-      ;;
-    --component)
-      COMPONENT="$2"
-      shift 2
-      ;;
-    --describe)
-      DESCRIBING=ture
-      shift
-      ;;
-    --tag)
-      TAG="$2"
-      shift 2
-      ;;
-    *) break ;;
-    esac
-  done
-fi
+while [[ "$*" ]]; do
+  case "$1" in
+  --xl)
+    XL_NAME="$2"
+    shift 2
+    ;;
+  --component)
+    COMPONENT="$2"
+    shift 2
+    ;;
+  --describe)
+    DESCRIBING=true
+    shift
+    ;;
+  --repo)
+    REPO="$2"
+    shift 2
+    ;;
+  --tag)
+    TAG="$2"
+    shift 2
+    ;;
+  --namespace|--project)
+    NAMESPACE="$2"
+    shift 2
+    ;;
+  --pull-secret-name)
+    PULL_SECRET_NAME="$2"
+    shift 2
+    ;;
+  --openshift)
+    KC=oc
+    shift
+    ;;
+  --help)
+    usage
+    exit 0
+    ;;
+  *)
+    KARGS+=("$1")
+    shift
+    ;;
+  esac
+done
 
 if [[ $COMPONENT && $DESCRIBING ]];  then
   echo "--describe and --component cannot be used together" > /dev/stderr
@@ -76,7 +110,7 @@ fi
 # detect image tag for current XL resource, if not given on command line
 # for this we need the name of an XL resource
 if [[ ! $XL_NAME ]]; then
-  XL_NAME=$(kubectl get xl --no-headers -o name)
+  XL_NAME=$($KC get xl --no-headers -o name)
   n=$(echo "$XL_NAME" | wc -w)
   if [[ $n -gt 1 && $COMPONENT ]]; then
     echo "Multiple XL resources exist; please specify one of them using --xl option" > /dev/stderr
@@ -91,9 +125,29 @@ if [[ ! $XL_NAME ]]; then
   fi
 fi
 
+if [[ ! $REPO ]]; then
+  REPO=$($KC get xl "$XL_NAME" -o jsonpath='{.spec.global.repository}')
+  if [[ ! $REPO ]]; then
+    echo "Unable to obtain default docker repository from XL resource "$XL_NAME"; please specify" \
+        "using --repo option" > /dev/stderr
+    usage
+    exit 1
+  fi
+fi
+
+if [[ ! $NAMESPACE ]]; then
+  NAMESPACE="$($KC get xl "$XL_NAME" -o jsonpath='{.metadata.namespace}')"
+  if [[ ! $NAMESPACE ]] ; then
+    echo "Unable to obtain default namespace from XL resource $XL_NAME; please specify using" \
+         "--namespace option" > /dev/stderr
+    usage
+    exit 1
+  fi
+fi
+
 # extract default tag name from the XL resource if not specified on command line
 if [[ ! $TAG ]]; then
-  TAG=$(kubectl get -o json xl "$XL_NAME" | jq -r .spec.global.tag)
+  TAG=$($KC get xl "$XL_NAME" -o jsonpath='{.spec.global.tag}')
   if [[ ! $TAG ]]; then
     echo "Unable to obtain default image tag from XL resource $XL_NAME; please specify using" \
          "--tag option" > /dev/stderr
@@ -103,7 +157,7 @@ if [[ ! $TAG ]]; then
 fi
 export TAG
 
-if [[ $# == 0 ]]; then
+if [[ ${#KARGS[@]} == 0 ]]; then
   echo "No kibitzer activities specified; please specify at least one" > /dev/stderr
   usage
   exit 1
@@ -113,22 +167,26 @@ if [[ $DESCRIBING ]] ; then
   # exec so we quit when container exits and don't follow on with actaully running activities
   exec docker run --rm --name=kibitzer \
     -e JAVA_OPTS="-Dorg.jooq.no-logo=true" -e LOG_TO_STDOUT=true \
-    turbonomic/kibitzer:$TAG --describe "$@"
+    "$REPO/kibitzer:$TAG" --describe "${KARGS[@]}"
 fi
 
 # kibitzer expects component name followed by activity specs; all need to be quoted and comma-separated
 # for inclusion in YAML inlined array literal
-args="\"$COMPONENT\""
-for arg in "$@"; do args="$args,\"$arg\""; done
+ARGSTRING="\"$COMPONENT\""
+for arg in "${KARGS[@]}"; do ARGSTRING="$ARGSTRING,\"$arg\""; done
+
+if [[ $PULL_SECRET_NAME ]]; then PULL_SECRET_NAME="\"$PULL_SECRET_NAME\""; fi
 
 # Create a customized job and submit it to kubernetes, using `envsubst` to inline our kibitzer args
 # and random numbers to prevent job/pod name collisions
-export ARGS="[$args]"
-cat <<EOF | envsubst '${ARGS} ${RANDOM} ${TAG}' | kubectl apply -f -
+tmpfile=$(mktemp)
+( cat | envsubst '${JOB_ARGS} ${RANDOM} ${REPO} ${TAG} ${NAMESPACE}' > $tmpfile; \
+  $KC apply -f $tmpfile) <<EOF
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: kibitzer-$(printf %x $RANDOM$RANDOM)-$(printf %x $RANDOM$RANDOM)
+  namespace: $NAMESPACE
   labels:
     app.kubernetes.io/name: kibitzer
     zone: internal
@@ -140,9 +198,10 @@ spec:
   template:
     spec:
       restartPolicy: Never
+      imagePullSecrets: [ $PULL_SECRET_NAME ]
       containers:
       - name: kibitzer
-        args: $ARGS
+        args: [$ARGSTRING]
         env:
         - name: JAVA_DEBUG
           value: "true"
@@ -168,7 +227,7 @@ spec:
           value: kafka:9092
         - name: logging.level.com.vmturbo.kibitzer
           value: info
-        image: "turbonomic/kibitzer:$TAG"
+        image: "$REPO/kibitzer:$TAG"
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 1440

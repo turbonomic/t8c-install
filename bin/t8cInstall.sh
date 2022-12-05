@@ -470,10 +470,7 @@ mkdir -p ${localStorageDataDirectory}prometheus-alertmanager
 mkdir -p ${localStorageDataDirectory}prometheus-server
 mkdir -p ${localStorageDataDirectory}graphstate-datacloud-graph
 mkdir -p ${localStorageDataDirectory}data-postgres
-mkdir -p ${localStorageDataDirectory}redis-data-xl-release-redis-master-0
-mkdir -p ${localStorageDataDirectory}redis-data-xl-release-redis-replicas-0
-mkdir -p ${localStorageDataDirectory}redis-data-xl-release-redis-replicas-1
-mkdir -p ${localStorageDataDirectory}redis-data-xl-release-redis-replicas-2
+mkdir -p ${localStorageDataDirectory}redis-data-redis-master-0
 chown -R turbo.turbo $localStorageDataDirectory
 chmod -R 777 $localStorageDataDirectory
 

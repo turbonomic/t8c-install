@@ -1,7 +1,11 @@
 packageName: t8c
 channels:
   - name: stable
-    currentCSV: t8c-operator.v42.17.0
+    currentCSV: t8c-operator.v42.19.0
+  - name: v42.19.0
+    currentCSV: t8c-operator.v42.19.0
+  - name: v42.18.0
+    currentCSV: t8c-operator.v42.18.0
   - name: v42.17.0
     currentCSV: t8c-operator.v42.17.0
   - name: v42.16.0

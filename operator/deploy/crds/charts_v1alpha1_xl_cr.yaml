@@ -18,7 +18,7 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 8.7.1
+    tag: 8.7.2
     externalIP: 10.0.2.15
     externalDbIP: 10.0.2.15
     externalTimescaleDBIP: 10.0.2.15
@@ -33,10 +33,6 @@ spec:
         # Store data in sqlite3 (no persistence across restarts) by default. To persist, uncomment:
         type: postgres
         password: grafana
-
-  # Suspend service selector
-  suspend:
-    enabled: false
 
   # Component selector - Probes
   actionscript:

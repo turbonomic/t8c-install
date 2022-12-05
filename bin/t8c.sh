@@ -326,10 +326,7 @@ then
     sudo mkdir -p ${localStorageDataDirectory}prometheus-server
     sudo mkdir -p ${localStorageDataDirectory}graphstate-datacloud-graph
     sudo mkdir -p ${localStorageDataDirectory}data-postgres
-    sudo mkdir -p ${localStorageDataDirectory}redis-data-xl-release-redis-master-0
-    sudo mkdir -p ${localStorageDataDirectory}redis-data-xl-release-redis-replicas-0
-    sudo mkdir -p ${localStorageDataDirectory}redis-data-xl-release-redis-replicas-1
-    sudo mkdir -p ${localStorageDataDirectory}redis-data-xl-release-redis-replicas-2
+    sudo mkdir -p ${localStorageDataDirectory}redis-data-redis-master-0
     sudo chown -R turbo.turbo $localStorageDataDirectory
     sudo chmod -R 777 $localStorageDataDirectory
     echo ""
