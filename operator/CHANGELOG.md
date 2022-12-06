@@ -3,6 +3,9 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.20
+1. Disable the default containerized DB creation step for new installation by adding an `externalDbIp` field under the `spec/global` section of the CR yaml file.
+
 42.18
 1. Fix IBM PowerVM probe charts
 2. Rename ibmpowerhmc to powervm
