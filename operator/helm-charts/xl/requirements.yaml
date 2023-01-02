@@ -109,7 +109,7 @@ dependencies:
 # Suspend services dependencies
   - name: redis
     repository: file://../suspend/redis
-    version: 15.7.5
+    version: 0.1.0
     condition: suspend.enabled
   - name: suspend
     repository: file://../suspend/suspend
@@ -176,6 +176,12 @@ dependencies:
     repository: file://../base/datacloud
     version: 0.1.0
     condition: datacloud.enabled
+
+# Data extraction dependencies
+  - name: kinesis-kafka-connect
+    repository: file://../base/kinesis-kafka-connect
+    version: 1.0.0
+    condition: kinesis-kafka-connect.enabled
 
 # Integration dependencies
   - name: intersight-integration

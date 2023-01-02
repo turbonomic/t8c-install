@@ -1,0 +1,21 @@
+image:
+  repository: turbonomic
+  tag: latest
+  pullPolicy: IfNotPresent
+
+connector:
+  config:
+    bootstrap_servers:
+    connector_name: turbo-saas-reporting-connector
+    exporter_topic:
+    kinesis_region:
+    batch_size:
+    batch_size_bytes:
+    kinesis_stream:
+    metrics_level:
+    metrics_granularity:
+    metrics_name_space:
+    role_arn:
+    role_session_name:
+    role_external_id:
+    role_duration_seconds:

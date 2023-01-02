@@ -53,6 +53,8 @@ spec:
           value: auth.{{ .Release.Namespace }}.svc.cluster.local
         - name: HYDRA_PUBLIC
           value: hydra-public.{{ .Release.Namespace }}.svc.cluster.local
+        - name: CLIENT_NETWORK
+          value: client-network.{{ .Release.Namespace }}.svc.cluster.local
 {{ toYaml .Values.env | indent 8 }}
 {{- if .Values.global }}
   {{- if .Values.global.blockRemoteProbes }}

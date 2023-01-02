@@ -74,6 +74,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
+  annotations:
+{{- with .Values.tunnel }}
+{{- if .expose }}
+{{- include "skupperExpose" . | nindent 4 }}
+{{- end }}
+{{- end }}
   labels:
     zone: internal
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -206,11 +212,6 @@ metadata:
   name: {{ .Chart.Name }}
   annotations:
 {{- include "serviceAnnotations" . | nindent 4 }}
-{{- with .Values.tunnel }}
-{{- if .expose }}
-{{- include "skupperExpose" . | nindent 4 }}
-{{- end }}
-{{- end }}
   labels:
 {{- include "serviceLabels" . | nindent 4 }}
     zone: internal

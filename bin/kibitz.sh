@@ -8,6 +8,8 @@ set -o pipefail
 # or more activities.
 
 XL_NAME=; COMPONENT=; DESCRIBING=; REPO=; TAG=; PULL_SECRET_NAME=; NAMESPACE=;
+DB_AUTOPROVISION=; DB_SECRET_NAME=; DB_SECRET_VOLUME=; DB_SECRET_MOUNT=;
+JAVA_COMPONENT_OPTS="-Dorg.jooq.no-logo=true";
 KC=kubectl
 KARGS=()
 
@@ -42,6 +44,17 @@ Where:
         activity or even Kibitzer itself
   --namespace ns (or --project ns)
         specify a namespace or OpenShift project name for the job
+  --db-autoprovision
+        use this to indicate that that any new database needed by Kibitzer should be created
+        and dropped automatically as needed. This requires that a root user and password be
+        configured via standard means. By default, Kibitzer expects any needed databases to be
+        created prior to using Kibitzer, if any activities use COPY or RETAINED_COPY db_mode.
+  --db-secret-name secretName
+        use this to specify a the name of a kubernetes secret with credentials for host componnent
+        DB connection. The same credentials will be used for a kibitzer copy of the component
+        database if one is required. Normally, the script will automatically detect the correct
+        the secret name from the XL resource.
+        component configuration or via global configuration
   --pull-secret-name name
         specify the name of a secret that can be used when pulling images
   --openshift
@@ -74,6 +87,14 @@ while [[ "$*" ]]; do
     ;;
   --namespace|--project)
     NAMESPACE="$2"
+    shift 2
+    ;;
+  --db-autoprovision)
+    DB_AUTOPROVISION=true
+    shift
+    ;;
+  --db-secret-name)
+    DB_SECRET_NAME="$2"
     shift 2
     ;;
   --pull-secret-name)
@@ -163,6 +184,13 @@ if [[ ${#KARGS[@]} == 0 ]]; then
   exit 1
 fi
 
+if [[ ! $DB_SECRET_NAME ]]; then
+  DB_SECRET_NAME="$($KC get xl "$XL_NAME" -o jsonpath="{.spec.$COMPONENT.dbSecretName}")"
+fi
+if [[ ! $DB_SECRET_NAME ]]; then
+  DB_SECRET_NAME="$($KC get xl "$XL_NAME" -o jsonpath="{.spec.global.dbSecretName}")"
+fi
+
 if [[ $DESCRIBING ]] ; then
   # exec so we quit when container exits and don't follow on with actaully running activities
   exec docker run --rm --name=kibitzer \
@@ -176,6 +204,16 @@ ARGSTRING="\"$COMPONENT\""
 for arg in "${KARGS[@]}"; do ARGSTRING="$ARGSTRING,\"$arg\""; done
 
 if [[ $PULL_SECRET_NAME ]]; then PULL_SECRET_NAME="\"$PULL_SECRET_NAME\""; fi
+
+if [[ $DB_AUTOPROVISION ]] ; then
+  JAVA_COMPONENT_OPTS="$JAVA_COMPONENT_OPTS -DdbAutoprovision=true"
+fi
+
+if [[ $DB_SECRET_NAME ]]; then
+  DB_SECRET_VOLUME="$(echo '- {"name": "db-creds", "secret": ' \
+      '{"secretName": "'$DB_SECRET_NAME'", "optional": true}}')"
+  DB_SECRET_MOUNT='- {"mountPath": "/vault/secrets", "name": "db-creds", "readOnly": true}'
+fi
 
 # Create a customized job and submit it to kubernetes, using `envsubst` to inline our kibitzer args
 # and random numbers to prevent job/pod name collisions
@@ -207,6 +245,8 @@ spec:
           value: "true"
         - name: JAVA_DEBUG_OPTS
           value: "-agentlib:jdwp=transport=dt_socket,address=0.0.0.0:8000,server=y,suspend=n"
+        - name: JAVA_COMPONENT_OPTS
+          value: "$JAVA_COMPONENT_OPTS"
         - name: component_type
           value: kibitzer
         - name: instance_id
@@ -270,6 +310,7 @@ spec:
           readOnly: true
         - mountPath: /tmp
           name: kibitzer-tmpfs0
+        ${DB_SECRET_MOUNT}
       volumes:
       - configMap:
           defaultMode: 420
@@ -298,4 +339,5 @@ spec:
           secretName: kibitzer-mtls-secret
       - emptyDir: {}
         name: kibitzer-tmpfs0
+      ${DB_SECRET_VOLUME}
 EOF

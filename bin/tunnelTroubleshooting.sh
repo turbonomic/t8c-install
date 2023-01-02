@@ -162,7 +162,7 @@ function troubleshoot_token_claim {
 
   echo "Testing connectivity to ${ip}:${port}..."
   nc -vzw 5 ${ip} ${port} || {
-    error="ERROR: Cannot connect to SaaS endpoint ${ip}:${port}/${deploy}. Is it being blocked by a firewall?"
+    error="ERROR: Cannot connect to SaaS endpoint ${ip}:${port}. Is it being blocked by a firewall?"
     echo "${error}"
     echo
     errors+=("${error}")

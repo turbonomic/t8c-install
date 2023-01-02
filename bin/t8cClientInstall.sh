@@ -2,9 +2,6 @@
 
 # get config variables
 source /opt/local/etc/turbo.conf
-: ${namespace:?"Bad state: namespace not defined"}
-: ${turboVersion:?"Bad state: turboVersion not defined"}
-: ${node:?"Bad state: node not defined"}
 
 main() {
 
@@ -14,6 +11,11 @@ main() {
     echo "Not running as root, please become the root user"
     exit
   fi
+
+  parse_args $@
+  : ${namespace:?"Bad state: namespace not defined"}
+  : ${turboVersion:?"Bad state: turboVersion not defined"}
+  : ${node:?"Bad state: node not defined"}
 
   # Check if the root user needs to change their password
   changePW=$(chage -l root | grep "Last password change" | awk -F: '{print $2}' | xargs)
@@ -33,6 +35,8 @@ main() {
     init_kubernetes
   }
 
+  enable_monitoring
+
   install_operator
 
   install_operand
@@ -41,6 +45,26 @@ main() {
   echo "Installation complete!"
   echo "You can now perform the token exchange to connect to your SaaS instance"
 
+}
+
+parse_args() {
+  while [ "${1-}" != "" ]; do
+    case $1 in
+    -n | --namespace)
+      shift
+      namespace="${1}"
+      ;;
+    -v | --version)
+      shift
+      turboVersion="${1}"
+      ;;
+    *)
+      echo "Invalid option: ${1}" >&2
+      exit 1
+      ;;
+    esac
+    shift
+  done
 }
 
 init_kubernetes() {
@@ -307,6 +331,13 @@ ProgressBar()
   printf "\rProgress : [${_fill// /#}${_empty// /-}] ${_progress}%%"
 }
 
+enable_monitoring() {
+  cat << EOF > /etc/cron.d/tsc_monitor_${namespace}
+*/5 * * * * turbo PATH="$PATH:/usr/local/bin" /opt/local/bin/tsc_monitor.py --namespace ${namespace} >> /tmp/tsc_monitor_${namespace}.log
+0 0 * * * turbo [[ -e /tmp/tsc_monitor_${namespace}.log ]] && mv /tmp/tsc_monitor_${namespace}.log /tmp/tsc_monitor_${namespace}.log.1
+EOF
+}
+
 install_operator() {
 
   echo
@@ -384,4 +415,4 @@ retry_until_successful() {
   return 1
 }
 
-main
+main $@

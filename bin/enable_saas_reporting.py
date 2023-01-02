@@ -103,14 +103,12 @@ class SaaSReporting:
 
     connectorBasePath = 'spec kinesis-kafka-connect'
     connectorPropertiesBasePath = connectorBasePath + ' connector'
-    connectorDeliveryStreamPath = connectorPropertiesBasePath + ' config kinesis_delivery_stream'
-    connectorAccessKeyIdPath = connectorPropertiesBasePath + ' aws_access_key aws_access_key_id'
-    connectorSecretAccessKeyPath = connectorPropertiesBasePath + ' aws_access_key aws_secret_access_key'
+    connectorKinesisStreamPath = connectorPropertiesBasePath + ' config kinesis_stream'
 
     def __init__(self, custom_resource):
         self.custom_resource = custom_resource
 
-    def enable(self, delivery_stream, aws_access_key_id, aws_secret_access_key):
+    def enable(self, kinesis_stream, aws_access_key_id, aws_secret_access_key):
 
         # Enable the extractor
         self.custom_resource.set_value('spec extractor enabled', True)
@@ -120,9 +118,10 @@ class SaaSReporting:
 
         # Enable and configure the connector
         self.custom_resource.set_value(SaaSReporting.connectorBasePath + ' enabled', True)
-        self.custom_resource.set_value(SaaSReporting.connectorDeliveryStreamPath, delivery_stream)
-        self.custom_resource.set_value(SaaSReporting.connectorAccessKeyIdPath, aws_access_key_id)
-        self.custom_resource.set_value(SaaSReporting.connectorSecretAccessKeyPath, aws_secret_access_key)
+        self.custom_resource.set_value(SaaSReporting.connectorKinesisStreamPath, kinesis_stream)
+
+        # Deploy the tenant access key kubernetes secret
+        os.system(f"kubectl create secret generic kinesis-kafka-connect-secret --from-literal=AWS_ACCESS_KEY_ID='{aws_access_key_id}' --from-literal=AWS_SECRET_ACCESS_KEY='{aws_secret_access_key}'")
 
     def is_enabled(self):
         # This is the primary flag that determines whether saas reporting is enabled or not.
@@ -135,9 +134,8 @@ class SaaSReporting:
         warnings = []
         if self.is_enabled():
             # TODO: maybe check for the saas reporting feature flag
-            self.check_password(SaaSReporting.connectorAccessKeyIdPath, warnings)
-            self.check_password(SaaSReporting.connectorSecretAccessKeyPath, warnings)
-            self.check_property_present(SaaSReporting.connectorDeliveryStreamPath, warnings)
+            # TODO: Check secret deployed
+            self.check_property_present(SaaSReporting.connectorKinesisStreamPath, warnings)
         else:
             warnings.append('SaaS Reporting is not enabled')
 
@@ -280,22 +278,10 @@ def main():
         print("SaaS reporting is already enabled. Please contact support if it is not working.")
         return
 
-    # while True:
-    #         if sys.stdin.isatty():
-    #             password = getpass(msg)
-    #         else:
-    #             password = input()
-    #         warning = validate_password(password)
-    #         if warning is None:
-    #             break
-    #         else:
-    #             print(warning)
-    #     return password
-
-    deliverySteam = input("Provide the name of the data streamed assigned to your account: ")
+    kinesisSteam = input("Provide the name of the data stream assigned to your account: ")
     awsAccessKeyId = wait_for_password("Provide the AWS Access Key ID: ")
     awsSecretAccessKey = wait_for_password("Provide the AWS Secret Access Key: ")
-    saas_reporting.enable(deliverySteam, awsAccessKeyId, awsSecretAccessKey)
+    saas_reporting.enable(kinesisSteam, awsAccessKeyId, awsSecretAccessKey)
 
     # write out custom resource component
     custom_resource.write()

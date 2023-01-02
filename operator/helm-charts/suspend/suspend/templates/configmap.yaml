@@ -52,7 +52,7 @@ data:
           - cadence: 10s
             type: ping
     redis:
-      address: xl-release-redis-master:6379
+      address: redis-master:6379
       cluster: true
       tls: false
       connecttimeout: 2m

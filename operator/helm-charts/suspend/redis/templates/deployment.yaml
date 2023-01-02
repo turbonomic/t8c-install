@@ -1,10 +1,47 @@
 ---
+{{- if .Values.global }}
+  {{- if or (not .Values.global.enableExternalSecrets) (not (or .Values.global.enableEphemeralDiscoveryDumps .Values.enableEphemeralDiscoveryDumps))}}
+    {{/* Use the PV legacy behavior unless both external secrets and ephemeral discovery dumps are enabled. */}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Chart.Name }}-data-redis-master-0
+  {{- if or .Values.storageAnnotations .Values.global.storageAnnotations }}
+  annotations:
+    {{- with .Values.storageAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.storageAnnotations }}
+{{- toYaml . | nindent 8 }}
+    {{- end }}
+  {{- end }}
+  labels:
+    {{- include "redis.labels" . | nindent 4 }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+{{- if .Values.global }}
+  {{- if .Values.global.storageSelector }}
+  selector:
+    matchLabels:
+      partition: {{ .Release.Namespace }}-redis
+  {{- end }}
+  {{- if .Values.global.storageClassName }}
+  storageClassName: {{ .Values.global.storageClassName }}
+  {{- end }}
+{{- end }}
+  resources:
+    requests:
+      storage: 4Gi
+---
+  {{- end }}
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
   labels:
-    {{- include "suspend.labels" . | nindent 4 }}
+    {{- include "redis.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -13,7 +50,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "suspend.selectorLabels" . | nindent 6 }}
+      {{- include "redis.selectorLabels" . | nindent 6 }}
   template:
     metadata:
 {{- if .Values.global }}
@@ -27,18 +64,17 @@ spec:
     {{- end }}
   {{- end }}
 {{- end }}
-    {{- with .Values.podAnnotations }}
+      {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
-
+      {{- end }}
       labels:
-        {{- include "suspend.selectorLabels" . | nindent 8 }}
+        {{- include "redis.selectorLabels" . | nindent 8 }}
     spec:
-{{- with .Values.imagePullSecrets }}
+      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
-{{- end }}
+      {{- end }}
 {{- if .Values.global.registry }}
     {{- if .Values.global.imagePullSecret }}
       imagePullSecrets:
@@ -49,10 +85,10 @@ spec:
       - name: turbocred
       {{- end }}
     {{- end }} 
-{{- end }}   
+{{- end }}
 {{- if .Values.global }}
   {{- if or .Values.serviceAccountName .Values.global.serviceAccountName }}
-      serviceAccountName: {{ template "serviceAccountName" . }}
+      serviceAccountName: {{ include "redis.serviceAccountName" . }}
   {{- end }}
   {{- if or .Values.podSecurityContext .Values.global.securityContext }}
       securityContext:
@@ -68,79 +104,70 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ template "image" . }}
-          imagePullPolicy: {{ template "pullPolicy" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-{{- if .Values.global }}
-  {{- if or .Values.logtostdout .Values.global.logtostdout }}
-            - name: LOG_TO_STDOUT
-              value: "true"
-  {{- end }}
-{{- end }}
             - name: component_type
-              value: suspend
+              value: redis
             - name: instance_id
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: SUSPEND_REDIS_PASSWORD
+            - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: redis
+                  name: {{ .Chart.Name }}
                   key: redis-password
           ports:
             - name: http
-              containerPort: 9093
+              containerPort: 6379
               protocol: TCP
-            - name: grpc
-              containerPort: 9094
-              protocol: TCP
-           
-          livenessProbe:
-            initialDelaySeconds: 30
-            httpGet:
-              path: /liveness
-              port: 9093
-            failureThreshold: 3
-            periodSeconds: 30
+
           readinessProbe:
-            initialDelaySeconds: 30
-            httpGet:
-              path: /readiness
-              port: 9093
-            failureThreshold: 3
-            periodSeconds: 30
- 
+            initialDelaySeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+            periodSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -i
+                - -c
+                - test "$(redis-cli -h 127.0.0.1 -a $REDIS_PASSWORD ping)"
+                  == "PONG"
+          livenessProbe:
+            initialDelaySeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+            periodSeconds: 5
+            tcpSocket:
+              port: 6379
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-          - mountPath: /vault/redis/secrets
-            name: redis-creds
-            readOnly: true
+          - mountPath: /var/lib/redis/data
+            name: redis-data-redis-master-0
 {{- if .Values.global }}
-  {{- if or .Values.dbSecretName .Values.global.dbSecretName }}
-          - mountPath: /vault/db/secrets
-            name: db-creds
-            readOnly: true
-  {{- end }}
   {{- if .Values.global.enableExternalSecrets }}
     {{/* Kubernetes secrets are enabled for encryption keys. */}}
   {{/* Kubernetes secrets are enabled for auth. */}}
-          - mountPath: /home/suspend/data/master_keys
+          - mountPath: /home/redis/data/master_keys
             name: master-key-secret
             readOnly: true
   {{- end }}
 {{- end }}
-          - mountPath: /opt/suspend/config
-            name: config-map
-          - mountPath: /etc/turbonomic
-            name: turbo-volume
-            readOnly: true
       volumes:
-        - name: redis-creds
-          secret:
-            secretName: xl-release-redis
-            optional: true
+        - name: redis-data-redis-master-0
+{{- if .Values.global }}
+  {{- if or (not .Values.global.enableExternalSecrets) (not (or .Values.global.enableEphemeralDiscoveryDumps .Values.enableEphemeralDiscoveryDumps))}}
+    {{/* Use the PV legacy behavior unless both external secrets and ephemeral discovery dumps are enabled. */}}
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-data-redis-master-0
+  {{- else }}
+          emptyDir: {}
+  {{- end }}
+{{- end }}
 {{- if .Values.global }}
   {{- if .Values.global.enableExternalSecrets }}
     {{/* Kubernetes secrets are enabled for auth. Attach one secret for the directory of secret files. */}}
@@ -149,21 +176,8 @@ spec:
             secretName: master-key-secret
             optional: true
   {{- end }}
-  {{- if or .Values.dbSecretName .Values.global.dbSecretName }}
-        - name: db-creds
-          secret:
-            secretName: {{ template "dbSecretName" .}}
-  {{- end }}
-{{- end }}
-        - name: config-map
-          configMap:
-            name: suspend-config
-            defaultMode: 0755
-        - name: turbo-volume
-          configMap:
-            name: global-properties-{{ .Release.Name }}
-            optional: true
-      restartPolicy: Always
+{{- end }} 
+      restartPolicy: Always       
 {{- if .Values.global }}
   {{- if or .Values.nodeSelector .Values.global.nodeSelector }}
       nodeSelector:
