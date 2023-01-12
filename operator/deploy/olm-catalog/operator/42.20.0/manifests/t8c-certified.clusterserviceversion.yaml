@@ -2,16 +2,16 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   annotations:
-    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"externalDbIP": "10.0.2.15","customImageNames": false,"repository": "registry.connect.redhat.com/turbonomic","tag":"8.7.2"}}}]'
+    alm-examples: '[{"apiVersion":"charts.helm.k8s.io/v1","kind":"Xl","metadata":{"name":"xl-release"},"spec":{"global":{"externalDbIP": "10.0.2.15","customImageNames": false,"repository": "registry.connect.redhat.com/turbonomic","tag":"8.7.3"}}}]'
     capabilities: Basic Install
     categories: Monitoring
     certified: "false"
-    containerImage: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:261f6dce0f0871a827697948d4e88168afbd0e498676350ac8e0f17102aae4ac
+    containerImage: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:e7b2bab0c55a3e2f2a9761ba28aa8e57097abd5323c9d79b3682b4e5ff7c1eed
     createdAt: "2019-07-01T00:00:00.000Z"
     description: Turbonomic Workload Automation for Multicloud simultaneously optimizes performance, compliance, and cost in real-time. Workloads are precisely resourced, automatically, to perform while satisfying business constraints.
     repository: https://github.com/turbonomic/t8c-install/tree/master/operator
     support: Turbonomic, Inc.
-  name: t8c-operator.v42.19.0
+  name: t8c-operator.v42.20.0
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
@@ -31,10 +31,10 @@ spec:
     It assures application performance by giving workloads the resources they need when they need them.
 
     ### How do I start?
-
+    
     Turbonomic platform installation and configuration documentation can be found on the IBM Turbonomic documentation site here https://www.ibm.com/docs/en/tarm/latest?topic=installation-installing-kubernetes-clusters
-    Carefully read through the prerequisites before beginning the installation.  Once ready, on the `Details` tab for the Turbonomic Platform Operator, under `Provided APIs`, click `Create instance`.
-    For samples of common configurations, refer to sample custom resource YAMLs provided here: https://github.com/turbonomic/t8c-install/tree/master/samples
+    Carefully read through the prerequisites before beginning the installation.  Once ready, on the `Details` tab for the Turbonomic Platform Operator, under `Provided APIs`, click `Create instance`.  
+    For samples of common configurations, refer to sample custom resource YAMLs provided here: https://github.com/turbonomic/t8c-install/tree/master/samples 
     Looking to upgrade your current deployment? Refer to documentation here: https://www.ibm.com/docs/en/tarm/latest?topic=version-updating-using-red-hat-openshift-operatorhub
 
     ### How does it work?
@@ -62,7 +62,7 @@ spec:
                 serviceAccountName: t8c-operator
                 containers:
                 - name: t8c-operator
-                  image: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:261f6dce0f0871a827697948d4e88168afbd0e498676350ac8e0f17102aae4ac
+                  image: registry.connect.redhat.com/turbonomic/t8c-operator@sha256:e7b2bab0c55a3e2f2a9761ba28aa8e57097abd5323c9d79b3682b4e5ff7c1eed
                   imagePullPolicy: Always
                   env:
                   - name: WATCH_NAMESPACE
@@ -202,5 +202,5 @@ spec:
   maturity: alpha
   provider:
     name: Turbonomic, Inc.
-  replaces: t8c-operator.v42.18.0
-  version: 42.19.0
+  replaces: t8c-operator.v42.19.0
+  version: 42.20.0
