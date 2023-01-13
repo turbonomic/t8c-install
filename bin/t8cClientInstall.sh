@@ -254,8 +254,6 @@ init_kubernetes() {
   /usr/local/bin/kubectl apply -f /etc/kubernetes/kubeadm-config.yaml 2>/dev/null
   /usr/local/bin/kubectl apply -f /etc/kubernetes/kube-proxy.yaml -n kube-system 2>/dev/null
 
-  # Restart Docker
-  systemctl restart docker
   sleep 10
 
   kubectl cluster-info > /dev/null 2>&1

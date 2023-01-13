@@ -3,15 +3,15 @@
 # Declare variables to be passed into your templates.
 
 global:
-#  registry: index.docker.io
+#  registry: icr.io
 #  imagePullSecret: turbocred
 #  imageUsername: turbouser
 #  imagePassword: turbopassword
-  repository: turbonomic
-  tag: 8.5.4
+  repository: icr.io/cpopen/turbonomic
+  tag: 8.7.5
 #  serviceAccountName: t8c-serviceaccount
 #  pullPolicy: IfNotPresent
-  customImageNames: true
+  customImageNames: false
   nodeSelector: {}
   tolerations: []
   affinity: {}

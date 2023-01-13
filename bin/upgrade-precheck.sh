@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - June 29, 2022
+#Upgrade pre-check script - Jan. 4, 2023
 #Author: CS/JS
 echo " "
 RED=`tput setaf 1`
@@ -21,7 +21,7 @@ trap 'tput sgr0' EXIT
 usage () {
    echo ""
    echo "Upgrade Precheck Script"
-   echo "v2.22"
+   echo "v2.33"
    echo ""
    echo "Usage:"
    echo ""
@@ -46,7 +46,7 @@ check_space(){
         df -h | egrep -v "overlay|shm"
         echo " "
     fi
-    if [[ $(printf '%s\n' "${VARSPACE}" | grep "/var$" | awk {'print $4'}) -ge 15728640 ]]; then
+    if [[ $(printf '%s\n' "${VARSPACE}" | grep "/var$" | awk {'print $4'}) -ge 12582912 ]]; then
         if [[ ${VERBOSE} = 1 ]]; then
             echo "${GREEN}There's enough disk space in /var to proceed with the upgrade."
         fi
@@ -54,15 +54,24 @@ check_space(){
         SUMMARY+=( "${WHITE}Disk space check | ${GREEN}PASSED" )
     else
         if [[ ${VERBOSE} = 1 ]]; then
-            echo "${RED}/var has less than 15GB free - if needed remove un-used docker images to clear enough space."
+            echo "${RED}/var has less than 12GB free - if needed remove un-used docker images to clear enough space."
             echo "${WHITE}***************************"
             echo " "
             echo "${WHITE}Reclaimable space list below - By deleting un-used docker images${WHITE}"
-            sudo docker system df
-            echo "${WHITE}To reclaim space from un-used docker images above you need to confirm the previous version of Turbonomic images installed:"
-            echo "Run the command ${YELLOW}'sudo docker images | grep turbonomic/auth'${WHITE} to find the previous versions."
-            echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 8.3.0 | awk '{print \$3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'8.3.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space."
-            echo "${WHITE}***************************"
+            if [[ $(cat /var/lib/kubelet/kubeadm-flags.env | grep containerd) ]]; then
+                docker_command=`which crictl`
+                echo "${WHITE}To reclaim space from un-used images above you need to confirm the previous version of IBM Turbonomic images installed:"
+                echo "Run the command ${YELLOW}'sudo crictl images | grep turbonomic/auth'${WHITE} to find the previous versions."
+                echo "Run the command ${YELLOW}'for i in \`sudo crictl images | grep 8.7.5 | awk '{print \$3}'\`; do sudo crictl rmi \$i;done'${WHITE} replacing ${YELLOW}'8.7.5'${YELLOW} with the old previous versions of the images installed to be removed to clear up the required disk space."
+                echo "${WHITE}***************************"
+            else
+                docker_command=`which docker`
+                sudo docker system df
+                echo "${WHITE}To reclaim space from un-used docker images above you need to confirm the previous version of IBM Turbonomic images installed:"
+                echo "Run the command ${YELLOW}'sudo docker images | grep turbonomic/auth'${WHITE} to find the previous versions."
+                echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 8.3.0 | awk '{print \$3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'8.3.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space."
+                echo "${WHITE}***************************"
+            fi
         fi
         echo "${RED}Disk space checks FAILED"
         SUMMARY+=( "${WHITE}Disk space check | ${RED}FAILED" )
@@ -73,9 +82,9 @@ check_space(){
 check_internet(){
     echo "${WHITE}****************************"
     echo "${WHITE}Checking endpoints connectivity for ONLINE upgrade ONLY..."
-    URL_LIST=( https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.4.2/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
+    URL_LIST=( https://icr.io https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.7.4/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
     NOT_REACHABLE_LIST=()
-    read -p "${GREEN}Are you using a proxy to connect to the internet on this Turbonomic instance (y/n)? " CONT
+    read -p "${GREEN}Are you using a proxy to connect to the internet on this IBM Turbonomic instance (y/n)? " CONT
     if [[ "${CONT}" =~ ^([yY][eE][sS]|[yY])$ ]]
     then
         read -p "${WHITE}What is the proxy name or IP and port you use?....example https://proxy.server.com:8443 " P_NAME_PORT
@@ -148,7 +157,7 @@ check_database(){
                     SUMMARY+=( "${WHITE}MariaDB checks | ${GREEN}PASSED" )
                 else                    
                     if [[ ${VERBOSE} = 1 ]]; then
-                        echo "${RED}The version of MariaDB is below version 10.5.16 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide."
+                        echo "${RED}The version of MariaDB is below version 10.5.16 you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
                     fi
                     echo "${RED}MariaDB version check FAILED"
                     SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
@@ -199,12 +208,14 @@ check_kubernetes_certs(){
     ERRORS=()
     EXPIRED_CERTS=()
     # Execute the command to check if kubectl is working
-    /usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g' > /dev/null
+    #/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g' > /dev/null
+    /usr/local/bin/kubectl version --output=yaml | grep -m1 gitVersion | awk {'print $2'} | awk -F. '{print $2}' > /dev/null
     # Grab return code
     KUBECTL_RC=${PIPESTATUS[0]}
     if [[ ${KUBECTL_RC} -eq 0 ]]; then # only if the kubectl command worked
     # As the command works, let's get the version
-    kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
+    #kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
+    kubeVersion=$(/usr/local/bin/kubectl version --output=yaml | grep -m1 gitVersion | awk {'print $2'} | awk -F. '{print $2}')
         if [[ $kubeVersion -ge 20 ]]; then
             CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
             if [[ ${VERBOSE} = 1 ]]; then
@@ -439,9 +450,9 @@ check_time_and_date(){
 
 check_turbonomic_pods(){
     echo "${WHITE}*****************************"
-    echo "Checking for any Turbonomic pods not ready and running..."
+    echo "Checking for any IBM Turbonomic pods not ready and running..."
     FAILING_PODS=()
-    KUBECTL_TEST_COMMAND=$(kubectl version)
+    KUBECTL_TEST_COMMAND=$(/usr/local/bin/kubectl version --output=yaml)
     KUBECTL_TEST=$?
     if [ -f "/opt/turbonomic/kubernetes/yaml/persistent-volumes/local-storage-pv.yaml" ]; then
         # Gluster is disabled
@@ -454,8 +465,8 @@ check_turbonomic_pods(){
                     echo " "
                     echo "${GREEN}All pods are running as expected."
                 fi
-                echo "${GREEN}Turbonomic pods checks PASSED"
-                SUMMARY+=( "${WHITE}Turbonomic pods checks | ${GREEN}PASSED" )
+                echo "${GREEN}IBM Turbonomic pods checks PASSED"
+                SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${GREEN}PASSED" )
             else
                 # Get the list of non correctly running pods
                 while IFS= read -r LINE; do
@@ -468,15 +479,15 @@ check_turbonomic_pods(){
                     echo "${WHITE}List of pods not running as expected:"
                     printf '%s\n' "${FAILING_PODS[@]}"
                 fi
-                echo "${RED}Turbonomic pods checks FAILED"
-                SUMMARY+=( "${WHITE}Turbonomic pods checks | ${RED}FAILED" )
+                echo "${RED}IBM Turbonomic pods checks FAILED"
+                SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
             fi
         else # kubectl command failed - cluster is messed up?
             if [[ ${VERBOSE} = 1 ]]; then
                 echo "${RED}Kubectl command is failing. Please check the status of your Kubernetes cluster."
             fi
-            echo "${RED}Turbonomic pods checks FAILED"
-            SUMMARY+=( "${WHITE}Turbonomic pods checks | ${RED}FAILED" )
+            echo "${RED}IBM Turbonomic pods checks FAILED"
+            SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
         fi
     else
         # Gluster is enabled
@@ -493,8 +504,8 @@ check_turbonomic_pods(){
                     echo " "
                     echo "${GREEN}All pods are running as expected."
                 fi
-                echo "${GREEN}Turbonomic pods checks PASSED"
-                SUMMARY+=( "${WHITE}Turbonomic pods checks | ${GREEN}PASSED" )
+                echo "${GREEN}IBM Turbonomic pods checks PASSED"
+                SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${GREEN}PASSED" )
             else
                 # Get the list of non correctly running pods
                 while IFS= read -r LINE; do
@@ -515,15 +526,15 @@ check_turbonomic_pods(){
                         echo "${RED}${POD}"
                     done
                 fi
-                echo "${RED}Turbonomic pods checks FAILED"
-                SUMMARY+=( "${WHITE}Turbonomic pods checks | ${RED}FAILED" )
+                echo "${RED}IBM Turbonomic pods checks FAILED"
+                SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
             fi
         else # kubectl command failed - cluster is messed up?
             if [[ ${VERBOSE} = 1 ]]; then
                 echo "${RED}Kubectl command is failing. Please check the status of your Kubernetes cluster."
             fi
-            echo "${RED}Turbonomic pods checks FAILED"
-            SUMMARY+=( "${WHITE}Turbonomic pods checks | ${RED}FAILED" )
+            echo "${RED}IBM Turbonomic pods checks FAILED"
+            SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
         fi
     fi
     echo "${WHITE}*****************************"
@@ -571,7 +582,7 @@ echo " "
 check_space
 echo " "
 echo "${WHITE}*****************************"
-read -p "${GREEN}Are you going to be performing an ONLINE upgrade of the Turbonomic instance (y/n)? " ONL
+read -p "${GREEN}Are you going to be performing an ONLINE upgrade of the IBM Turbonomic instance (y/n)? " ONL
 echo " "
 if [[ "${ONL}" =~ ^([yY][eE][sS]|[yY])$ ]]; then
     check_internet    
@@ -601,9 +612,9 @@ if [[ ${SUMMARY_TABLE} = 1 ]]; then
 fi
 echo " "
 if [[ ${VERBOSE} = 1 ]]; then
-    echo "${WHITE}Please review and resolve any ${RED}FAILED ${WHITE}issues above before proceeding with the upgrade, if you cannot resolve **please contact Turbonomic support**"
+    echo "${WHITE}Please review and resolve any ${RED}FAILED ${WHITE}issues above before proceeding with the upgrade, if you cannot resolve **please contact IBM Turbonomic support**"
 else
-    echo "${WHITE}Please review and resolve any ${RED}FAILED ${WHITE}issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact Turbonomic support**"
+    echo "${WHITE}Please review and resolve any ${RED}FAILED ${WHITE}issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact IBM Turbonomic support**"
 fi
 echo " "
 echo "End of Upgrade Pre-Check"

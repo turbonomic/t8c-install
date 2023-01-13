@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: "prom/mysqld-exporter"
+  repository: "icr.io/cpopen/turbonomic/mysqld-exporter"
   tag: "v0.11.0"
   pullPolicy: "IfNotPresent"
 

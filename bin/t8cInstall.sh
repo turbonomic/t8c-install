@@ -300,8 +300,6 @@ fi
 /usr/local/bin/kubectl apply -f /etc/kubernetes/kubeadm-config.yaml 2>/dev/null
 /usr/local/bin/kubectl apply -f /etc/kubernetes/kube-proxy.yaml -n ${kubeNameSpace}  2>/dev/null
 
-# Restart Docker
-systemctl restart docker
 sleep 10
 
 kubectl cluster-info

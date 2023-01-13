@@ -46,7 +46,7 @@ alertmanager:
   ## alertmanager container image
   ##
   image:
-    repository: prom/alertmanager
+    repository: icr.io/cpopen/turbonomic/alertmanager
     tag: v0.21.0
     pullPolicy: IfNotPresent
 
@@ -333,7 +333,7 @@ configmapReload:
     ## configmap-reload container image
     ##
     image:
-      repository: jimmidyson/configmap-reload
+      repository: icr.io/cpopen/turbonomic/configmap-reload
       tag: v0.3.0
       pullPolicy: IfNotPresent
 
@@ -371,7 +371,7 @@ configmapReload:
     ## configmap-reload container image
     ##
     image:
-      repository: jimmidyson/configmap-reload
+      repository: icr.io/cpopen/turbonomic/configmap-reload
       tag: v0.3.0
       pullPolicy: IfNotPresent
 
@@ -438,7 +438,7 @@ nodeExporter:
   ## node-exporter container image
   ##
   image:
-    repository: prom/node-exporter
+    repository: icr.io/cpopen/turbonomic/node-exporter
     tag: v1.0.1
     pullPolicy: IfNotPresent
 
@@ -599,7 +599,8 @@ server:
     image:
       # Repository and tag to use for the prometheus-to-kafka adapter container image.
       # Image name will always be "prometheus-kafka-adapter"
-      repository: telefonica
+      # This is odd -- double check this
+      repository: icr.io/cpopen/turbonomic
       tag: 1.8.0
       pullPolicy: IfNotPresent
     # Additional arguments to use when starting the prometheus-kafka-adapter process.
@@ -622,7 +623,7 @@ server:
   ## Prometheus server container image
   ##
   image:
-    repository: prom/prometheus
+    repository: icr.io/cpopen/turbonomic/prometheus
     tag: v2.32.0
     pullPolicy: IfNotPresent
 
@@ -1037,7 +1038,7 @@ pushgateway:
   ## pushgateway container image
   ##
   image:
-    repository: prom/pushgateway
+    repository: icr.io/cpopen/turbonomic/pushgateway
     tag: v1.2.0
     pullPolicy: IfNotPresent
 

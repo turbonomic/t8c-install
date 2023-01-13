@@ -7,9 +7,9 @@ annotations: {}
 replicaCount: 1
 
 image:
-  repository: turbonomic/redis
+  repository: icr.io/cpopen/turbonomic/redis
   tag: 6.1.92
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 imagePullSecrets: []
 nameOverride: ""

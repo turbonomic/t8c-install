@@ -3,6 +3,10 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.22
+1. Set the operator to point to the icr.io/cpopen/turbonomic registry
+2. Change CustomImageName to false, to pull in the proper image names in the icr registry
+
 42.21
 1. Use data streams for kinesis kafka connect and deploy access key secret from script
 

@@ -1,20 +1,26 @@
 FROM quay.io/operator-framework/helm-operator:v1.25
+
+USER root
+RUN microdnf update -y && microdnf clean all
+USER 1001
+
 MAINTAINER Endre Sara <endre.sara@turbonomic.com>
 
 # Required OpenShift Labels
 LABEL name="t8c-operator" \
       vendor="Turbonomic" \
       version="42" \
-      release="21" \
+      release="22" \
       summary="Turbonomic Platform Operator" \
       description="Turbonomic Workload Automation for Multicloud simultaneously optimizes performance, compliance, and cost in real-time. Workloads are precisely resourced, automatically, to perform while satisfying business constraints." \
 ### Required labels above - recommended below
       url="https://www.turbonomic.com" \
-      run='docker run -tdi --name ${NAME} turbonomic/t8c-operator:42.21' \
+      run='docker run -tdi --name ${NAME} t8c-operator:42.22' \
       io.k8s.description="Turbonomic Workload Automation Platform simultaneously optimizes performance, compliance, and cost in real-time. Workloads are precisely resourced, automatically, to perform while satisfying business constraints.  " \
       io.k8s.display-name="Turbonomic Platform Operator" \
       io.openshift.expose-services="" \
       io.openshift.tags="turbonomic, Workload Automation Platform"
+
 
 ENV HOME=/opt/helm
 # Required Licenses

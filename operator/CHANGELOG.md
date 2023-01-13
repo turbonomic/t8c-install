@@ -3,6 +3,22 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.22
+1. Set the operator to point to the icr.io/cpopen/turbonomic registry
+2. Change CustomImageName to false, to pull in the proper image names in the icr registry
+
+42.21
+1. Use data streams for kinesis kafka connect and deploy access key secret from script
+
+42.20
+1. Fixed a bug where log messages would get lost in a Turbo Secure Connect environment
+2. Disable the default containerized DB creation step for new installation by adding an `externalDbIp` field under the `spec/global` section of the CR yaml file.
+
+42.19
+1. Added the AWS Kinesis connector to the helm charts
+2. Add new telemetry gauge: turbo_automated_entities
+3. Support field upgrading when suspend enabled
+
 42.18
 1. Fix IBM PowerVM probe charts
 2. Rename ibmpowerhmc to powervm

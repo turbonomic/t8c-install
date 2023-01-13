@@ -17,8 +17,8 @@ spec:
   #  registry: index.docker.io
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
-    repository: turbonomic
-    tag: 8.7.4
+    repository: icr.io/cpopen/turbonomic
+    tag: 8.7.5
     externalIP: 10.0.2.15
     externalDbIP: 10.0.2.15
     externalTimescaleDBIP: 10.0.2.15

@@ -62,16 +62,6 @@ else
   echo " "
 fi
 
-echo "Restarting docker service..."
-systemctl restart docker
-DSTATUS="$(systemctl is-active docker)"
-if [ "${DSTATUS}" = "active" ]; then
-    echo "docker is running now...continuing"
-else 
-    echo "docker service is not running....please check"  
-fi
-echo " "
-
 echo "Restarting Kubernetes kubelet service..."
 systemctl restart kubelet
 CSTATUS="$(systemctl is-active kubelet)"

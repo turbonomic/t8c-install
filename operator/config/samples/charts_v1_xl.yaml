@@ -18,7 +18,7 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: turbonomic
-    tag: 8.5.14-SNAPSHOT
+    tag: 8.5.16-SNAPSHOT
     externalIP: 10.0.2.15
     externalDbIP: 10.0.2.15
     externalTimescaleDBIP: 10.0.2.15
@@ -34,10 +34,6 @@ spec:
         type: postgres
         password: grafana
   
-  # Suspend service selector
-  suspend:
-    enabled: false
-
   # Component selector - Probes
   actionscript:
     enabled: true

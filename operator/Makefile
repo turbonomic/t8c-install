@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 42.21
+VERSION ?= 42.22
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "preview,fast,stable")
@@ -29,7 +29,7 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 BUNDLE_IMG ?= t8c-operator-bundle:$(VERSION)
 
 # Image URL to use all building/pushing image targets
-IMG ?= turbonomic/t8c-operator:$(VERSION)
+IMG ?= icr.io/cpopen/t8c-operator:$(VERSION)
 
 all: docker-build
 
@@ -63,7 +63,7 @@ docker-push:
 	docker push ${IMG}
 
 operator: xl
-	operator-sdk build "turbonomic/t8c-operator:$(version)"
+	operator-sdk build "icr.io/cpopen/t8c-operator:$(version)"
 
 xl-clean:
 	rm -rf helm-charts/xl/charts/* helm-charts/xl/requirements.lock
