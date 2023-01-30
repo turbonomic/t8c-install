@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - Jan. 4, 2023
+#Upgrade pre-check script - Jan. 10, 2023
 #Author: CS/JS
 echo " "
 RED=`tput setaf 1`
@@ -21,7 +21,7 @@ trap 'tput sgr0' EXIT
 usage () {
    echo ""
    echo "Upgrade Precheck Script"
-   echo "v2.33"
+   echo "v2.34"
    echo ""
    echo "Usage:"
    echo ""
@@ -82,7 +82,7 @@ check_space(){
 check_internet(){
     echo "${WHITE}****************************"
     echo "${WHITE}Checking endpoints connectivity for ONLINE upgrade ONLY..."
-    URL_LIST=( https://icr.io https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.7.4/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
+    URL_LIST=( https://archive.mariadb.org https://icr.io https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.7.4/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
     NOT_REACHABLE_LIST=()
     read -p "${GREEN}Are you using a proxy to connect to the internet on this IBM Turbonomic instance (y/n)? " CONT
     if [[ "${CONT}" =~ ^([yY][eE][sS]|[yY])$ ]]
@@ -150,14 +150,14 @@ check_database(){
                     echo "${WHITE}Checking MariaDB version"
                 fi
                 MVERSION=$(systemctl list-units --all -t service --full --no-legend "mariadb.service" | awk {'print $6'})
-                # Compare version (if 10.5.16 is the output, that means the version is either equals or above this)
-                VERSION_COMPARE=$(echo -e "10.5.16\n${MVERSION}" | sort -V | head -n1)
-                if [[ ${VERSION_COMPARE} = "10.5.16" ]]; then
+                # Compare version (if 10.5.18 is the output, that means the version is either equals or above this)
+                VERSION_COMPARE=$(echo -e "10.5.18\n${MVERSION}" | sort -V | head -n1)
+                if [[ ${VERSION_COMPARE} = "10.5.18" ]]; then
                     echo "${GREEN}MariaDB checks PASSED"
                     SUMMARY+=( "${WHITE}MariaDB checks | ${GREEN}PASSED" )
                 else                    
                     if [[ ${VERBOSE} = 1 ]]; then
-                        echo "${RED}The version of MariaDB is below version 10.5.16 you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
+                        echo "${RED}The version of MariaDB is below version 10.5.18 you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
                     fi
                     echo "${RED}MariaDB version check FAILED"
                     SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )

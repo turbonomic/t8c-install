@@ -7,7 +7,7 @@ then
   exit
 fi
 
-oldIP=$(grep "externalIP:" /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml | awk '{print $2}')
+oldIP=$(grep KUBELET_ADDRESS /etc/kubernetes/kubelet.env | grep -oP "[0-9.]+")
 newIP=$(ip address show eth0 | egrep inet | egrep -v inet6 | awk '{print $2}' | awk -F/ '{print$1}')
 
 usage()

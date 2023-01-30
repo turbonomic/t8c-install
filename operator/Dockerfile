@@ -10,7 +10,7 @@ MAINTAINER Endre Sara <endre.sara@turbonomic.com>
 LABEL name="t8c-operator" \
       vendor="Turbonomic" \
       version="42" \
-      release="22" \
+      release="23" \
       summary="Turbonomic Platform Operator" \
       description="Turbonomic Workload Automation for Multicloud simultaneously optimizes performance, compliance, and cost in real-time. Workloads are precisely resourced, automatically, to perform while satisfying business constraints." \
 ### Required labels above - recommended below

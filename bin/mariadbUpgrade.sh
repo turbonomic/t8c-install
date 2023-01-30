@@ -7,7 +7,7 @@
 serverIp=$(ifconfig eth0 | grep 'inet' |egrep -v 'inet6' | cut -d: -f2 | awk '{ print $2}')
 databaseIp=$(grep externalDbIP /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml | egrep -v '#' | awk '{print $2}')
 databaseName=$(grep externalDBName /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml | egrep -v '#' | awk '{print $2}')
-databaseUpgradeVersion="10.5.16"
+databaseUpgradeVersion="10.5.18"
 
 # Check to see if the database is remote from the server
 if [ -z "${databaseIp+x}" ]

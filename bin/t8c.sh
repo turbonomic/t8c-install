@@ -5,15 +5,41 @@
 # Purpose: Setup a kubernetes environment with T8s xl components
 # Tools:  Kubespray, Heketi, GlusterFs
 
+echo "
+ ██╗██████╗ ███╗   ███╗              ████████╗██╗   ██╗██████╗ ██████╗  ██████╗ ███╗   ██╗ ██████╗ ███╗   ███╗██╗ ██████╗
+ ██║██╔══██╗████╗ ████║              ╚══██╔══╝██║   ██║██╔══██╗██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗████╗ ████║██║██╔════╝
+ ██║██████╔╝██╔████╔██║    █████╗       ██║   ██║   ██║██████╔╝██████╔╝██║   ██║██╔██╗ ██║██║   ██║██╔████╔██║██║██║
+ ██║██╔══██╗██║╚██╔╝██║    ╚════╝       ██║   ██║   ██║██╔══██╗██╔══██╗██║   ██║██║╚██╗██║██║   ██║██║╚██╔╝██║██║██║
+ ██║██████╔╝██║ ╚═╝ ██║                 ██║   ╚██████╔╝██║  ██║██████╔╝╚██████╔╝██║ ╚████║╚██████╔╝██║ ╚═╝ ██║██║╚██████╗
+ ╚═╝╚═════╝ ╚═╝     ╚═╝                 ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝╚═╝ ╚═════╝
+"
+
 # Exit out if running as root or sudo
 
 # Variable to use if a non-turbonomic deployment
-while getopts b:h: flag
-do
-    case "${flag}" in
-        h) hostName=${OPTARG};;
+while getopts 'h:dv' option; do
+    case "${option}" in
+        h)
+          hostName=${OPTARG}
+          ;;
+        d)
+          dev_env=true
+          ;;
+        v)
+          debug_flag=true
+          ;;
+        *)
+        echo "Continuing with production cluster setup"
+        ;;
     esac
 done
+
+# Enable debug mode if requested
+if [ "X${debug_flag}" == "Xtrue" ]
+then
+  set -x
+fi
+
 serviceAccountFile="/opt/turbonomic/kubernetes/operator/deploy/service_account.yaml"
 roleFile="/opt/turbonomic/kubernetes/operator/deploy/cluster_role.yaml"
 roleBindingFile="/opt/turbonomic/kubernetes/operator/deploy/cluster_role_binding.yaml"
@@ -93,6 +119,22 @@ inventoryPath="${kubesprayPath}/inventory/turbocluster"
 glusterStorage="/opt/gluster-kubernetes"
 glusterStorageJson="${glusterStorage}/deploy/topology.json"
 declare -a node=(${node})
+
+# Setup development cluster if requested
+if [ "X${dev_env}" == "Xtrue" ]
+then
+  echo ""
+  echo ""
+  echo "######################################################################"
+  echo "                   Setup t8c cluster for development                  "
+  echo "######################################################################"
+  echo ""
+  cp "${kubesprayPath}"/updates/development/docker.yml "${kubesprayPath}"/inventory/sample/group_vars/all/docker.yml
+  cp "${kubesprayPath}"/updates/development/download_file.yml "${kubesprayPath}"/roles/download/tasks/download_file.yml
+  cp "${kubesprayPath}"/updates/development/etcd.yml "${kubesprayPath}"/inventory/sample/group_vars/etcd.yml
+  cp "${kubesprayPath}"/updates/development/k8s-cluster.yml "${kubesprayPath}"/inventory/sample/group_vars/k8s_cluster/k8s-cluster.yml
+  cp "${kubesprayPath}"/updates/development/main.yml "${kubesprayPath}"/roles/container-engine/validate-container-engine/tasks/main.yml
+fi
 
 # Build the node array to pass into kubespray
 for i in "${node[@]}"

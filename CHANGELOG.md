@@ -3,6 +3,10 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.23
+1. Add new telemetry gauge: turbo_actions
+2. Remove NAMESPACE from API component environment - no longer required
+
 42.22
 1. Set the operator to point to the icr.io/cpopen/turbonomic registry
 2. Change CustomImageName to false, to pull in the proper image names in the icr registry
