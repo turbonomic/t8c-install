@@ -13,8 +13,8 @@ global:
 ## ref: https://hub.docker.com/r/bitnami/postgresql/tags/
 ##
 image:
-  registry: docker.io
-  repository: timescale/timescaledb
+  registry: icr.io
+  repository: turbonomic/timescaledb
   tag: 2.0.1-pg12
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'

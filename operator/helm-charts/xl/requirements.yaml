@@ -106,6 +106,12 @@ dependencies:
     version: 0.1.0
     condition: extractor.enabled # todo: change to platform.enabled once XLR/search is ready
 
+# power-modelers services dependencies
+  - name: server-power-modeler
+    repository: file://../services/power-modelers/server-power-modeler
+    version: 0.1.0
+    condition: server-power-modeler.enabled
+
 # Suspend services dependencies
   - name: redis
     repository: file://../suspend/redis

@@ -121,7 +121,15 @@ global:
                         turbo_oid_expiration_execution_seconds_bucket|\
                         turbo_expired_entities_total|\
                         turbo_policies|\
-                        turbo_automated_entities"
+                        turbo_automated_entities|\
+                        turbo_actions|\
+                        turbo_suspendable_entities|\
+                        turbo_schedule_overrides|\
+                        turbo_timespan_schedules"
+    # This controls whether frontEnd adaptor is enabled in UI.
+    # Front End Telemetry Adaptor will not collect data until user opts-in from UI
+    frontEnd:
+      enabled: true
 
 nginxingress:
   enabled: true
@@ -156,6 +164,9 @@ client-network:
   enabled: false
 
 suspend:
+  enabled: false
+
+server-power-modeler:
   enabled: false
 
 loki:

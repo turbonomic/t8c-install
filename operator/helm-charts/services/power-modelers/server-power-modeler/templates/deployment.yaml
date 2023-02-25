@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    {{- include "server-power-modeler.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "server-power-modeler.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- if .Values.global }}
+      {{- if or .Values.annotations .Values.global.annotations .Values.podAnnotations }}
+      annotations:
+      {{- with .Values.annotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.global.annotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+       {{- end }}
+      {{- end }}
+      {{- end }}
+      labels:
+        {{- include "server-power-modeler.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+        {{- if or .Values.serviceAccountName .Values.global.serviceAccountName }}
+      serviceAccountName: {{ template "serviceAccountName" . }}
+        {{- end }}
+        {{- if or .Values.podSecurityContext .Values.global.securityContext }}
+      securityContext:
+        {{- with .Values.podSecurityContext }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.global.securityContext }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ template "image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

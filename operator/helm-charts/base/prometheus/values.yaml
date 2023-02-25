@@ -30,7 +30,7 @@ serviceAccounts:
 alertmanager:
   ## If false, alertmanager will not be installed
   ##
-  enabled: true
+  enabled: false
 
   ## Use a ClusterRole (and ClusterRoleBinding)
   ## - If set to false, we define a Role and RoleBinding in the namespace where t8c-operator is
@@ -47,7 +47,7 @@ alertmanager:
   ##
   image:
     repository: icr.io/cpopen/turbonomic/alertmanager
-    tag: v0.21.0
+    tag: v0.25.0
     pullPolicy: IfNotPresent
 
   #nameOverride: ""
@@ -439,7 +439,7 @@ nodeExporter:
   ##
   image:
     repository: icr.io/cpopen/turbonomic/node-exporter
-    tag: v1.0.1
+    tag: v1.5.0
     pullPolicy: IfNotPresent
 
   #nameOverride: ""
@@ -624,7 +624,7 @@ server:
   ##
   image:
     repository: icr.io/cpopen/turbonomic/prometheus
-    tag: v2.32.0
+    tag: v2.42.0
     pullPolicy: IfNotPresent
 
   #nameOverride: ""
@@ -1024,7 +1024,7 @@ server:
 pushgateway:
   ## If false, pushgateway will not be installed
   ##
-  enabled: true
+  enabled: false
 
   ## Use an alternate scheduler, e.g. "stork".
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
@@ -1039,7 +1039,7 @@ pushgateway:
   ##
   image:
     repository: icr.io/cpopen/turbonomic/pushgateway
-    tag: v1.2.0
+    tag: v1.5.1
     pullPolicy: IfNotPresent
 
   #nameOverride: ""

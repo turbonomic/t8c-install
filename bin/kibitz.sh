@@ -8,7 +8,8 @@ set -o pipefail
 # or more activities.
 
 XL_NAME=; COMPONENT=; DESCRIBING=; REPO=; TAG=; PULL_SECRET_NAME=; NAMESPACE=;
-DB_AUTOPROVISION=; DB_SECRET_NAME=; DB_SECRET_VOLUME=; DB_SECRET_MOUNT=;
+DB_AUTOPROVISION=; DB_SECRET_NAME=; DB_SECRET_VOLUME=; DB_SECRET_MOUNT=; JOB_NAME=;
+DELETE=; NOLOG=; RESTARTS=0
 JAVA_COMPONENT_OPTS="-Dorg.jooq.no-logo=true";
 KC=kubectl
 KARGS=()
@@ -28,8 +29,22 @@ Where:
 
   --describe component:tag ...
         produces information about the specified activities in Kibitzer, including
-        names, descriptions, types, and defaults for all configuration properties
+        names, descriptions, types, and defaults for all configuration properties. This
+        option always turns on --delete-on-completion
 
+  --job-name name
+        specify the job name to use; by default the name is "kibitzer" followed by a random
+        hex string for deduplication. If a job by this name already exists, that job is updated
+        rather than a new job being created.
+  --nolog
+        do not tail job output to terminal. By default, this is done unil the job completes.
+        Output always goes to rsyslog with prefix "kibitzer" regardless of this setting
+  --delete-on-completion
+        specify that the job should be deleted immediately after completion, rather than
+        the default of specifying auto-deletion five minutes after completion
+  --restarts n
+        specify how many times the pod should be allowed to restart if it fails. If this is not
+        specified, the kubernetes default of 6 is used.
   --xl name
         useful in the case where multiple XL resources are present in the current environment
         (uncommon). This option can be used to select one of those resources for use by
@@ -63,167 +78,213 @@ Where:
 EOF
 }
 
-while [[ "$*" ]]; do
-  case "$1" in
-  --xl)
-    XL_NAME="$2"
-    shift 2
-    ;;
-  --component)
-    COMPONENT="$2"
-    shift 2
-    ;;
-  --describe)
-    DESCRIBING=true
-    shift
-    ;;
-  --repo)
-    REPO="$2"
-    shift 2
-    ;;
-  --tag)
-    TAG="$2"
-    shift 2
-    ;;
-  --namespace|--project)
-    NAMESPACE="$2"
-    shift 2
-    ;;
-  --db-autoprovision)
-    DB_AUTOPROVISION=true
-    shift
-    ;;
-  --db-secret-name)
-    DB_SECRET_NAME="$2"
-    shift 2
-    ;;
-  --pull-secret-name)
-    PULL_SECRET_NAME="$2"
-    shift 2
-    ;;
-  --openshift)
-    KC=oc
-    shift
-    ;;
-  --help)
+function get_args {
+  while [[ "$*" ]]; do
+    case "$1" in
+    --xl)
+      XL_NAME="$2"
+      shift 2
+      ;;
+    --component)
+      COMPONENT="$2"
+      shift 2
+      ;;
+    --describe)
+      DESCRIBING=true
+      DELETE=true
+      shift
+      ;;
+    --job-name)
+      JOB_NAME="$2"
+      shift 2
+      ;;
+    --delete-on-completion)
+      DELETE=true
+      shift
+      ;;
+    --nolog)
+      NOLOG=true
+      shift
+      ;;
+    --restarts)
+      RESTARTS="$2"
+      shift 2
+      ;;
+    --repo)
+      REPO="$2"
+      shift 2
+      ;;
+    --tag)
+      TAG="$2"
+      shift 2
+      ;;
+    --namespace|--project)
+      NAMESPACE="$2"
+      shift 2
+      ;;
+    --db-autoprovision)
+      DB_AUTOPROVISION=true
+      shift
+      ;;
+    --db-secret-name)
+      DB_SECRET_NAME="$2"
+      shift 2
+      ;;
+    --pull-secret-name)
+      PULL_SECRET_NAME="$2"
+      shift 2
+      ;;
+    --openshift)
+      KC=oc
+      shift
+      ;;
+    --help)
+      usage
+      exit 0
+      ;;
+    *)
+      KARGS+=("$1")
+      shift
+      ;;
+    esac
+  done
+
+  if [[ $COMPONENT && $DESCRIBING ]];  then
+    echo "--describe and --component cannot be used together" > /dev/stderr
     usage
-    exit 0
-    ;;
-  *)
-    KARGS+=("$1")
-    shift
-    ;;
-  esac
-done
-
-if [[ $COMPONENT && $DESCRIBING ]];  then
-  echo "--describe and --component cannot be used together" > /dev/stderr
-  usage
-  exit 1
-fi
-
-if [[ ! $COMPONENT && ! $DESCRIBING ]]; then
-  echo "No component specified; please use --component option to specifiy one" > /dev/stderr
-  usage
-  exit 1
-fi
-
-# detect image tag for current XL resource, if not given on command line
-# for this we need the name of an XL resource
-if [[ ! $XL_NAME ]]; then
-  XL_NAME=$($KC get xl --no-headers -o name)
-  n=$(echo "$XL_NAME" | wc -w)
-  if [[ $n -gt 1 && $COMPONENT ]]; then
-    echo "Multiple XL resources exist; please specify one of them using --xl option" > /dev/stderr
-    usage
-    exit 1
-  elif [[ $n == 0 && $COMPONENT ]]; then
-    echo "No XL resource exists; cannot launch kibitzer." > /dev/stderr
-    exit 1
-  else
-    # strip resource type from name
-    XL_NAME=${XL_NAME#*/}
+    return 1
   fi
-fi
 
-if [[ ! $REPO ]]; then
-  REPO=$($KC get xl "$XL_NAME" -o jsonpath='{.spec.global.repository}')
+  if [[ ! $COMPONENT && ! $DESCRIBING ]]; then
+    echo "No component specified; please use --component option to specifiy one" > /dev/stderr
+    usage
+    return 1
+  fi
+}
+
+function run_detections {
+  detect_xl_resource
+  detect_repo
+  detect_namespace
+  detect_tag
+}
+
+function detect_xl_resource {
+  if [[ ! $XL_NAME ]]; then
+    XL_NAME=$($KC get xl --no-headers -o name)
+    n=$(echo "$XL_NAME" | wc -w)
+    if [[ $n -gt 1 && $COMPONENT ]]; then
+      echo "Multiple XL resources exist; please specify one of them using --xl option" > /dev/stderr
+      usage
+      exit 1
+    elif [[ $n == 0 && $COMPONENT ]]; then
+      echo "No XL resource exists; cannot launch kibitzer." > /dev/stderr
+      exit 1
+    else
+      # strip resource type from name
+      XL_NAME=${XL_NAME#*/}
+    fi
+  fi
+}
+
+function detect_repo {
   if [[ ! $REPO ]]; then
-    echo "Unable to obtain default docker repository from XL resource "$XL_NAME"; please specify" \
-        "using --repo option" > /dev/stderr
-    usage
-    exit 1
+    REPO=$($KC get xl "$XL_NAME" -o jsonpath='{.spec.global.repository}')
+    if [[ ! $REPO ]]; then
+      echo "Unable to obtain default docker repository from XL resource '$XL_NAME'; please " \
+          "specify using --repo option" > /dev/stderr
+      usage
+      exit 1
+    fi
   fi
-fi
+}
 
-if [[ ! $NAMESPACE ]]; then
-  NAMESPACE="$($KC get xl "$XL_NAME" -o jsonpath='{.metadata.namespace}')"
-  if [[ ! $NAMESPACE ]] ; then
-    echo "Unable to obtain default namespace from XL resource $XL_NAME; please specify using" \
-         "--namespace option" > /dev/stderr
-    usage
-    exit 1
+function detect_namespace {
+  if [[ ! $NAMESPACE ]]; then
+    NAMESPACE="$($KC get xl "$XL_NAME" -o jsonpath='{.metadata.namespace}')"
+    if [[ ! $NAMESPACE ]] ; then
+      echo "Unable to obtain default namespace from XL resource $XL_NAME; please specify using" \
+           "--namespace option" > /dev/stderr
+      usage
+      exit 1
+    fi
   fi
-fi
+}
 
-# extract default tag name from the XL resource if not specified on command line
-if [[ ! $TAG ]]; then
-  TAG=$($KC get xl "$XL_NAME" -o jsonpath='{.spec.global.tag}')
+function detect_tag {
   if [[ ! $TAG ]]; then
-    echo "Unable to obtain default image tag from XL resource $XL_NAME; please specify using" \
-         "--tag option" > /dev/stderr
+    TAG=$($KC get xl "$XL_NAME" -o jsonpath='{.spec.global.tag}')
+    if [[ ! $TAG ]]; then
+      echo "Unable to obtain default image tag from XL resource $XL_NAME; please specify using" \
+           "--tag option" > /dev/stderr
+      usage
+      exit 1
+    fi
+  fi
+}
+
+function compose_argstring {
+  if [[ ! $DESCRIBING && ${#KARGS[@]} == 0 ]]; then
+    echo "No kibitzer activities specified; please specify at least one" > /dev/stderr
     usage
     exit 1
   fi
-fi
-export TAG
 
-if [[ ${#KARGS[@]} == 0 ]]; then
-  echo "No kibitzer activities specified; please specify at least one" > /dev/stderr
-  usage
-  exit 1
-fi
+  if [[ $DESCRIBING ]] ; then
+    # for --describe, we need that option up front in kibitzer container args, followed by
+    # describe specs
+    ARGSTRING="\"--describe\""
+  else
+    # otherwise, kibitzer expects component name first, followed by activity specs and other options
+    ARGSTRING="\"$COMPONENT\""
+  fi
+  for arg in "${KARGS[@]}"; do ARGSTRING="$ARGSTRING,\"$arg\""; done
+}
 
-if [[ ! $DB_SECRET_NAME ]]; then
-  DB_SECRET_NAME="$($KC get xl "$XL_NAME" -o jsonpath="{.spec.$COMPONENT.dbSecretName}")"
-fi
-if [[ ! $DB_SECRET_NAME ]]; then
-  DB_SECRET_NAME="$($KC get xl "$XL_NAME" -o jsonpath="{.spec.global.dbSecretName}")"
-fi
+function create_job_name {
+  if [[ ! $JOB_NAME ]]; then
+    JOB_NAME="kibitzer-$(printf %x $RANDOM$RANDOM)"
+  fi
+  echo job name $JOB_NAME
+}
 
-if [[ $DESCRIBING ]] ; then
-  # exec so we quit when container exits and don't follow on with actaully running activities
-  exec docker run --rm --name=kibitzer \
-    -e JAVA_OPTS="-Dorg.jooq.no-logo=true" -e LOG_TO_STDOUT=true \
-    "$REPO/kibitzer:$TAG" --describe "${KARGS[@]}"
-fi
 
-# kibitzer expects component name followed by activity specs; all need to be quoted and comma-separated
-# for inclusion in YAML inlined array literal
-ARGSTRING="\"$COMPONENT\""
-for arg in "${KARGS[@]}"; do ARGSTRING="$ARGSTRING,\"$arg\""; done
+function compose_jobspec_substitutions {
+  compose_argstring
 
-if [[ $PULL_SECRET_NAME ]]; then PULL_SECRET_NAME="\"$PULL_SECRET_NAME\""; fi
+  if [[ ! $DB_SECRET_NAME ]]; then
+    DB_SECRET_NAME="$($KC get xl "$XL_NAME" -o jsonpath="{.spec.$COMPONENT.dbSecretName}")"
+  fi
+  if [[ ! $DB_SECRET_NAME ]]; then
+    DB_SECRET_NAME="$($KC get xl "$XL_NAME" -o jsonpath="{.spec.global.dbSecretName}")"
+  fi
 
-if [[ $DB_AUTOPROVISION ]] ; then
-  JAVA_COMPONENT_OPTS="$JAVA_COMPONENT_OPTS -DdbAutoprovision=true"
-fi
+  if [[ $PULL_SECRET_NAME ]]; then PULL_SECRET_NAME="\"$PULL_SECRET_NAME\""; fi
 
-if [[ $DB_SECRET_NAME ]]; then
-  DB_SECRET_VOLUME="$(echo '- {"name": "db-creds", "secret": ' \
-      '{"secretName": "'$DB_SECRET_NAME'", "optional": true}}')"
-  DB_SECRET_MOUNT='- {"mountPath": "/vault/secrets", "name": "db-creds", "readOnly": true}'
-fi
+  if [[ $DB_AUTOPROVISION ]] ; then
+    JAVA_COMPONENT_OPTS="$JAVA_COMPONENT_OPTS -DdbAutoprovision=true"
+  fi
 
-# Create a customized job and submit it to kubernetes, using `envsubst` to inline our kibitzer args
-# and random numbers to prevent job/pod name collisions
-tmpfile=$(mktemp)
-( cat | envsubst '${JOB_ARGS} ${RANDOM} ${REPO} ${TAG} ${NAMESPACE}' > $tmpfile; \
-  $KC apply -f $tmpfile) <<EOF
+  if [[ $DB_SECRET_NAME ]]; then
+    DB_SECRET_VOLUME="$(echo '- {"name": "db-creds", "secret": ' \
+        '{"secretName": "'$DB_SECRET_NAME'", "optional": true}}')"
+    DB_SECRET_MOUNT='- {"mountPath": "/vault/secrets", "name": "db-creds", "readOnly": true}'
+  fi
+
+  if [[ $RESTARTS ]]; then
+    RESTART_SPEC="backoffLimit: $RESTARTS"
+  else
+    RESTART_SPEC=""
+  fi
+}
+
+function create_job_spec {
+  # Create a customized job and submit it to kubernetes, using `envsubst` to inline our kibitzer args
+  cat << EOF
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: kibitzer-$(printf %x $RANDOM$RANDOM)-$(printf %x $RANDOM$RANDOM)
+  name: "$JOB_NAME"
   namespace: $NAMESPACE
   labels:
     app.kubernetes.io/name: kibitzer
@@ -233,6 +294,7 @@ spec:
   # a need to examine them or extract data from them. If more than this time will be needed, the
   # first step should be to edit the job and set its ttl to zero or a sufficiently large value
   ttlSecondsAfterFinished: 300
+  $RESTART_SPEC
   template:
     spec:
       restartPolicy: Never
@@ -267,6 +329,8 @@ spec:
           value: kafka:9092
         - name: logging.level.com.vmturbo.kibitzer
           value: info
+        - name: LOG_TO_STDOUT
+          value: "true"
         image: "$REPO/kibitzer:$TAG"
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -341,3 +405,52 @@ spec:
         name: kibitzer-tmpfs0
       ${DB_SECRET_VOLUME}
 EOF
+}
+
+function create_job {
+    local tmpfile=$(mktemp)
+    create_job_spec > $tmpfile
+    $KC apply -f $tmpfile
+}
+
+function log_pod {
+  local name_out="--output=jsonpath={.items[0].metadata.name}"
+  local pod_name="$($KC get pod -l job-name="$JOB_NAME" "$name_out")"
+  if [[ $DESCRIBING ]]; then
+      # skip output until we see the initial description separator
+      $KC logs -f "$pod_name" | sed -n '/=====================/,$p'
+  else
+      # skip output until we see the first message from Kibitzer class
+      $KC logs -f "$pod_name" | sed -n '/[[]Kibitzer[]]/,$p'
+  fi
+}
+
+function wait_for_pod {
+  local ready_out="--output=jsonpath={.status.ready}"
+  local completed_out="--output=jsonpath={.status.completed}"
+  while true; do
+    local ready="$($KC get job "$JOB_NAME" "$ready_out")"
+    local completed="$($KC get job "$JOB_NAME" "$completed_out")"
+    if [[ $ready -gt 0 || $completed -gt 0 ]]; then return; fi
+    sleep 1
+  done
+}
+
+function delete_job {
+  $KC delete job "$JOB_NAME"
+}
+
+function main {
+  get_args "$@"
+  run_detections
+  create_job_name
+  compose_jobspec_substitutions
+  create_job
+  if [[ ! $NOLOG ]]; then
+    wait_for_pod
+    log_pod
+  fi
+  if [[ $DELETE ]]; then delete_job; fi
+}
+
+main "$@"

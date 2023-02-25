@@ -59,6 +59,8 @@ spec:
         - name: skupper-console-users
           mountPath: /etc/skupper-console-users
           readOnly: true
+        - name: cns-tmpfs0
+          mountPath: /tmp
         ports:
           - containerPort: 8080
         livenessProbe:
@@ -109,6 +111,8 @@ spec:
           items:
           - key: tls.crt
             path: tls.crt
+      - name: cns-tmpfs0
+        emptyDir: {}
 {{- end }}
       restartPolicy: Always
   selector:

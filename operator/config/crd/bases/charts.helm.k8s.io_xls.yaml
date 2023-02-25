@@ -1729,6 +1729,9 @@ spec:
                 type: object
               client-network:
                 properties:
+                  enabled:
+                    description: Enable client-network service
+                    type: boolean
                   image:
                     description: component specific image options
                     properties:
@@ -2151,6 +2154,40 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
+              server-power-modeler:
+                properties:
+                  annotations:
+                    description: component specific pod annotations list
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  env:
+                    description: component environment variable
+                    type: array
+                    items:
+                      type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  image:
+                    description: component specific image options
+                    properties:
+                      repository:
+                        description: component container registry and repository name
+                        type: string
+                      tag:
+                        description: component container tag
+                        type: string
+                      pullPolicy:
+                        description: component image pull policy
+                        type: string
+                    type: object
+                  resources:
+                    description: component resource configuration
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  serviceAccountName:
+                    description: component serviceAccountName
+                    type: string
+                type: object
+
 
               # Resources limits - Probes
               mediation-actionscript:

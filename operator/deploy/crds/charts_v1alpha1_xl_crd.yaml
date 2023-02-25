@@ -1491,6 +1491,9 @@ spec:
               type: object
             client-network:
               properties:
+                enabled:
+                  description: Enable client-network service
+                  type: boolean
                 image:
                   description: component specific image options
                   properties:
