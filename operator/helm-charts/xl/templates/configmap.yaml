@@ -52,6 +52,8 @@ data:
         extractorHost: extractor
         suspendHost: suspend
         suspendGrpcPort: 9094
+        parkingEnabled: {{ .Values.suspend.enabled }}
+        frontEndTelemetryEnabled: {{ and .Values.global.telemetry.enabled .Values.global.telemetry.frontEnd.enabled }}
         # Auth
         authRetryDelaySecs: 10
         # Consul Key/Value and Service Discovery Utility

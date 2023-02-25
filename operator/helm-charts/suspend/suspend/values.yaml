@@ -53,7 +53,7 @@ securityContext:
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
-  runAsUser: 10001
+  runAsUser: 1001000000
 
 service:
   type: ClusterIP 

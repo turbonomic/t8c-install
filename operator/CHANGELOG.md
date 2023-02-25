@@ -3,6 +3,21 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.24
+1. Added parkingEnabled config to indicate suspend features are enabled/disabled.
+2. Allow suspend services deploy on OpenShift platform
+3. Fixed Client network service to push logs to rsyslog.
+4. Add new telemetry counters: turbo_schedule_overrides, turbo_timespan_schedules
+5. Add new telemetry gauge: turbo_suspendable_entities
+6. Added power-modeler/server-power-modeler module to helm charts
+7. Changed prometheus-server, node-exporter, pushgateway and alertmanager versions for security
+   issue. Also, disabled alertmanager and pushgatway as they are not used.
+8. Added `telemtry.frontEnd.enabled` config to indicate frontEnd telemetry feature is enabled or disabled.
+   
+42.23
+1. Add new telemetry gauge: turbo_actions
+2. Remove NAMESPACE from API component environment - no longer required
+
 42.22
 1. Set the operator to point to the icr.io/cpopen/turbonomic registry
 2. Change CustomImageName to false, to pull in the proper image names in the icr registry
@@ -124,5 +139,3 @@ to newer versions.
 | 8.1.2 - 8.2.0                        | 8.1          |
 | 8.0.3 - 8.1.1                        | 8.0          |
 | 8.0.0 - 8.0.2                        | 7.22         |
-
-

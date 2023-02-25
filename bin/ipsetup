@@ -203,6 +203,15 @@ EOF
     do    # List all the elements in the array.
       let "dnsNumber = $index + 1"
       echo "DNS${dnsNumber}=\"${dns[$index]}\"" >> ${ifcfgPath}
+      if [ -f /etc/NetworkManager/conf.d/dns.conf ]
+      then
+        if [ ${dnsNumber} = 1 ]
+        then
+          cp /etc/resolv.conf.bare /etc/resolv.conf
+        fi
+        sed -i "/^search/ s/$/ ${domainName}/" /etc/resolv.conf
+        echo "nameserver ${dns[$index]}" >> /etc/resolv.conf
+      fi
       let "index = $index + 1"
     done  
   else
