@@ -3,6 +3,29 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.27
+1. Enabled Suspend(Parking) service by default
+2. Added `metrics-processor` component for metrics collection on certain cloud entities. Disabled by default.
+3. Enabled Azure Pricing Probe by default if azure enabled.
+4. Updated prometheus-kafka-adapter image to 1.8.2 tag with updated golang.org/x/net version.
+5. Add telemetry scrubber component.
+6. Added support for customizing telemetry destination at runtime and injecting a default during the
+   build.
+7. Security patches for prometheus and configmap-reload
+8. Security patches for prometheus/mysqld_exporter
+9. Security patches for prometheus/node_exporter
+
+42.26
+1. IWO SPECIFIC RELEASE: Fix when multiple controllers are managing a resource in a conflicting manner, they can get stuck in an endless reconciliation cycle.
+
+42.25
+1. Add Kafka Kinesis connector component for telemetry.
+2. Enabled Azure Infrastructure Probe by default if azure is enabled.
+3. Added `telemtry.frontEnd.enabled` config to indicate frontEnd telemetry feature is enabled or disabled. 
+4. Added missing resources to helm charts and crd, so it can be configured through cr.
+5. Updated prometheus-kafka-adapter image to 1.8.1 tag with updated golang version.
+6. Added new metrics-adapter-aws component to helm charts. Disabled by default.
+
 42.24
 1. Added parkingEnabled config to indicate suspend features are enabled/disabled.
 2. Allow suspend services deploy on OpenShift platform
@@ -10,10 +33,9 @@ Operator Versions
 4. Add new telemetry counters: turbo_schedule_overrides, turbo_timespan_schedules
 5. Add new telemetry gauge: turbo_suspendable_entities
 6. Added power-modeler/server-power-modeler module to helm charts
-7. Changed prometheus-server, node-exporter, pushgateway and alertmanager versions for security
+7. Changed prometheus-server, node-exporter, pushgateway and alertmanager versions for security 
    issue. Also, disabled alertmanager and pushgatway as they are not used.
-8. Added `telemtry.frontEnd.enabled` config to indicate frontEnd telemetry feature is enabled or disabled.
-   
+
 42.23
 1. Add new telemetry gauge: turbo_actions
 2. Remove NAMESPACE from API component environment - no longer required
@@ -139,3 +161,5 @@ to newer versions.
 | 8.1.2 - 8.2.0                        | 8.1          |
 | 8.0.3 - 8.1.1                        | 8.0          |
 | 8.0.0 - 8.0.2                        | 7.22         |
+
+

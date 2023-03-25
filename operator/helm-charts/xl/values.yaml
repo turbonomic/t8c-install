@@ -92,6 +92,15 @@ global:
     # This just controls whether the necessary components are there to collect telemetry and store
     # it locally. Whether telemetry is sent anywhere is controlled by a UI checkbox.
     enabled: true
+    # Whether to enable automatic transmission of telemetry (enables the telemetry Kinesis connector).
+    automatic:
+      enabled: false
+      # Kinesis connector instance and stream names
+    # Intentionally opaque so that we can keep the same configuration parameter as we change
+    # technologies. e.g. currently the base64 encoded string contains a username and password
+    # while in the past it contained a ssh key pair.
+    secret: ${telemetry-secret} # will be replaced by the actual secret during build.
+
     # How often to collect telemetry. Default if once a day.
     scrapeInterval: 1d
     # Currently, XL components export ~300 metrics or ~3k time series. 10k should be big enough to
@@ -126,6 +135,9 @@ global:
                         turbo_suspendable_entities|\
                         turbo_schedule_overrides|\
                         turbo_timespan_schedules"
+    # Specifies which labels will be removed by the telemetry scrubber. This is a
+    # space-delimited list.
+    scrubbedLabels: "customer_id customer_domain"
     # This controls whether frontEnd adaptor is enabled in UI.
     # Front End Telemetry Adaptor will not collect data until user opts-in from UI
     frontEnd:
@@ -164,7 +176,7 @@ client-network:
   enabled: false
 
 suspend:
-  enabled: false
+  enabled: true
 
 server-power-modeler:
   enabled: false
@@ -245,7 +257,6 @@ kinesis-kafka-connect:
   enabled: false
 hydra:
   enabled: false
-
 # Enable mediation
 actionscript:
   enabled: false
@@ -257,6 +268,8 @@ appinsights:
   enabled: false
 aws:
   enabled: false
+  metrics:
+    enabled: false
 baremetal:
   enabled: false
 datadog:
@@ -358,4 +371,8 @@ wmi:
 xtremio:
   enabled: false
 xen:
+  enabled: false
+metadata:
+  enabled: false
+metrics-processor:
   enabled: false

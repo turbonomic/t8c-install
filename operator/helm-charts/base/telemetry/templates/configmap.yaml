@@ -1,0 +1,26 @@
+{{- if .Values.global.telemetry.automatic.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config-map
+data:
+  worker.properties: |-
+    bootstrap.servers = kafka:9092
+    key.converter = org.apache.kafka.connect.storage.StringConverter
+    value.converter = org.apache.kafka.connect.converters.ByteArrayConverter
+    value.converter.schemas.enable = false
+    plugin.path = /home/appuser/kinesis-kafka-connect-plugin
+    offset.storage.file.filename = offset.log
+  sink.properties: |-
+    name = {{ .Values.global.telemetry.automatic.connector_name | default .Values.config.connector_name }}
+    connector.class = com.amazon.kinesis.kafka.FirehoseSinkConnector
+    tasks.max = 1
+    topics.regex = NO-TOPIC.*
+    batch = true
+    batchSize = {{ .Values.global.telemetry.automatic.batch_size | default .Values.config.batch_size | int64 }}
+    batchSizeInBytes = {{ .Values.global.telemetry.automatic.batch_size_bytes | default .Values.config.batch_size_bytes | int64 }}
+    region = {{ (.Values.global.telemetry.secret | b64dec | fromYaml).kinesis_region }}
+    deliveryStream = {{ (.Values.global.telemetry.secret | b64dec | fromYaml).kinesis_stream }}
+    errors.log.enable = true
+    errors.tolerance = all
+{{- end }}

@@ -30,6 +30,7 @@ spec:
         app.kubernetes.io/name: {{ include "prometurbo.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/part-of: non-mediation
     spec:
 {{- if .Values.global }}
   {{- if or .Values.serviceAccountName .Values.global.serviceAccountName }}
@@ -44,6 +45,8 @@ spec:
             - --v={{ .Values.args.logginglevel }}
           ports:
             - containerPort: 8081
+          resources:
+{{ toYaml .Values.prometurbo.resources | indent 12 }}
           volumeMounts:
             - name: prometurbo-config
               mountPath: /etc/prometurbo
@@ -56,6 +59,8 @@ spec:
 {{- if .Values.args.ignoreCommodityIfPresent }}
             - --ignoreCommodityIfPresent=true
 {{- end }}
+          resources:
+{{ toYaml .Values.turbodif.resources | indent 12 }}
           volumeMounts:
           - name: turbodif-config
             mountPath: /etc/turbodif

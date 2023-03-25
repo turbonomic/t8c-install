@@ -21,6 +21,7 @@ spec:
     metadata:
       labels:
         app: {{ template "promtail.name" . }}
+        app.kubernetes.io/part-of: non-mediation
         release: {{ .Release.Name }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}

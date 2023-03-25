@@ -37,6 +37,7 @@ spec:
       name: "{{ template "logstash.fullname" . }}"
       labels:
         app: "{{ template "logstash.fullname" . }}"
+        app.kubernetes.io/part-of: non-mediation
         chart: "{{ .Chart.Name }}"
         heritage: {{ .Release.Service | quote }}
         release: {{ .Release.Name | quote }}

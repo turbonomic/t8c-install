@@ -89,6 +89,8 @@ spec:
             port: 8443
             scheme: HTTPS
 {{- include "common.getReadinessThresholds" . | indent 10 }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
         securityContext:
           readOnlyRootFilesystem: true
           capabilities:

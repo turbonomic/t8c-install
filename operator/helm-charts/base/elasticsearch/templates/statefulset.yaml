@@ -50,6 +50,7 @@ spec:
         heritage: {{ .Release.Service | quote }}
         release: {{ .Release.Name | quote }}
         chart: "{{ .Chart.Name }}"
+        app.kubernetes.io/part-of: non-mediation
         app: "{{ template "elasticsearch.uname" . }}"
         {{- range $key, $value := .Values.labels }}
         {{ $key }}: {{ $value | quote }}

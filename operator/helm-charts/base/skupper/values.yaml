@@ -8,6 +8,7 @@ skupperSiteController:
     component: skupper-site-controller
     tag: latest
     pullPolicy: IfNotPresent
+  resources: {}
 
 skupperServiceController:
   image:

@@ -24,6 +24,7 @@ spec:
     metadata:
       labels:
         app: {{ template "fluent-bit-loki.name" . }}
+        app.kubernetes.io/part-of: non-mediation
         release: {{ .Release.Name }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}

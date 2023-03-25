@@ -33,6 +33,7 @@ spec:
     {{- end }}
 
       labels:
+        app.kubernetes.io/part-of: non-mediation
         {{- include "suspend.selectorLabels" . | nindent 8 }}
     spec:
 {{- with .Values.imagePullSecrets }}
