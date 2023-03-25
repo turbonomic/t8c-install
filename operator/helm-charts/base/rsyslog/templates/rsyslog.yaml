@@ -74,12 +74,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
+  {{- if .Values.tunnel.expose }}
   annotations:
-{{- with .Values.tunnel }}
-{{- if .expose }}
-{{- include "skupperExpose" . | nindent 4 }}
-{{- end }}
-{{- end }}
+  {{- include "skupperExpose" .Values.tunnel | nindent 4 }}
+  {{- end }}
   labels:
     zone: internal
     app.kubernetes.io/name: {{ .Chart.Name }}
@@ -108,6 +106,7 @@ spec:
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/part-of: non-mediation
     spec:
 {{- if .Values.global }}
   {{- if or .Values.serviceAccountName .Values.global.serviceAccountName }}

@@ -1,0 +1,45 @@
+# Default values for metadata.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+annotations: {}
+labels: {}
+serviceAnnotations: {}
+serviceLabels: {}
+
+replicaCount: 1
+
+image:
+  repository: turbonomic
+  tag: latest
+  pullPolicy: IfNotPresent
+
+livenessFailureThreshold: 1440
+readinessTimeoutSecs: 72000
+livenessTimeoutSecs: 72000
+
+env:
+  - name: component_type
+    value: metadata
+  - name: instance_id
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: instance_ip
+    valueFrom:
+      fieldRef:
+        fieldPath: status.podIP
+  - name: clustermgr_host
+    value: clustermgr
+  - name: clustermgr_port
+    value: "8080"
+  - name: kafkaServers
+    value: kafka:9092
+  - name: logging.level.com.vmturbo.metadata
+    value: info
+
+resources:
+  limits:
+    memory: 32Gi
+  requests:
+    memory: 384Mi

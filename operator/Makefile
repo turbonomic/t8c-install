@@ -3,7 +3,24 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 42.24
+VERSION ?= 42.27
+
+# TELEMETRY_SECRET is needed for the operand to send telemetry data to some destination. It's an
+# opaque token specifying both where to send telemetry to and how to authenticate with this
+# destination. The intention is to have a single opaque token regardless of how many and which
+# technologies we use and whether we split it into front-end and back-end telemetry.
+#
+# We should not include secrets in source code. The below default value is a dummy token, that
+# contains no real destination and credentials, and is there for convenience to allow building
+# without telemetry support.
+#
+# To build operator with telemetry support you can:
+# - use the TELEMETRY_SECRET as arg of the all target (e.g make TELEMETRY_SECRET=xyz)
+# - use environment variables to overwrite this value (e.g export TELEMETRY_SECRET=xyz)
+ifndef TELEMETRY_SECRET
+$(warning WARNING: Telemetry secret not provided. Built operator binary will have partial or no telemetry support.)
+TELEMETRY_SECRET = a2luZXNpc19zdHJlYW06IGVtcHR5CmtpbmVzaXNfcmVnaW9uOiBlbXB0eQphd3NfYWNjZXNzX2tleV9pZDogZW1wdHkKYXdzX3NlY3JldF9hY2Nlc3Nfa2V5OiBlbXB0eQo=
+endif
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "preview,fast,stable")
@@ -65,12 +82,24 @@ docker-push:
 operator: xl
 	operator-sdk build "icr.io/cpopen/t8c-operator:$(version)"
 
-xl-clean:
-	rm -rf helm-charts/xl/charts/* helm-charts/xl/requirements.lock
+BUILD_DIRECTORY := build
 
-xl:
+xl-clean:
+	rm -rf helm-charts/xl/charts/* helm-charts/xl/requirements.lock helm-charts/base/prometheus/charts/* helm-charts/base/prometheus/requirements.lock
+	rm -rf "$(BUILD_DIRECTORY)"
+
+xl: inject
 	rm -rf helm-charts/xl/charts/* helm-charts/xl/requirements.lock
+	helm dependency update "helm-charts/base/prometheus"
 	helm dependency update "helm-charts/xl"
+
+SOURCE_FILE := "helm-charts/xl/values.yaml"
+DESTINATION_FILE := "$(BUILD_DIRECTORY)/values.yaml"
+
+inject:
+	mkdir -p "$(BUILD_DIRECTORY)"
+	@# Don't echo command containing sensitive info:
+	@sed -e 's/$${telemetry-secret}/$(TELEMETRY_SECRET)/' < "$(SOURCE_FILE)" > "$(DESTINATION_FILE)"
 
 .PHONY: all operator
 

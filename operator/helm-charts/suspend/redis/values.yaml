@@ -8,7 +8,7 @@ replicaCount: 1
 
 image:
   repository: icr.io/cpopen/turbonomic/redis
-  tag: 6.1.102.1675799509
+  tag: 6.1.110
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -32,12 +32,9 @@ podSecurityContext: {}
 # fsGroup: 2000
 
 securityContext: 
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  runAsUser: 1001000000
+  capabilities:
+    drop:
+    - ALL
 
 service:
   type: ClusterIP

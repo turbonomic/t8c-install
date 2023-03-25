@@ -31,6 +31,7 @@ spec:
       labels:
         app: {{ template "grafana.name" . }}
         release: {{ .Release.Name }}
+        app.kubernetes.io/part-of: non-mediation
 {{- with .Values.podLabels }}
 {{ toYaml . | indent 8 }}
 {{- end }}

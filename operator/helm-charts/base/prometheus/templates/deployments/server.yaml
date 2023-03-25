@@ -28,6 +28,7 @@ spec:
 {{ toYaml .Values.server.podAnnotations | indent 8 }}
     {{- end }}
       labels:
+        app.kubernetes.io/part-of: non-mediation
         {{- include "prometheus.server.labels" . | nindent 8 }}
         {{- if .Values.server.podLabels}}
         {{ toYaml .Values.server.podLabels | nindent 8 }}
@@ -152,6 +153,8 @@ spec:
           imagePullPolicy: {{ .Values.server.configManager.image.pullPolicy }}
           args:
 {{ toYaml .Values.server.configManager.args | indent 12 }}
+          resources:
+{{ toYaml .Values.server.configManager.resources | indent 12 }}
           volumeMounts:
             - name: config-volume
               mountPath: /etc/config
@@ -181,6 +184,29 @@ spec:
               value: {{ .Values.server.kafkaAdapter.env.logLevel }}
             - name: GIN_MODE
               value: {{ .Values.server.kafkaAdapter.env.ginMode }}
+          resources:
+{{ toYaml .Values.server.kafkaAdapter.resources | indent 12 }}
+
+        - name: {{ tpl .Values.server.telemetryScrubber.name . }}
+          image: {{ tpl .Values.server.telemetryScrubber.image.repository . }}/telemetry-scrubber:{{ tpl .Values.server.telemetryScrubber.image.tag . }}
+          imagePullPolicy: {{ .Values.server.telemetryScrubber.image.pullPolicy }}
+          env:
+            - name: instance_id
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: KAFKA_BROKER_LIST
+              value: {{ .Values.server.kafkaAdapter.env.kafkaBrokerList }}
+            - name: KAFKA_TOPIC
+              value: {{ printf "%s.%s" .Release.Namespace .Values.server.kafkaAdapter.env.kafkaTopic }}
+            - name: KAFKA_SCRUBBED_TOPIC
+              value: {{ printf "%s.%s-scrubbed" .Release.Namespace .Values.server.kafkaAdapter.env.kafkaTopic }}
+            - name: LOG_LEVEL
+              value: {{ .Values.server.telemetryScrubber.env.logLevel }}
+            - name: SCRUBBED_LABELS
+              value: {{ .Values.global.telemetry.scrubbedLabels }}
+          resources:
+{{ toYaml .Values.server.telemetryScrubber.resources | indent 12 }}
         {{- end }}
 
       {{- if .Values.server.sidecarContainers }}

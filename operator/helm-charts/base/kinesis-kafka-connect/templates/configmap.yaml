@@ -8,3 +8,34 @@ data:
   {{ upper $key }}: {{ $val | quote }}
   {{- end }}
   {{- end }}
+  worker.properties: |-
+    bootstrap.servers = {{ .Values.connector.config.bootstrap_servers }}
+    key.converter = org.apache.kafka.connect.storage.StringConverter
+    value.converter = org.apache.kafka.connect.converters.ByteArrayConverter
+    value.converter.schemas.enable = false
+    plugin.path = /home/appuser/kinesis-kafka-connect-plugin
+    offset.storage.file.filename = offset.log
+  sink.properties: |-
+    name = {{ .Values.connector.config.connector_name }}
+    connector.class = com.amazon.kinesis.kafka.AmazonKinesisSinkConnector
+    tasks.max = 1
+    topics = {{ .Values.connector.config.exporter_topic }}
+    region = {{ .Values.connector.config.kinesis_region }}
+    streamName = {{ .Values.connector.config.kinesis_stream }}
+    aggregation = {{ .Values.connector.config.aggregation }}
+    metricsLevel = {{ .Values.connector.config.metrics_level }}
+    metricsGranuality = {{ .Values.connector.config.metrics_granularity }}
+    metricsNameSpace = {{ .Values.connector.config.metrics_name_space }}
+    # Optional values are not included if not defined.
+    {{- if .Values.connector.config.role_arn }}
+    roleARN = {{ .Values.connector.config.role_arn }}
+    {{- end }}
+    {{- if .Values.connector.config.role_session_name }}
+    roleSessionName = {{ .Values.connector.config.role_session_name }}
+    {{- end }}
+    {{- if .Values.connector.config.role_external_id }}
+     roleExternalID = {{ .Values.connector.config.role_external_id }}
+    {{- end }}
+    {{- if .Values.connector.config.role_duration_seconds }}
+    roleDurationSeconds = {{ .Values.connector.config.role_duration_seconds }}
+    {{- end }}

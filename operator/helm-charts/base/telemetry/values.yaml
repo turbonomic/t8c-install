@@ -1,0 +1,10 @@
+image:
+  repository: turbonomic
+  tag: latest
+  pullPolicy: IfNotPresent
+
+config:
+  bootstrap_servers: kafka:9092
+  connector_name: telemetry-connector
+  batch_size: 500
+  batch_size_bytes: 3670016

@@ -38,6 +38,7 @@ spec:
         zone: internal
         {{- include "clientNetwork.selectorLabels" . | nindent 8 }}
         {{- include "clientNetwork.labels" . | nindent 8 }}
+        app.kubernetes.io/part-of: non-mediation
     spec:
       containers:
       - name: {{ .Chart.Name }}

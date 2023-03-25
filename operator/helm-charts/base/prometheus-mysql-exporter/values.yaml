@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: "icr.io/cpopen/turbonomic/mysqld-exporter"
-  tag: "v0.11.0"
+  tag: "v0.14.0.1"
   pullPolicy: "IfNotPresent"
 
 fullnameOverride: prometheus-mysql-exporter
@@ -125,3 +125,4 @@ cloudsqlproxy:
       "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
       "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/user%40project.iam.gserviceaccount.com"
     }'
+  resources: {}

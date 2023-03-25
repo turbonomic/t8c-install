@@ -334,7 +334,7 @@ configmapReload:
     ##
     image:
       repository: icr.io/cpopen/turbonomic/configmap-reload
-      tag: v0.3.0
+      tag: v0.8.0.1
       pullPolicy: IfNotPresent
 
     ## Additional configmap-reload container arguments
@@ -372,7 +372,7 @@ configmapReload:
     ##
     image:
       repository: icr.io/cpopen/turbonomic/configmap-reload
-      tag: v0.3.0
+      tag: v0.8.0.1
       pullPolicy: IfNotPresent
 
     ## Additional configmap-reload container arguments
@@ -398,25 +398,41 @@ configmapReload:
     ##
     resources: {}
 
-kubeStateMetrics:
-  ## If false, kube-state-metrics sub-chart will not be installed
-  ##
-  enabled: false
-
 ## kube-state-metrics sub-chart configurable values
 ## Please see https://github.com/helm/charts/tree/master/stable/kube-state-metrics
 ##
 kube-state-metrics:
-  #nameOverride: ""
+  # If false, kube-state-metrics sub-chart will not be installed
+  enabled: true
+
+  # Override the deployment name to be consistent with our other dependencies
   fullnameOverride: prometheus-kube-state-metrics
+
+  ## kube-state-metrics container image
+  ##
+  image:
+    repository: icr.io/cpopen/turbonomic/kube-state-metrics
+    tag: v2.7.0
+    pullPolicy: IfNotPresent
+
+  # Comma-separated list of metrics to be exposed.
+  # This list comprises of exact metric names and/or regex patterns.
+  metricAllowlist: [kube_pod_status_phase]
+
+  # Comma-separated list(string) or yaml list of namespaces to be enabled for collecting resources. By default all namespaces are collected.
+  namespaces: ""
+
+  ## Override the deployment namespace
+  namespaceOverride: ""
+
+  # Enable only the release namespace for collecting resources. By default all namespaces are collected.
+  # If releaseNamespace and namespaces are both set a merged list will be collected.
+  releaseNamespace: true
+
   # Available collectors for kube-state-metrics. By default all available
   # collectors are enabled.
   collectors:
-    # (Vaptistis) Current version of kube-state-metrics targets the v1 API instead of the v1beta1
-    # one. That means that in order to use the following collectors we need version >= 1.16 of
-    # Kubernetes instead >= 1.9 and our appliances that I checked were running v1.14.3.
-    validatingwebhookconfigurations: false
-    mutatingwebhookconfigurations: false
+    - pods
 
 nodeExporter:
   ## If false, node-exporter will not be installed
@@ -439,7 +455,7 @@ nodeExporter:
   ##
   image:
     repository: icr.io/cpopen/turbonomic/node-exporter
-    tag: v1.5.0
+    tag: v1.5.0.1
     pullPolicy: IfNotPresent
 
   #nameOverride: ""
@@ -591,6 +607,7 @@ server:
       pullPolicy: IfNotPresent
     args:
       - "60" # seconds between attempts to update the configuration
+    resources: {}
 
   # Prometheus to kafka adapter.
   kafkaAdapter:
@@ -601,7 +618,7 @@ server:
       # Image name will always be "prometheus-kafka-adapter"
       # This is odd -- double check this
       repository: icr.io/cpopen/turbonomic
-      tag: 1.8.0
+      tag: 1.8.2
       pullPolicy: IfNotPresent
     # Additional arguments to use when starting the prometheus-kafka-adapter process.
     args: []
@@ -619,12 +636,30 @@ server:
       ginMode: release
     # Additional environment variables to set for the prometheus-kafka-adapter process.
     additionalEnv: []
+    resources: {}
+
+  # Telemetry label scrubber.
+  telemetryScrubber:
+    # Name of the sidecar container inside Prometheus server pod.
+    name: telemetry-scrubber
+    image:
+      repository: "{{ .Values.global.repository }}"
+      tag: "{{ .Values.global.tag }}"
+      pullPolicy: IfNotPresent
+    env:
+      # The kafkaBrokerList and kafkaTopic are taken from the kafkaAdapter environment above.
+      logLevel: info
+    resources:
+      limits:
+        memory: 1Gi
+      requests:
+        memory: 384Mi
 
   ## Prometheus server container image
   ##
   image:
     repository: icr.io/cpopen/turbonomic/prometheus
-    tag: v2.42.0
+    tag: v2.42.0.1
     pullPolicy: IfNotPresent
 
   #nameOverride: ""

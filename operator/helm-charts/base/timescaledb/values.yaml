@@ -13,7 +13,7 @@ global:
 ## ref: https://hub.docker.com/r/bitnami/postgresql/tags/
 ##
 image:
-  registry: icr.io
+  registry: icr.io/cpopen
   repository: turbonomic/timescaledb
   tag: 2.0.1-pg12
   ## Specify a imagePullPolicy

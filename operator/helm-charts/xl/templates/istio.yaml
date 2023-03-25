@@ -137,6 +137,7 @@ spec:
       labels:
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/part-of: non-mediation
         istio: t8c-ingressgateway-{{ .Release.Name }}
       annotations:
         sidecar.istio.io/inject: "false"

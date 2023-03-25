@@ -5,17 +5,20 @@ image:
 
 connector:
   config:
-    bootstrap_servers:
+    bootstrap_servers: kafka:9092
     connector_name: turbo-saas-reporting-connector
-    exporter_topic:
-    kinesis_region:
+    exporter_topic: turbonomic.exporter
+    kinesis_region: us-east-1
     batch_size:
     batch_size_bytes:
     kinesis_stream:
-    metrics_level:
-    metrics_granularity:
-    metrics_name_space:
+    metrics_level: none
+    metrics_granularity: global
+    metrics_name_space: KinesisProducer
     role_arn:
     role_session_name:
     role_external_id:
     role_duration_seconds:
+    aggregation: true
+
+resources: {}

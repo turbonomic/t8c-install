@@ -318,6 +318,22 @@ spec:
                 enabled:
                   description: Enable prometurbo for the local prometheus server
                   type: boolean
+                prometurbo:
+                  description: configuration for prometurbo container
+                  properties:
+                    resources:
+                      description: component resource configuration
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                  type: object
+                turbodif:
+                  description: configuration for turbodif container
+                  properties:
+                    resources:
+                      description: component resource configuration
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                  type: object
               type: object
             metron:
               properties:
@@ -428,11 +444,47 @@ spec:
                   description: component serviceAccountName
                   type: string
               type: object
+            metrics-processor:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                enabled:
+                  description: Enable metrics processor
+                  type: boolean
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object
             kinesis-kafka-connect:
               properties:
                 enabled:
                   description: Enable the Kinesis connector
                   type: boolean
+                connector:
+                  properties:
+                    config:
+                      description: Kinesis connector configuration overrides
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                  type: object
+                resources:
+                  description: component resource configuration
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
               type: object
             influxdb:
               properties:
@@ -736,6 +788,10 @@ spec:
                         pullPolicy:
                           description: component image pull policy
                           type: string
+                    resources:
+                      description: component resource configuration
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
                 skupperServiceController:
                   type: object
                   properties:
@@ -961,18 +1017,102 @@ spec:
                 enabled:
                   description: Enable hydra
                   type: boolean
+                deployment:
+                  description: component deployment configuration
+                  properties:
+                    resources:
+                      description: component resource configuration
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                  type: object
               type: object
             prometheus:
               properties:
                 enabled:
                   description: Enable prometheus
                   type: boolean
+                alertmanager:
+                  description:
+                  properties:
+                    resources:
+                      description: component resource configuration
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                  type: object
+                configmapReload:
+                  description:
+                  properties:
+                    alertmanager:
+                      description: configuration for alertmanager configmap-reload container
+                      properties:
+                        resources:
+                          description: component resource configuration
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                      type: object
+                    prometheus:
+                      description: configuration for prometheus configmap-reload container
+                      properties:
+                        resources:
+                          description: component resource configuration
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                      type: object
+                  type: object
+                nodeExporter:
+                  description:
+                  properties:
+                    resources:
+                      description: component resource configuration
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                  type: object
+                pushgateway:
+                  description:
+                  properties:
+                    resources:
+                      description: component resource configuration
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                  type: object
+                server:
+                  description:
+                  properties:
+                    configManager:
+                      description: configuration for prometheus configuration manager sidecar sidecar container
+                      properties:
+                        resources:
+                          description: component resource configuration
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                      type: object
+                    kafkaAdapter:
+                      description: configuration for prometheus to kafka adapter sidecar container
+                      properties:
+                        resources:
+                          description: component resource configuration
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                      type: object
+                    resources:
+                      description: resource configuration for server container
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                  type: object
               type: object
             prometheus-mysql-exporter:
               properties:
                 enabled:
                   description: Enable prometheus mysql exporter
                   type: boolean
+                cloudsqlproxy:
+                  description: configuration for cloudsql-proxy
+                  properties:
+                    resources:
+                      description: resource configuration for cloudsql-proxy
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                  type: object
                 mysql:
                   description: Enable prometheus mysql exporter
                   properties:
@@ -983,6 +1123,10 @@ spec:
                       description: password for the mysql exporter
                       type: string
                   type: object
+                resources:
+                  description: resource configuration for prometheus-mysql-exporter
+                  type: object
+                  x-kubernetes-preserve-unknown-fields: true
               type: object
             grafana:
               properties:
@@ -1048,6 +1192,12 @@ spec:
                 enabled:
                   description: Enable AWS mediation
                   type: boolean
+                metrics:
+                  properties:
+                    enabled:
+                      description: Enable AWS metrics adapter
+                      type: boolean
+                  type: object
               type: object
             awslambda:
               properties:
@@ -1060,18 +1210,6 @@ spec:
                 enabled:
                   description: Enable Azure mediation
                   type: boolean
-                pricing:
-                  properties:
-                    enabled:
-                      description: Enable Azure Pricing mediation
-                      type: boolean
-                  type: object
-                infra:
-                  properties:
-                    enabled:
-                      description: Enable Azure infra mediation
-                      type: boolean
-                  type: object
               type: object
             baremetal:
               properties:
@@ -1627,6 +1765,48 @@ spec:
               type: object
             history:
               properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                javaComponentOptions:
+                  description: component additional java options
+                  type: string
+                debug:
+                  description: component debug
+                  type: boolean
+                resources:
+                  description: component resource configuration
+                  properties:
+                    limits:
+                      description: component limits
+                      properties:
+                        memory:
+                          description: component memory limits
+                          type: string
+                      type: object
+                  type: object
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object
+            metadata:
+              properties:
+                enabled:
+                  description: Enable Metadata Component
+                  type: boolean
                 annotations:
                   description: component specific pod annotations list
                   type: object
@@ -2330,6 +2510,45 @@ spec:
                   type: string
               type: object
             mediation-azurepricing:
+              properties:
+                annotations:
+                  description: component specific pod annotations list
+                  type: object
+                image:
+                  description: component specific image options
+                  properties:
+                    repository:
+                      description: component container registry and repository name
+                      type: string
+                    tag:
+                      description: component container tag
+                      type: string
+                    pullPolicy:
+                      description: component image pull policy
+                      type: string
+                  type: object
+                javaComponentOptions:
+                  description: component additional java options
+                  type: string
+                debug:
+                  description: component debug
+                  type: boolean
+                resources:
+                  description: component resource configuration
+                  properties:
+                    limits:
+                      description: component limits
+                      properties:
+                        memory:
+                          description: component memory limits
+                          type: string
+                      type: object
+                  type: object
+                serviceAccountName:
+                  description: component serviceAccountName
+                  type: string
+              type: object
+            metrics-adapter-aws:
               properties:
                 annotations:
                   description: component specific pod annotations list
@@ -4406,6 +4625,9 @@ spec:
                   type: object
                 history:
                   description: history property overrides
+                  type: object
+                metadata:
+                  description: metadata property overrides
                   type: object
                 plan-orchestrator:
                   description: plan-orchestrator property overrides

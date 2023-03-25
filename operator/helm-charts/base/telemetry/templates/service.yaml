@@ -1,0 +1,21 @@
+{{- if .Values.global.telemetry.automatic.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+  annotations:
+{{- include "serviceAnnotations" . | nindent 4 }}
+  labels:
+{{- include "serviceLabels" . | nindent 4 }}
+    zone: internal
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  ports:
+  - name: rest-api
+    port: 8083
+  selector:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

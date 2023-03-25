@@ -3,6 +3,8 @@
 # get config variables
 source /opt/local/etc/turbo.conf
 
+legacy="false"
+
 main() {
 
   # Run this as the root user
@@ -37,7 +39,16 @@ main() {
 
   enable_monitoring
 
-  install_operator
+  # create the namespace (if it doesn't already exist)
+  kubectl get ns ${namespace} > /dev/null 2>&1 && echo "Namespace ${namespace} already exists." || kubectl create ns ${namespace}
+
+  if [ "${legacy}" == "true" ]
+  then
+    install_operator
+  else
+    install_olm
+    install_operator_olm
+  fi
 
   install_operand
 
@@ -57,6 +68,9 @@ parse_args() {
     -v | --version)
       shift
       turboVersion="${1}"
+      ;;
+    --legacy)
+      legacy="true"
       ;;
     *)
       echo "Invalid option: ${1}" >&2
@@ -336,6 +350,17 @@ enable_monitoring() {
 EOF
 }
 
+install_olm() {
+
+  echo
+  echo "###############################################################"
+  echo "                        Installing OLM                         "
+  echo "###############################################################"
+  echo
+
+  /opt/local/bin/olmInstall.sh
+}
+
 install_operator() {
 
   echo
@@ -346,9 +371,6 @@ install_operator() {
 
   operatorFile=/opt/turbonomic/kubernetes/yaml/t8c-client-operator/operator.yaml
 
-  # create the namespace (if it doesn't already exist)
-  kubectl get ns ${namespace} > /dev/null 2>&1 && echo "Namespace ${namespace} already exists." || kubectl create ns ${namespace}
-
   kubectl apply -n ${namespace} -f $operatorFile
 
   echo "Waiting for operator to become ready"
@@ -358,6 +380,41 @@ install_operator() {
   }
 
   echo "Operator is ready"
+}
+
+install_operator_olm() {
+
+  echo
+  echo "###############################################################"
+  echo "             Installing Turbonomic Client Operator             "
+  echo "###############################################################"
+  echo
+
+  operatorgroupFile=/opt/turbonomic/kubernetes/yaml/t8c-client-operator/olm/operatorgroup.yaml
+  catalogsourceFile=/opt/turbonomic/kubernetes/yaml/t8c-client-operator/olm/catalogsource.yaml
+  subscriptionFile=/opt/turbonomic/kubernetes/yaml/t8c-client-operator/olm/subscription.yaml
+
+  sed "s/__NAMESPACE__/${namespace}/g" $operatorgroupFile | kubectl apply -n $namespace -f -
+  kubectl apply -f $catalogsourceFile
+
+  kubectl apply -f $subscriptionFile -n $namespace
+
+  echo "Waiting for CSV to be created"
+  retry_until_successful "[[ \$(kubectl get -f ${subscriptionFile} -n $namespace -o jsonpath='{.status.currentCSV}') != '' ]]" 120 || {
+    echo "CSV did not appear after 120s"
+    exit 1
+  }
+  csv=$(kubectl get -f ${subscriptionFile} -n $namespace -o jsonpath='{.status.currentCSV}')
+  echo "CSV has been created: ${csv}"
+
+  echo "Waiting for operator to install"
+  retry_until_successful "[[ \$(kubectl get csv ${csv} -n $namespace -o jsonpath='{.status.phase}') == 'Succeeded' ]]" 300 || {
+    echo "Operator did not successfully install after 300s"
+    exit 1
+  }
+
+  echo "Operator is ready"
+
 }
 
 install_operand() {
@@ -388,14 +445,8 @@ install_operand() {
 
   echo "Turbonomic Client was installed successfully!"
 
-  answer=$(yes_or_no "Would you like to enable automatic version updates? [y/n]")
-  if [ "${answer}" == "yes" ]
-  then
-    kubectl apply -f $versionmanagerFile -n $namespace
-  else
-    # Delete the version manager if it already exists. This can happen if the script is run multiple times
-    kubectl delete -f $versionmanagerFile -n $namespace > /dev/null 2>&1
-  fi
+  # enable automatic version updates
+  kubectl apply -f $versionmanagerFile -n $namespace
 }
 
 retry_until_successful() {

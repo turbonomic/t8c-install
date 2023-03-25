@@ -19,6 +19,7 @@ spec:
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
+        app.kubernetes.io/part-of: non-mediation
       annotations:
         checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
@@ -28,8 +29,28 @@ spec:
           imagePullPolicy: {{ template "pullPolicy" . }}
           ports:
             - containerPort: 8083
+          env:
+            - name: INSTANCE_ID
+              valueFrom:
+               fieldRef:
+                 fieldPath: metadata.name
           envFrom:
             - configMapRef:
                 name: {{ .Chart.Name }}-config-map
             - secretRef:
                 name: {{ .Chart.Name }}-secret
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+          - name: config
+            mountPath: "/config"
+            readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: {{ .Chart.Name }}-config-map
+          items:
+          - key: "worker.properties"
+            path: "worker.properties"
+          - key: "sink.properties"
+            path: "sink.properties"

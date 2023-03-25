@@ -77,6 +77,10 @@ dependencies:
     repository: file://../services/history
     version: 0.1.0
     condition: control.enabled,platform.enabled
+  - name: metadata
+    repository: file://../services/metadata
+    version: 0.1.0
+    condition: metadata.enabled
   - name: market
     repository: file://../services/market
     version: 0.1.0
@@ -105,6 +109,10 @@ dependencies:
     repository: file://../services/extractor
     version: 0.1.0
     condition: extractor.enabled # todo: change to platform.enabled once XLR/search is ready
+  - name: metrics-processor
+    repository: file://../services/metrics-processor
+    version: 0.1.0
+    condition: metrics-processor.enabled
 
 # power-modelers services dependencies
   - name: server-power-modeler
@@ -189,6 +197,12 @@ dependencies:
     version: 1.0.0
     condition: kinesis-kafka-connect.enabled
 
+# Telemetry connector dependencies
+  - name: telemetry
+    repository: file://../base/telemetry
+    version: 1.0.0
+    condition: global.telemetry.enabled
+
 # Integration dependencies
   - name: intersight-integration
     repository: file://../services/intersight-integration
@@ -255,11 +269,11 @@ dependencies:
   - name: mediation-azurepricing
     repository: file://../probes/mediation-azurepricing
     version: 0.1.0
-    condition: azure.pricing.enabled
+    condition: azure.enabled
   - name: mediation-azureinfra
     repository: file://../probes/mediation-azureinfra
     version: 0.1.0
-    condition: azure.infra.enabled
+    condition: azure.enabled
   - name: mediation-azuresp
     repository: file://../probes/mediation-azuresp
     version: 0.1.0
@@ -472,3 +486,7 @@ dependencies:
     repository: file://../probes/mediation-xen
     version: 0.1.0
     condition: xen.enabled
+  - name: metrics-adapter-aws
+    repository: file://../probes/metrics-adapter-aws
+    version: 0.1.0
+    condition: aws.metrics.enabled

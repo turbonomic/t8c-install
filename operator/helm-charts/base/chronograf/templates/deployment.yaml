@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         app: {{ template "chronograf.fullname" . }}
+        app.kubernetes.io/part-of: non-mediation
     spec:
       containers:
       - name: {{ .Chart.Name }}

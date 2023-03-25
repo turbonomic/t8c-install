@@ -26,6 +26,12 @@ restAPIConfig:
   opsManagerUserName: administrator
   opsManagerPassword: administrator
 
+prometurbo:
+  resources: {}
+
+turbodif:
+  resources: {}
+
 # Specify a unique target name
 targetName: Prometheus-Turbonomic
 # Specify metric endpoint from Prometurbo

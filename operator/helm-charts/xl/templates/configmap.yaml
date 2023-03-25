@@ -48,6 +48,7 @@ data:
         planOrchestratorHost: plan-orchestrator
         reportingHost: reporting
         repositoryHost: repository
+        metadataHost: metadata
         topologyProcessorHost: topology-processor
         extractorHost: extractor
         suspendHost: suspend
