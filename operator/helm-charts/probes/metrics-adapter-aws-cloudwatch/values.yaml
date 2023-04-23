@@ -18,7 +18,7 @@ image:
 
 env:
   - name: component_type
-    value: metrics-adapter-aws
+    value: metrics-adapter-aws-cloudwatch
   - name: instance_id
     valueFrom:
       fieldRef:

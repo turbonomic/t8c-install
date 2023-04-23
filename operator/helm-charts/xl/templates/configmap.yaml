@@ -15,6 +15,11 @@ data:
         clustermgr_retry_delay_sec : 10
         kafkaServers : kafka:9092
         kafkaNamespace : {{ .Release.Namespace }}
+        telemetry:
+          automatic: {{ .Values.global.telemetry.automatic.enabled }}
+          kafkaTopic: {{ .Release.Namespace }}.{{ .Values.global.telemetry.kafkaTopic }}
+          scrubbedKafkaTopic: {{ .Release.Namespace }}.{{ .Values.global.telemetry.scrubbedKafkaTopic }}
+          connectorName: {{ .Values.global.telemetry.automatic.connector_name }}
         deadlockCheckIntervalSecs: 900
         scheduledMetricsIntervalMs: 60000
         grpcPingIntervalSeconds: 300

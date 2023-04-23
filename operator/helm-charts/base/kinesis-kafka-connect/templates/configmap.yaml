@@ -26,6 +26,8 @@ data:
     metricsLevel = {{ .Values.connector.config.metrics_level }}
     metricsGranuality = {{ .Values.connector.config.metrics_granularity }}
     metricsNameSpace = {{ .Values.connector.config.metrics_name_space }}
+    pauseConsumption = {{ .Values.connector.config.pause_consumption }}
+    outstandingRecordsThreshold = {{ .Values.connector.config.outstanding_records_threshold }}
     # Optional values are not included if not defined.
     {{- if .Values.connector.config.role_arn }}
     roleARN = {{ .Values.connector.config.role_arn }}

@@ -28,6 +28,7 @@ env:
 
 httpsRedirect: true
 nginxIsPrimaryIngress: true
+insecureHttpOnly: false
 
 resources: {}
 

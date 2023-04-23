@@ -69,7 +69,7 @@ spec:
         - name: LOG_TO_STDOUT
           value: "true"
   {{- end }}
-  {{- if not (or .Values.nginxIsPrimaryIngress .Values.httpsRedirect) }}
+  {{- if or (not (or .Values.nginxIsPrimaryIngress .Values.httpsRedirect)) .Values.insecureHttpOnly }}
         - name: DISABLE_HTTPS_REDIRECT
           value: "true"
   {{- end }}
@@ -187,9 +187,11 @@ spec:
   type: ClusterIP
 {{- end }}
   ports:
+{{- if not .Values.insecureHttpOnly }}
   - name: https-nginx
     port: 443
     targetPort: 8443
+{{- end }}
   - name: http-nginx
     port: 80
     targetPort: 8000

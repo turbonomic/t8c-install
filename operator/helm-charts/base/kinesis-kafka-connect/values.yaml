@@ -20,5 +20,7 @@ connector:
     role_external_id:
     role_duration_seconds:
     aggregation: true
+    pause_consumption: false
+    outstanding_records_threshold: 950000
 
 resources: {}

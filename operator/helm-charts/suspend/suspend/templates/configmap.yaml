@@ -24,7 +24,7 @@ data:
     engines:
       discoverer:
         workers: 1
-        timeout: 60s
+        timeout: 180s
         topic: {{ .Release.Namespace }}.tp-live-topologies
         healthverifiers:
           - cadence: 10s
