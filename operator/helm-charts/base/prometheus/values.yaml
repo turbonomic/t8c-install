@@ -411,8 +411,9 @@ kube-state-metrics:
   ## kube-state-metrics container image
   ##
   image:
-    repository: icr.io/cpopen/turbonomic/kube-state-metrics
-    tag: v2.7.0
+    registry: icr.io/cpopen
+    repository: turbonomic/kube-state-metrics
+    tag: v2.8.2
     pullPolicy: IfNotPresent
 
   # Comma-separated list of metrics to be exposed.
@@ -618,7 +619,7 @@ server:
       # Image name will always be "prometheus-kafka-adapter"
       # This is odd -- double check this
       repository: icr.io/cpopen/turbonomic
-      tag: 1.8.2
+      tag: 1.8.0.1
       pullPolicy: IfNotPresent
     # Additional arguments to use when starting the prometheus-kafka-adapter process.
     args: []
@@ -627,7 +628,6 @@ server:
     # [GitHub](https://github.com/Telefonica/prometheus-kafka-adapter).
     env:
       kafkaBrokerList: kafka:9092
-      kafkaTopic: telemetry
       kafkaCompression: gzip
       kafkaBatchNumMessages: 100
       serializationFormat: json

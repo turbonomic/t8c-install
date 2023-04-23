@@ -40,7 +40,7 @@ The following table lists the configurable parameters of the mysql exporter char
 | -------------------------------------- | --------------------------------------------------- | ---------------------------------- |
 | `replicaCount`                         | Amount of pods for the deployment                   | `1`                                |
 | `image.repository`                     | Image repository                                    | `prom/mysqld-exporter`             |
-| `image.tag`                            | Image tag                                           | `v0.14.0.1`                        |
+| `image.tag`                            | Image tag                                           | `v0.14.0.2`                        |
 | `image.pullPolicy`                     | Image pull policy                                   | `IfNotPresent`                     |
 | `service.name`                         | Service name                                        | `mysql-exporter`                   |
 | `service.type`                         | Service type                                        | `ClusterIP`                        |

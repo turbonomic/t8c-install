@@ -119,6 +119,11 @@ DEVICE="${deviceName}"
 BOOTPROTO="dhcp"
 ONBOOT="yes"
 EOF
+
+# Let dhcp be enabled by the NetworkManager service
+grep "dns=none" /etc/NetworkManager/NetworkManager.conf > /dev/null 2>&1
+result="$?"
+if [ $result = 0 ]; then sed -i 's/dns=none//g' /etc/NetworkManager/NetworkManager.conf; fi
 fi
 
 if [ X${bootproto} = "Xstatic" ]; then 
@@ -208,8 +213,14 @@ EOF
         if [ ${dnsNumber} = 1 ]
         then
           cp /etc/resolv.conf.bare /etc/resolv.conf
+          sed -i "/^search/ s/$/ ${domainName}/" /etc/resolv.conf
+          grep "dns=none" /etc/NetworkManager/NetworkManager.conf > /dev/null 2>&1
+          result="$?"
+          if [ $result != 0 ]
+          then
+            sed -i '/\[main\]/a dns=none' /etc/NetworkManager/NetworkManager.conf
+          fi
         fi
-        sed -i "/^search/ s/$/ ${domainName}/" /etc/resolv.conf
         echo "nameserver ${dns[$index]}" >> /etc/resolv.conf
       fi
       let "index = $index + 1"

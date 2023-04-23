@@ -34,6 +34,8 @@ spec:
               valueFrom:
                fieldRef:
                  fieldPath: metadata.name
+            - name: TELEMETRY_CONNECTOR_NAME
+              value: {{ .Values.global.telemetry.automatic.connector_name }}
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
@@ -50,6 +52,16 @@ spec:
           - name: config
             mountPath: "/config"
             readOnly: true
+          livenessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - /home/appuser/healthcheck.sh
+            initialDelaySeconds: 300
+            periodSeconds: 60
+            successThreshold: 1
+            failureThreshold: 2
       volumes:
       - name: config
         configMap:

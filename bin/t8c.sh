@@ -43,7 +43,7 @@ fi
 serviceAccountFile="/opt/turbonomic/kubernetes/operator/deploy/service_account.yaml"
 roleFile="/opt/turbonomic/kubernetes/operator/deploy/cluster_role.yaml"
 roleBindingFile="/opt/turbonomic/kubernetes/operator/deploy/cluster_role_binding.yaml"
-crdsFile="/opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_crd.yaml"
+crdsFile="/opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1_xl_crd.yaml"
 operatorFile="/opt/turbonomic/kubernetes/operator/deploy/operator.yaml"
 chartsFile="/opt/turbonomic/kubernetes/operator/deploy/crds/charts_v1alpha1_xl_cr.yaml"
 localStorageDataDirectory="/data/turbonomic/"

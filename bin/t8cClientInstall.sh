@@ -37,7 +37,6 @@ main() {
     init_kubernetes
   }
 
-  enable_monitoring
 
   # create the namespace (if it doesn't already exist)
   kubectl get ns ${namespace} > /dev/null 2>&1 && echo "Namespace ${namespace} already exists." || kubectl create ns ${namespace}
@@ -343,12 +342,6 @@ ProgressBar()
   printf "\rProgress : [${_fill// /#}${_empty// /-}] ${_progress}%%"
 }
 
-enable_monitoring() {
-  cat << EOF > /etc/cron.d/tsc_monitor_${namespace}
-*/5 * * * * turbo PATH="$PATH:/usr/local/bin" /opt/local/bin/tsc_monitor.py --namespace ${namespace} >> /tmp/tsc_monitor_${namespace}.log
-0 0 * * * turbo [[ -e /tmp/tsc_monitor_${namespace}.log ]] && mv /tmp/tsc_monitor_${namespace}.log /tmp/tsc_monitor_${namespace}.log.1
-EOF
-}
 
 install_olm() {
 

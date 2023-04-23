@@ -294,10 +294,6 @@ dependencies:
     repository: file://../probes/mediation-flexera
     version: 0.1.0
     condition: flexera.enabled
-  - name: mediation-tanium
-    repository: file://../probes/mediation-tanium
-    version: 0.1.0
-    condition: tanium.enabled
   - name: mediation-gcpcost
     repository: file://../probes/mediation-gcpcost
     version: 0.1.0
@@ -317,7 +313,7 @@ dependencies:
   - name: mediation-gcpinfra
     repository: file://../probes/mediation-gcpinfra
     version: 0.1.0
-    condition: gcp.infra.enabled
+    condition: gcp.enabled
   - name: mediation-hds
     repository: file://../probes/mediation-hds
     version: 0.1.0
@@ -486,7 +482,7 @@ dependencies:
     repository: file://../probes/mediation-xen
     version: 0.1.0
     condition: xen.enabled
-  - name: metrics-adapter-aws
-    repository: file://../probes/metrics-adapter-aws
+  - name: metrics-adapter-aws-cloudwatch
+    repository: file://../probes/metrics-adapter-aws-cloudwatch
     version: 0.1.0
     condition: aws.metrics.enabled

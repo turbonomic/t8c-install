@@ -92,10 +92,14 @@ global:
     # This just controls whether the necessary components are there to collect telemetry and store
     # it locally. Whether telemetry is sent anywhere is controlled by a UI checkbox.
     enabled: true
+    # Kafka topic names. WARNING: Do not change these without making matching changes in the clustermgr.
+    kafkaTopic: telemetry
+    scrubbedKafkaTopic: telemetry-scrubbed
     # Whether to enable automatic transmission of telemetry (enables the telemetry Kinesis connector).
     automatic:
       enabled: false
-      # Kinesis connector instance and stream names
+      # Kinesis connector instance name
+      connector_name: online-telemetry
     # Intentionally opaque so that we can keep the same configuration parameter as we change
     # technologies. e.g. currently the base64 encoded string contains a username and password
     # while in the past it contained a ssh key pair.
@@ -289,8 +293,6 @@ compellent:
 dynatrace:
   enabled: false
 flexera:
-  enabled: false
-tanium:
   enabled: false
 gcp:
   enabled: false

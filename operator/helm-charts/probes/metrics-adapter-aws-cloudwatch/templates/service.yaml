@@ -12,11 +12,11 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
-  - name: http-metrics-adapter-aws
+  - name: http-metrics-adapter-aws-cloudwatch
     port: 8080
 {{- if .Values.global }}
   {{- if or .Values.debug .Values.global.debug }}
-  - name: tcp-metrics-adapter-aws-debug
+  - name: tcp-metrics-adapter-aws-cloudwatch-debug
     port: 8000
   {{- end -}}
 {{- end }}
