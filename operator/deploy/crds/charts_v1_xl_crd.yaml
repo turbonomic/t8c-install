@@ -66,9 +66,22 @@ spec:
           spec:
             description: Spec defines the desired state of Xl
             properties:
+              x-templates:
+                type: object
+                description: |-
+                  Dummy object that will not be included in the installed research,
+                  due to its name ("x-" prefix marks this as an something to be processed by a YAML
+                  extension). We won't do that, but we can use this object as a container for
+                  reusable templates (YAML anchors) to be used later in the file.
+                  type: object
+                properties: &dbComponentProperties
+                  dbSecretName:
+                    description: Name of secret containing DB credentials for this component
+                    type: string
               global:
                 description: Platform configuration options
                 properties:
+                  <<: [*dbComponentProperties]
                   registry:
                     description: Global image registry name for pull secret
                     type: string
@@ -462,6 +475,7 @@ spec:
                 type: object
               extractor:
                 properties:
+                  <<: [*dbComponentProperties]
                   annotations:
                     description: component specific pod annotations list
                     type: object
@@ -699,7 +713,13 @@ spec:
                     description: |-
                       true if nginx is acting as primary ingress for the appliance (typical of OVA installations),
                       as opposed to being downstream of some other ingress mechanism as in something like an
-                      OpenShift deployemnt
+                      OpenShift deployment
+                    type: boolean
+                  insecureHttpOnly:
+                    description: |-
+                      true if non-SSL requests should NOT be redirected to corresponding secure
+                      URLs, even when nginx is acting as primary ingress. Only http port will 
+                      be exposed.
                     type: boolean
                   tunnel:
                     type: object
@@ -884,6 +904,7 @@ spec:
               # Enable suspend service
               suspend:
                 properties:
+                  <<: [*dbComponentProperties]
                   enabled:
                     description: Enable suspend components
                     type: boolean
@@ -1292,6 +1313,7 @@ spec:
                 type: object
               hydra:
                 properties:
+                  <<: [*dbComponentProperties]
                   enabled:
                     description: Enable hydra
                     type: boolean
@@ -1334,6 +1356,7 @@ spec:
                 type: object
               grafana:
                 properties:
+                  <<: [*dbComponentProperties]
                   enabled:
                     description: Enable grafana
                     type: boolean
@@ -1427,12 +1450,6 @@ spec:
                   enabled:
                     description: Enable GCP mediation
                     type: boolean
-                  infra:
-                    properties:
-                      enabled:
-                        description: Enable GCP infra mediation
-                        type: boolean
-                    type: object
                 type: object
               hds:
                 properties:
@@ -1468,6 +1485,12 @@ spec:
                 properties:
                   enabled:
                     description: Enable IBM PowerVM mediation
+                    type: boolean
+                type: object
+              server-power-modeler:
+                properties:
+                  enabled:
+                    description: Enable Server power modeler
                     type: boolean
                 type: object
               ibmstorage-flashsystem:
@@ -1566,12 +1589,6 @@ spec:
                     description: Enable SNMP mediation
                     type: boolean
                 type: object
-              tanium:
-                properties:
-                  enabled:
-                    description: Enable Terraform mediation
-                    type: boolean
-                type: object
               terraform:
                 properties:
                   enabled:
@@ -1666,6 +1683,7 @@ spec:
               # Resource limits - Core Services
               action-orchestrator:
                 properties:
+                  <<: [*dbComponentProperties]
                   annotations:
                     description: component specific pod annotations list
                     type: object
@@ -1804,6 +1822,7 @@ spec:
                 type: object
               auth:
                 properties:
+                  <<: [*dbComponentProperties]
                   annotations:
                     description: component specific pod annotations list
                     type: object
@@ -1874,6 +1893,7 @@ spec:
                 type: object
               clustermgr:
                 properties:
+                  <<: [*dbComponentProperties]
                   annotations:
                     description: component specific pod annotations list
                     type: object
@@ -1925,6 +1945,7 @@ spec:
                 type: object
               cost:
                 properties:
+                  <<: [*dbComponentProperties]
                   annotations:
                     description: component specific pod annotations list
                     type: object
@@ -1976,6 +1997,7 @@ spec:
                 type: object
               group:
                 properties:
+                  <<: [*dbComponentProperties]
                   annotations:
                     description: component specific pod annotations list
                     type: object
@@ -2027,6 +2049,7 @@ spec:
                 type: object
               history:
                 properties:
+                  <<: [*dbComponentProperties]
                   annotations:
                     description: component specific pod annotations list
                     type: object
@@ -2132,6 +2155,7 @@ spec:
                 type: object
               market:
                 properties:
+                  <<: [*dbComponentProperties]
                   annotations:
                     description: component specific pod annotations list
                     type: object
@@ -2183,6 +2207,7 @@ spec:
                 type: object
               plan-orchestrator:
                 properties:
+                  <<: [*dbComponentProperties]
                   annotations:
                     description: component specific pod annotations list
                     type: object
@@ -2234,6 +2259,7 @@ spec:
                 type: object
               repository:
                 properties:
+                  <<: [*dbComponentProperties]
                   annotations:
                     description: component specific pod annotations list
                     type: object
@@ -2285,6 +2311,7 @@ spec:
                 type: object
               topology-processor:
                 properties:
+                  <<: [*dbComponentProperties]
                   annotations:
                     description: component specific pod annotations list
                     type: object
@@ -3203,7 +3230,7 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
-              metrics-adapter-aws:
+              metrics-adapter-aws-cloudwatch:
                 properties:
                   annotations:
                     description: component specific pod annotations list
@@ -4930,57 +4957,6 @@ spec:
                     type: string
                 type: object
               mediation-snmp:
-                properties:
-                  annotations:
-                    description: component specific pod annotations list
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  env:
-                    description: component environment variable
-                    type: array
-                    items:
-                      type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  image:
-                    description: component specific image options
-                    properties:
-                      repository:
-                        description: component container registry and repository name
-                        type: string
-                      tag:
-                        description: component container tag
-                        type: string
-                      pullPolicy:
-                        description: component image pull policy
-                        type: string
-                    type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
-                  javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
-                    type: string
-                  debug:
-                    description: component debug
-                    type: boolean
-                  resources:
-                    description: component resource configuration
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  serviceAccountName:
-                    description: component serviceAccountName
-                    type: string
-                type: object
-              mediation-tanium:
                 properties:
                   annotations:
                     description: component specific pod annotations list
