@@ -14,7 +14,7 @@ then
   fi
 
   # Set or correct permissions on redis PV directory
-  chmod 0777 /data/turbonomic/redis-data-redis-master
+  chmod 0777 /data/turbonomic/redis-data-redis-master-0
 
   cat <<EOF > /opt/turbonomic/kubernetes/yaml/persistent-volumes/suspend-storage.yaml
 apiVersion: v1

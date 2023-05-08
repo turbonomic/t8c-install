@@ -52,7 +52,7 @@ then
   sudo yum localinstall --disablerepo="*" -y /mnt/iso/rpm/timescaledb*.rpm
 else
   # Now install appropriate package for PG version
-  sudo yum install --disablerepo="mariadb" -y timescaledb-2-postgresql-12-2.0.1-0.el7.x86_64 timescaledb-2-loader-postgresql-12-2.0.1-0.el7.x86_64 timescaledb-tools-0.10.1-0.el7.x86_64
+  sudo yum install --disablerepo="mariadb" -y timescaledb-2-postgresql-12-2.10.2-0.el7.x86_64 timescaledb-2-loader-postgresql-12-2.10.2-0.el7.x86_64 timescaledb-tools-0.14.3-0.el7.x86_64
 fi
 
 log_msg "Successfully installed TimescaleDB."
