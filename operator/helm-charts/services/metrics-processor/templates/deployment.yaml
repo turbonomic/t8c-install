@@ -83,6 +83,20 @@ spec:
         - mountPath: /tmp
           name: metrics-processor-tmpfs0
 {{- if .Values.global }}
+  {{- if .Values.global.enableExternalSecrets }}
+    {{/* Kubernetes secrets are enabled for encryption keys. */}}
+  {{/* Kubernetes secrets are enabled for auth. */}}
+        - mountPath: /home/turbonomic/data/master_keys
+          name: master-key-secret
+          readOnly: true
+  {{/* Optionally mount the legacy encryption key to be read in as part of upgrades. */}}
+        - mountPath: /home/turbonomic/data/helper_dir
+          name: topology-processor-secret
+          readOnly: true
+  {{- end }}
+{{- end }}
+
+{{- if .Values.global }}
     {{- if .Values.global.jwtAuthenticationEnabled }}
         {{- include "kubeAuthSecretsVolumeMount" . | indent 8  -}}
     {{ end }}
@@ -117,13 +131,35 @@ spec:
         fsGroup: {{ .Values.global.securityContext.fsGroup | default 65534 }}
       volumes:
       - name: metrics-processor-data
+{{- if .Values.global }}
+  {{- if not .Values.global.enableExternalSecrets}}
+    {{/* Use the PV legacy behavior unless external secrets are enabled. */}}
+        persistentVolumeClaim:
+          claimName: topology-processor
+  {{- else }}
         emptyDir: {}
+  {{- end }}
+{{- end }}
       - name: turbo-volume
         configMap:
           name: global-properties-{{ .Release.Name }}
           optional: true
       - name: metrics-processor-tmpfs0
         emptyDir: {}
+{{- if .Values.global }}
+  {{- if .Values.global.enableExternalSecrets }}
+    {{/* Kubernetes secrets are enabled for auth. Attach one secret for the directory of secret files. */}}
+      - name: master-key-secret
+        secret:
+          secretName: master-key-secret
+          optional: true
+  {{/* Optionally mount the legacy encryption key to be read in as part of upgrades. */}}
+      - name: topology-processor-secret
+        secret:
+            secretName: topology-processor-secret
+            optional: true
+  {{- end }}
+{{- end }}
 {{- if .Values.global }}
     {{- if .Values.global.jwtAuthenticationEnabled }}
         {{- include "kubeAuthSecretsVolume" . | indent 6 -}}

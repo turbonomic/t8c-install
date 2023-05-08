@@ -3,6 +3,20 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.30
+1. Give metrics-processor service access to topology-processor's persistent volume
+2. Updated timescaledb image to version 2.10.2.
+
+42.29
+1. Update Kube State Metrics version to use no Go version to resolve CVE vulnerabilities
+2. Security patches for prometheus/mysqld_exporter 
+3. Updated prometheus-kafka-adapter image to 1.8.0.1, updating the golang version to 1.20.2.
+
+42.28
+1. Add new defaults and configurations to kinesis kafka connect helm chart for bug. 
+2. Enabled GCP Infrastructure Probe by default, if GCP probe is enabled.
+3. Added insecureHttpOnly so non-SSL requests will not be redirected even nginx is acting as primary ingress
+
 42.27
 1. Enabled Suspend(Parking) service by default
 2. Added `metrics-processor` component for metrics collection on certain cloud entities. Disabled by default.
@@ -11,9 +25,9 @@ Operator Versions
 5. Add telemetry scrubber component.
 6. Added support for customizing telemetry destination at runtime and injecting a default during the
    build.
-7. Security patches for prometheus and configmap-reload
-8. Security patches for prometheus/mysqld_exporter
-9. Security patches for prometheus/node_exporter
+7. Security patches for prometheus and configmap-reload.
+8. Security patches for prometheus/mysqld_exporter.
+9. Security patches for prometheus/node_exporter.
 
 42.26
 1. IWO SPECIFIC RELEASE: Fix when multiple controllers are managing a resource in a conflicting manner, they can get stuck in an endless reconciliation cycle.

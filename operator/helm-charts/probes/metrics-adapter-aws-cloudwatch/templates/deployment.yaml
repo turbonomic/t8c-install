@@ -58,6 +58,7 @@ spec:
 {{- end }}
         ports:
           - containerPort: 8080
+          - containerPort: 9001
         livenessProbe:
           httpGet:
             port: 8080
