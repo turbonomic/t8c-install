@@ -202,5 +202,5 @@ spec:
   maturity: alpha
   provider:
     name: Turbonomic, Inc.
-  replaces: t8c-operator.v42.28.0
+  replaces: t8c-operator.v42.29.0
   version: 42.30.0
