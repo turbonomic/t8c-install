@@ -7,6 +7,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
+  {{- $dbPorts := (include "computeDbPorts" . | mustFromJson) }}
   properties.yaml: |-
     defaultProperties:
       global:
@@ -20,6 +21,7 @@ data:
           kafkaTopic: {{ .Release.Namespace }}.{{ .Values.global.telemetry.kafkaTopic }}
           scrubbedKafkaTopic: {{ .Release.Namespace }}.{{ .Values.global.telemetry.scrubbedKafkaTopic }}
           connectorName: {{ .Values.global.telemetry.automatic.connector_name }}
+          shareTelemetry: {{ .Values.global.telemetry.shareTelemetry }}
         deadlockCheckIntervalSecs: 900
         scheduledMetricsIntervalMs: 60000
         grpcPingIntervalSeconds: 300
@@ -37,16 +39,16 @@ data:
         dbHost: db
         dbs:
           postgresDefault:
-            # host should be postgres rather than timescaledb, since we want components (like TP)
-            # to use postgres rather than timescaledb, if configured correctly
+            # postgres is the correct host for everything except extractor, and there's an explicit
+            # overriding setting in the extractor properties block below
             host: postgres
-            port: 5432
+            port: {{ $dbPorts.postgres }}
           mysqlDefault:
             host: db
-            port: {{ .Values.global.externalDBPort | default 3306 }}
+            port: {{ $dbPorts.mysql }}
           mariadbDefault:
             host: db
-            port: {{ .Values.global.externalDBPort | default 3306 }}
+            port: {{ $dbPorts.mysql }}
         groupHost: group
         historyHost: history
         marketHost: market
@@ -67,7 +69,7 @@ data:
         # Default stat retention times
         retention.numRetainedMinutes: 130
         # DB
-        dbPort: 3306
+        dbPort: {{ $dbPorts.mysql }}
         dbUsername: root
         sqlDialect: MARIADB
         mariadbHealthCheckIntervalSeconds: 60
@@ -203,8 +205,6 @@ data:
         bridgeHost: clustermgr
         bridgePort: 8120
       extractor:
-        dbHost: timescaledb
-        dbPort: {{ .Values.global.externalTimescaleDBPort | default 5432 }}
         enableReporting: {{ .Values.reporting.enabled }}
         grafanaAdminPassword: {{ .Values.grafana.adminPassword }}
 {{- if index .Values "grafana" "grafana.ini" "database" "type" }}
@@ -217,7 +217,7 @@ data:
             password: {{ index .Values "grafana" "grafana.ini" "database" "password" }}
           postgresDefault:
             host: timescaledb
-            port: {{ .Values.global.externalTimescaleDBPort | default 5432 }}
+            port: {{ $dbPorts.timescale }}
 {{- end }}
 {{- if .Values.properties }}
     customProperties:

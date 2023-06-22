@@ -84,6 +84,22 @@ spec:
         - mountPath: /etc/targets
           name: vmm-secrets
           readOnly: true
+
+{{- if index .Values "winrm-proxy" "enabled"}}
+      - name: winrm-proxy-server
+        image: {{ .Values.global.repository }}/winrm-proxy:{{ .Values.global.tag }}
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: LOG_LEVEL
+            value: {{ index .Values "winrm-proxy" "env" "logLevel"}}
+          - name: LOG_PREFIX
+            value: {{ index .Values "winrm-proxy" "env" "logPrefix" }}
+          - name: SERVER_WORKER
+            value: {{ index .Values "winrm-proxy" "env" "serverWorker" | quote}}
+          - name: KRB_RENEW_HOURS
+            value: {{ index .Values "winrm-proxy" "env" "krbRenewHours" | quote }}
+{{- end }}
+
 {{- if .Values.global }}
     {{- if .Values.global.jwtAuthenticationEnabled }}
         {{- include "kubeAuthSecretsVolumeMount" . | indent 8  -}}

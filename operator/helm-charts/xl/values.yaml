@@ -95,6 +95,8 @@ global:
     # Kafka topic names. WARNING: Do not change these without making matching changes in the clustermgr.
     kafkaTopic: telemetry
     scrubbedKafkaTopic: telemetry-scrubbed
+    # Telemetry sharing modes: USER_CHOICE, FORCE_ON, FORCE_OFF
+    shareTelemetry: USER_CHOICE
     # Whether to enable automatic transmission of telemetry (enables the telemetry Kinesis connector).
     automatic:
       enabled: false
@@ -146,7 +148,13 @@ global:
     # Front End Telemetry Adaptor will not collect data until user opts-in from UI
     frontEnd:
       enabled: true
-
+    # disable plg by default
+    plg:
+      enabled: false
+      queue_config:
+        max_samples_per_send: 1000
+        max_shards: 200
+        capacity: 2500
 nginxingress:
   enabled: true
 openshiftingress:
@@ -183,7 +191,7 @@ suspend:
   enabled: true
 
 server-power-modeler:
-  enabled: false
+  enabled: true
 
 loki:
   enabled: false

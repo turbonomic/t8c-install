@@ -247,3 +247,25 @@ Define the prometheus.namespace template if set with forceNamespace or .Release.
 {{ printf "namespace: %s" .Release.Namespace }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Build the filtered telemetry label scrub list.
+
+This takes the space-delimited list of scrubbed labels, removes any of those labels that are
+specified in the external_labels list, then returns a new space-delimited string containing
+the filtered list of labels to scrub.
+*/}}
+{{- define "prometheus.server.getScrubbedLabels" -}}
+{{- $updatedScrubbedLabels := .Values.global.telemetry.scrubbedLabels | default "" | quote -}}
+{{- if and .Values.global.telemetry.scrubbedLabels .Values.server.global.external_labels -}}
+{{/* Split to a list and remove duplicate labels */}}
+{{- $scrubbedLabels := splitList " " .Values.global.telemetry.scrubbedLabels | uniq -}}
+{{- range $label, $value := .Values.server.global.external_labels -}}
+{{/* Remove the extra labels from the scrubbed labels list. */}}
+{{- $scrubbedLabels = without $scrubbedLabels $label -}}
+{{- end -}}
+{{/* Convert the remaining labels back to a string */}}
+{{- $updatedScrubbedLabels = join " " $scrubbedLabels -}}
+{{- end -}}
+{{- printf "%s" $updatedScrubbedLabels -}}
+{{- end -}}

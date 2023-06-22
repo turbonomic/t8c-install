@@ -29,6 +29,13 @@ data:
         healthverifiers:
           - cadence: 10s
             type: ping
+      groupdiscoverer:
+        workers: 1
+        timeout: 180s
+        topic: {{ .Release.Namespace }}.discovered-groups
+        healthverifiers:
+          - cadence: 10s
+            type: ping
       cost:
         workers: 1
         timeout: 60s
@@ -41,6 +48,13 @@ data:
         schedulesperworkitem: 3
         timeout: 60s
         topic: {{ .Release.Namespace }}.effective-suspend-schedules
+        healthverifiers:
+          - cadence: 10s
+            type: ping
+      policyevaluator:
+        workers: 1
+        timeout: 60s
+        topic: {{ .Release.Namespace }}.suspend-engine-processing
         healthverifiers:
           - cadence: 10s
             type: ping

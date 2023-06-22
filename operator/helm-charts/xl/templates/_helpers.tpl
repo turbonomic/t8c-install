@@ -296,3 +296,21 @@ Return kube OAuth secret volume mount configuration
   name: kube-auth-secrets
   readOnly: true
 {{ end }}
+
+{{/*
+Compute internal ports for accessing databases depending on relevant CR properties.
+*/}}
+{{ define "computeDbPorts" }}
+{{ $global := .Values.global }}
+{{ (dict
+    "mysql"
+    ((and $global.externalDBName (not $global.externalDbIP)
+         $global.externalDbPort) | default 3306)
+    "postgres"
+    ((and $global.externalPostgresName (not $global.externalPostgresIP)
+        $global.externalPostgresPort) | default 5432)
+    "timescale"
+    ((and $global.externalTimescaleDBName (not $global.externalTimescaleDBIP)
+        $global.externalTimescaleDBPort) | default 5432)
+    ) | mustToJson }}
+{{ end }}

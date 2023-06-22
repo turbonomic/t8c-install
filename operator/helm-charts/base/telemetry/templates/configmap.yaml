@@ -13,7 +13,7 @@ data:
     offset.storage.file.filename = offset.log
   sink.properties: |-
     name = {{ .Values.global.telemetry.automatic.connector_name | default .Values.config.connector_name }}
-    connector.class = com.amazon.kinesis.kafka.FirehoseSinkConnector
+    connector.class = com.vmturbo.kinesis.kafka.FlowControlFirehoseSinkConnector
     tasks.max = 1
     topics.regex = NO-TOPIC.*
     batch = true
@@ -23,4 +23,26 @@ data:
     deliveryStream = {{ (.Values.global.telemetry.secret | b64dec | fromYaml).kinesis_stream }}
     errors.log.enable = true
     errors.tolerance = all
+    baseRate = {{ .Values.global.telemetry.automatic.base_rate | default .Values.config.base_rate | int64 }}
+    cooldownTimeSeconds = {{ .Values.global.telemetry.automatic.cooldown_time | default .Values.config.cooldown_time | int64 }}
+    decreaseFactor = {{ .Values.global.telemetry.automatic.decrease_factor | default .Values.config.decrease_factor | float64 }}
+    increaseFactor = {{ .Values.global.telemetry.automatic.increase_factor | default .Values.config.increase_factor | float64 }}
+    recoveryIntervalSeconds = {{ .Values.global.telemetry.automatic.recovery_interval | default .Values.config.recovery_interval | int64 }}
+    errorRetries = {{ .Values.global.telemetry.automatic.error_retries | default .Values.config.error_retries | int64 }}
+    errorRetryDelaySeconds = {{ .Values.global.telemetry.automatic.error_retry_delay | default .Values.config.error_retry_delay | float64 }}
+  connect-log4j.properties: |-
+    log4j.rootLogger=INFO, stdout, connectAppender
+    log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+    log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+    log4j.appender.connectAppender=org.apache.log4j.DailyRollingFileAppender
+    log4j.appender.connectAppender.DatePattern='.'yyyy-MM-dd-HH
+    log4j.appender.connectAppender.File=${kafka.logs.dir}/connect.log
+    log4j.appender.connectAppender.layout=org.apache.log4j.PatternLayout
+    connect.log.pattern=[%d] %p %X{connector.context}%m (%c:%L)%n
+    log4j.appender.stdout.layout.ConversionPattern=${connect.log.pattern}
+    log4j.appender.connectAppender.layout.ConversionPattern=${connect.log.pattern}
+    log4j.logger.org.apache.zookeeper=ERROR
+    log4j.logger.org.reflections=ERROR
+    log4j.logger.com.vmturbo.kinesis.kafka={{- .Values.global.telemetry.automatic.log_level | default .Values.config.log_level | default "INFO" -}}, stdout
+    log4j.additivity.com.vmturbo.kinesis.kafka=false
 {{- end }}

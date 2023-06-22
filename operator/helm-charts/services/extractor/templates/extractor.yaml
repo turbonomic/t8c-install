@@ -41,6 +41,11 @@ spec:
       - name: {{ .Chart.Name }}
         image: {{ template "image" . }}
         imagePullPolicy: {{ template "pullPolicy" . }}
+{{- if .Values.enableAwsMsk }}
+        envFrom:
+          - secretRef:
+              name: {{ .Chart.Name }}-secret
+{{- end }}
         env:
 {{ template "java.setJVMEnvironmentOptions" . }}
 {{ toYaml .Values.env | indent 8 }}

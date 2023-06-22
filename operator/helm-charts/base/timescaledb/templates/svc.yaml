@@ -12,38 +12,13 @@ metadata:
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
-  type: {{ .Values.service.type }}
-  {{- if and .Values.service.loadBalancerIP (eq .Values.service.type "LoadBalancer") }}
-  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
-  {{- end }}
-  {{- if and (eq .Values.service.type "LoadBalancer") .Values.service.loadBalancerSourceRanges }}
-  loadBalancerSourceRanges:
-  {{ with .Values.service.loadBalancerSourceRanges }}
-{{ toYaml . | indent 4 }}
-{{- end }}
-  {{- end }}
-  {{- if and (eq .Values.service.type "ClusterIP") .Values.service.clusterIP }}
-  clusterIP: {{ .Values.service.clusterIP }}
-  {{- end }}
+{{- if and .Values.global .Values.global.externalTimescaleDBIP }}
+# external IP defined, so we'll use a ClusterIP service with a singleton Endpoints
+# (ignoring external name if that's also defined)
+  type: ClusterIP
   ports:
-  - name: tcp-postgresql
-    port: {{ template "postgresql.port" . }}
-    targetPort: tcp-postgresql
-    {{- if .Values.service.nodePort }}
-    nodePort: {{ .Values.service.nodePort }}
-    {{- end }}
-{{- if .Values.global }}
-  {{- if .Values.global.externalTimescaleDBName }}
-  type: ExternalName
-  externalName: {{ .Values.global.externalTimescaleDBName }}
-  {{- end -}}
-  {{- if and (not .Values.global.externalTimescaleDBName) (not .Values.global.externalTimescaleDBIP)}}
-  selector:
-    role: master
-    app.kubernetes.io/name: {{ .Chart.Name }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-  {{- end -}}
-  {{- if and (.Values.global.externalTimescaleDBIP) (not .Values.global.externalTimescaleDBName)}}
+  - name: timescaledb-tcp
+    port: 5432
 ---
 apiVersion: v1
 kind: Endpoints
@@ -51,10 +26,27 @@ metadata:
   name: {{ template "postgresql.fullname" . }}
 subsets:
   - addresses:
-    - ip: {{ .Values.global.externalTimescaleDBIP | quote }}
+      - ip: {{ .Values.global.externalTimescaleDBIP | quote }}
     ports:
-    - name: tcp-postgresql
-      port: {{ .Values.global.externalTimescaleDBPort | default 5432 }}
-      protocol: TCP
-  {{- end -}}
+      - name: timescaledb-tcp
+        port: {{ .Values.global.externalTimescaleDBPort | default 5432 }}
+        protocol: TCP
+{{- else if and .Values.global .Values.global.externalTimescaleDBName }}
+# external name is defined but not external IP, so we'll use an ExternalName service.
+# In this case, because there's no proxying involved, the access port (not specified here)
+# will be whatever is specified with `externalDbPort`, defaulting to 5432, and this is
+# managed in the overall XL configmap
+  type: ExternalName
+  externalName: {{ .Values.global.externalTimescaleDBName }}
+{{- else }}
+# no external name or IP is specified so db pod will be present, and we'll use a
+# ClusterIP service with a selector pointing at the db pod. External port, if
+# specified, is ignored
+  type: ClusterIP
+  ports:
+  - name: timescaledb
+    port: 5432
+  selector:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

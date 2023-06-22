@@ -76,10 +76,26 @@ spec:
         - name: {{ template "prometheus.name" . }}-{{ .Values.server.name }}
           image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"
           imagePullPolicy: "{{ .Values.server.image.pullPolicy }}"
-          {{- if .Values.server.env }}
+          {{- if or .Values.server.env (and .Values.global.telemetry.enabled .Values.global.telemetry.plg.enabled)}}
           env:
+          {{- end }}
+          {{- if .Values.server.env }}
 {{ toYaml .Values.server.env | indent 12}}
           {{- end }}
+          {{- if and .Values.global.telemetry.plg.enabled .Values.global.telemetry.enabled }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: telemetry-secret
+                  key: plg_aws_access_key_id
+                  optional: false
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: telemetry-secret
+                  key: plg_aws_secret_access_key
+                  optional: false
+          {{- end}}
           args:
           {{- if .Values.server.retention }}
             - --storage.tsdb.retention.time={{ .Values.server.retention }}
@@ -204,7 +220,7 @@ spec:
             - name: LOG_LEVEL
               value: {{ .Values.server.telemetryScrubber.env.logLevel }}
             - name: SCRUBBED_LABELS
-              value: {{ .Values.global.telemetry.scrubbedLabels }}
+              value: {{ template "prometheus.server.getScrubbedLabels" . }}
           resources:
 {{ toYaml .Values.server.telemetryScrubber.resources | indent 12 }}
         {{- end }}

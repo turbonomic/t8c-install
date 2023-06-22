@@ -37,7 +37,7 @@ alertmanager:
   ## deployed ONLY.
   ## This makes alertmanager work - for users who do not have ClusterAdmin privs, but wants
   ## alertmanager to operate on their own namespace, instead of clusterwide.
-  useClusterRole: true
+  useClusterRole: false
 
   ## alertmanager container name
   ##
@@ -334,7 +334,7 @@ configmapReload:
     ##
     image:
       repository: icr.io/cpopen/turbonomic/configmap-reload
-      tag: v0.8.0.1
+      tag: v0.8.0.3
       pullPolicy: IfNotPresent
 
     ## Additional configmap-reload container arguments
@@ -372,7 +372,7 @@ configmapReload:
     ##
     image:
       repository: icr.io/cpopen/turbonomic/configmap-reload
-      tag: v0.8.0.1
+      tag: v0.8.0.3
       pullPolicy: IfNotPresent
 
     ## Additional configmap-reload container arguments
@@ -413,20 +413,26 @@ kube-state-metrics:
   image:
     registry: icr.io/cpopen
     repository: turbonomic/kube-state-metrics
-    tag: v2.8.2
+    tag: v2.9.2
     pullPolicy: IfNotPresent
 
-  # Comma-separated list of metrics to be exposed.
-  # This list comprises of exact metric names and/or regex patterns.
-  metricAllowlist: [kube_pod_status_phase]
+  rbac:
+    # If set to false - Run without Cluteradmin privs needed - ONLY works if namespace is also set
+    # (if useExistingRole is set this name is used as ClusterRole or Role to bind to)
+    useClusterRole: false
 
-  # Comma-separated list(string) or yaml list of namespaces to be enabled for collecting resources. By default all namespaces are collected.
+  # Comma-separated list of metrics to be exposed.
+  # This list comprises exact metric names and/or regex patterns.
+  metricAllowlist: [kube_pod_status_phase, kube_service_status_load_balancer_ingress]
+
+  # Comma-separated list(string) or yaml list of namespaces to be enabled for collecting resources.
+  # By default, all namespaces are collected.
   namespaces: ""
 
   ## Override the deployment namespace
   namespaceOverride: ""
 
-  # Enable only the release namespace for collecting resources. By default all namespaces are collected.
+  # Enable only the release namespace for collecting resources. By default, all namespaces are collected.
   # If releaseNamespace and namespaces are both set a merged list will be collected.
   releaseNamespace: true
 
@@ -434,11 +440,12 @@ kube-state-metrics:
   # collectors are enabled.
   collectors:
     - pods
+    - services
 
 nodeExporter:
   ## If false, node-exporter will not be installed
   ##
-  enabled: true
+  enabled: false
 
   ## If true, node-exporter pods share the host network namespace
   ##
@@ -584,13 +591,16 @@ server:
   ## deployed ONLY.
   ## This makes server work - for users who do not have ClusterAdmin privs, but wants
   ## alertmanager to operate on their own namespace, instead of clusterwide.
-  useClusterRole: true
+  useClusterRole: false
 
   outOfTheBoxScrapeConfigs:
+    prometheus:
+      enabled: false
     kubernetes:
-      enabled: true
+      enabled: false
     xl:
       enabled: true
+      lightweight: true
 
   name: server
   sidecarContainers: []
@@ -619,7 +629,7 @@ server:
       # Image name will always be "prometheus-kafka-adapter"
       # This is odd -- double check this
       repository: icr.io/cpopen/turbonomic
-      tag: 1.8.0.1
+      tag: 1.8.0.3
       pullPolicy: IfNotPresent
     # Additional arguments to use when starting the prometheus-kafka-adapter process.
     args: []
@@ -659,7 +669,7 @@ server:
   ##
   image:
     repository: icr.io/cpopen/turbonomic/prometheus
-    tag: v2.42.0.1
+    tag: v2.42.0.2
     pullPolicy: IfNotPresent
 
   #nameOverride: ""
@@ -729,9 +739,6 @@ server:
       # This should be overridden automatically by a version-4 UUID during initialization of the
       # instance.
       instance_id: "00000000-0000-0000-0000-000000000000"
-      # These should be overridden automatically with information in the license once it's installed
-      customer_id: "000000"
-      customer_domain: "unlicensed"
 
   ## https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write
   ##
@@ -1310,16 +1317,8 @@ serverFiles:
       - /etc/config/rules
       - /etc/config/alerts
 
+    # adds additional scrape configs to prometheus.yml
     scrape_configs:
-      - job_name: prometheus
-        static_configs:
-          - targets:
-            - localhost:9090
-
-# adds additional scrape configs to prometheus.yml
-# must be a string so you have to add a | after extraScrapeConfigs:
-# example adds prometheus-blackbox-exporter scrape config
-extraScrapeConfigs:
 
 # Adds option to add alert_relabel_configs to avoid duplicate alerts in alertmanager
 # useful in H/A prometheus with different external labels but the same alerts

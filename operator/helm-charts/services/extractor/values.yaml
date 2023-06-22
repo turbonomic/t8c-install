@@ -18,6 +18,8 @@ image:
   logstashtag: 7.11.1
   pullPolicy: IfNotPresent
 
+enableAwsMsk: false
+
 env:
   - name: component_type
     value: extractor

@@ -130,6 +130,8 @@ spec:
         - name: LOG_TO_STDOUT
           value: "true"
   {{- end }}
+        - name: SHARE_TELEMETRY
+          value: {{ .Values.global.telemetry.shareTelemetry }}
 {{- end }}
         ports:
           - containerPort: 8080

@@ -176,20 +176,13 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
+{{- if and .Values.global .Values.global.externalDbIP }}
+# external IP defined, so we'll use a ClusterIP service with a singleton Endpoints
+# (ignoring external name if that's also defined)
+  type: ClusterIP
   ports:
   - name: mysql-db
-    port: {{ .Values.global.externalDbPort | default 3306 }}
-{{- if .Values.global }}
-  {{- if .Values.global.externalDBName }}
-  type: ExternalName
-  externalName: {{ .Values.global.externalDBName }}
-  {{- end -}}
-  {{- if and (not .Values.global.externalDBName) (not .Values.global.externalDbIP)}}
-  selector:
-    app.kubernetes.io/name: {{ .Chart.Name }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-  {{- end -}}
-  {{- if and (.Values.global.externalDbIP) (not .Values.global.externalDBName)}}
+    port: 3306
 ---
 apiVersion: v1
 kind: Endpoints
@@ -197,10 +190,27 @@ metadata:
   name: {{ .Chart.Name }}
 subsets:
   - addresses:
-    - ip: {{ .Values.global.externalDbIP | quote }}
+      - ip: {{ .Values.global.externalDbIP | quote }}
     ports:
-    - name: "mysql-db"
-      port: {{ .Values.global.externalDbPort | default 3306 }}
-      protocol: TCP
-  {{- end -}}
+      - name: "mysql-db"
+        port: {{ .Values.global.externalDbPort | default 3306 }}
+        protocol: TCP
+{{- else if and .Values.global .Values.global.externalDBName }}
+# external name is defined but not external IP, so we'll use an ExternalName service.
+# In this case, because there's no proxying involved, the access port (not specified here)
+# will be whatever is specified with `externalDbPort`, defaulting to 3306, and this is
+# managed in the overal XL configmap
+  type: ExternalName
+  externalName: {{ .Values.global.externalDBName }}
+{{- else }}
+# no external name or IP is specified so db pod will be present, and we'll use a
+# ClusterIP service with a selector pointing at the db pod. External port, if
+# specified, is ignored
+  type: ClusterIP
+  ports:
+  - name: mysql-db
+    port: 3306
+  selector:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
