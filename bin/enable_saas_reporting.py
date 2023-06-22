@@ -9,7 +9,7 @@ import time
 from datetime import datetime, timedelta
 from getpass import getpass
 from typing import Callable
-
+from collections import namedtuple
 from ruamel.yaml import YAML
 
 
@@ -98,6 +98,105 @@ class CustomResource:
 
         return data[key] if key in data else default
 
+MSKUserInput = namedtuple('MSKUserInput', ['aws_access_key_id', 'aws_secret_access_key', 'msk_topic', 'msk_bootstrap_server'])
+class SaasMSKReporting:
+    extractor_path = "spec extractor"
+    extractor_properties_path = "spec properties extractor"
+    def __init__(self, custom_resource):
+        self.custom_resource = custom_resource
+
+    def enable(self):
+        if not hasattr(self, "user_input"):
+            logging.error("User input is required.")
+            sys.exit(1)
+        # mskTopic, bootstrap_server, aws_access_key_id, aws_secret_access_key
+        # Enable the extractor
+        self.custom_resource.set_value('spec extractor enabled', True)
+
+        # Enable data extraction
+        self.custom_resource.set_value('spec properties extractor enableDataExtraction', True)
+
+        # configure msk
+
+        self.custom_resource.set_value(SaasMSKReporting.extractor_path + ' enableAwsMsk', True)
+        self.custom_resource.set_value(SaasMSKReporting.extractor_properties_path + ' enableAwsMsk', True)
+        self.custom_resource.set_value(SaasMSKReporting.extractor_properties_path + ' mskBootstrapServer', self.user_input.msk_bootstrap_server)
+        self.custom_resource.set_value(SaasMSKReporting.extractor_properties_path + ' mskTopic', self.user_input.msk_topic)
+
+        # Deploy the tenant access key kubernetes secret
+        os.system(f"kubectl create secret generic extractor-secret --from-literal=AWS_ACCESS_KEY_ID='{self.user_input.aws_access_key_id}' --from-literal=AWS_SECRET_ACCESS_KEY='{self.user_input.aws_secret_access_key}'")
+
+    def disable(self):
+        self.custom_resource.set_value(SaasMSKReporting.extractor_path + ' enableAwsMsk', False)
+        self.custom_resource.set_value(SaasMSKReporting.extractor_properties_path + ' enableAwsMsk', False)
+        self.custom_resource.set_value(SaasMSKReporting.extractor_path + ' enabled', False)
+
+
+    def is_enabled(self):
+        logging.info("is_enabled is called")
+        # This is the primary flag that determines whether saas reporting is enabled or not.
+        # We need both the connector and data extraction running.
+        return self.custom_resource.get_value('spec extractor enableAwsMsk', False) \
+            and self.custom_resource.get_value('spec properties extractor enableAwsMsk', False) \
+            and self.custom_resource.get_value('spec properties extractor enableDataExtraction', False) \
+            and self.custom_resource.get_value('spec extractor enabled', False)
+
+    def validate(self):
+        logging.info("validate is called")
+        pass
+
+    def get_input_from_user(self):
+        #kinesisSteam = input("Provide the name of the data stream assigned to your account: ")
+        awsAccessKeyId = wait_for_password("Provide the AWS Access Key ID: ")
+        awsSecretAccessKey = wait_for_password("Provide the AWS Secret Access Key: ")
+        #saas_reporting.enable(kinesisSteam, awsAccessKeyId, awsSecretAccessKey)
+        msk_topic = input("Provide the Kafka topic assigned to your account: ")
+        msk_bootstrap_server = input("Provide the Kafka bootstrap server assigned to your account")
+        logging.info(f"username is {awsAccessKeyId}")
+        logging.info(f"password is {awsSecretAccessKey}")
+        self.user_input = MSKUserInput(awsAccessKeyId, awsSecretAccessKey, msk_topic, msk_bootstrap_server)
+
+    def pods_are_ready(self) -> bool:
+
+        # The shell command:
+        #   1. gets the pods
+        #   2. keeps only kinesis and extractor
+        #   3. for each line it keeps only the READY column n/N
+        #   4. it filters for lines where n is equal to N
+        #   5. it counts the lines
+        # Possible values 0, 1, 2
+        check_ready_pods = "kubectl get pods | " + \
+                           "egrep 'extractor' | " + \
+                           "awk '{print $2}' | " + \
+                           "awk -F '/' '{ if($1 == $2) { print $0 } }' | " + \
+                           "wc -l"
+        stdout_value, stderr_value = subprocess.Popen(check_ready_pods, shell=True, stdout=subprocess.PIPE,
+                                                      stderr=subprocess.STDOUT).communicate()
+        check_ready_pods = int(stdout_value.decode().split("\n")[0])
+        return check_ready_pods >= 1
+
+    def pods_are_shutdown(self) -> bool:
+        check_ready_pods = "kubectl get pods | " + \
+                           "egrep 'extractor' | " + \
+                           "awk '{print $2}' | " + \
+                           "awk -F '/' '{ if($1 == $2) { print $0 } }' | " + \
+                           "wc -l"
+        stdout_value, stderr_value = subprocess.Popen(check_ready_pods, shell=True, stdout=subprocess.PIPE,
+                                                      stderr=subprocess.STDOUT).communicate()
+        check_ready_pods = int(stdout_value.decode().split("\n")[0])
+        return check_ready_pods == 0
+
+
+
+def get_reporting_stream_type(custom_resource, stream_type):
+    if stream_type == 'KINESIS':
+        return SaaSReporting(custom_resource)
+    elif stream_type == 'MSK':
+        return SaasMSKReporting(custom_resource)
+    else:
+        logging.error(f"No such stream_type: {stream_type}")
+
+KinesisUserInput = namedtuple('KinesisUserInput', ['kinesis_stream', 'aws_access_key_id', 'aws_secret_access_key'])
 
 class SaaSReporting:
 
@@ -108,8 +207,10 @@ class SaaSReporting:
     def __init__(self, custom_resource):
         self.custom_resource = custom_resource
 
-    def enable(self, kinesis_stream, aws_access_key_id, aws_secret_access_key):
-
+    def enable(self):
+        if not hasattr(self, "user_input"):
+            logging.error("User input is required.")
+            sys.exit(1)
         # Enable the extractor
         self.custom_resource.set_value('spec extractor enabled', True)
 
@@ -118,10 +219,16 @@ class SaaSReporting:
 
         # Enable and configure the connector
         self.custom_resource.set_value(SaaSReporting.connectorBasePath + ' enabled', True)
-        self.custom_resource.set_value(SaaSReporting.connectorKinesisStreamPath, kinesis_stream)
+        self.custom_resource.set_value(SaaSReporting.connectorKinesisStreamPath, self.user_input.kinesis_stream)
 
         # Deploy the tenant access key kubernetes secret
-        os.system(f"kubectl create secret generic kinesis-kafka-connect-secret --from-literal=AWS_ACCESS_KEY_ID='{aws_access_key_id}' --from-literal=AWS_SECRET_ACCESS_KEY='{aws_secret_access_key}'")
+        os.system(f"kubectl create secret generic kinesis-kafka-connect-secret --from-literal=AWS_ACCESS_KEY_ID='{self.user_input.aws_access_key_id}' --from-literal=AWS_SECRET_ACCESS_KEY='{self.user_input.aws_secret_access_key}'")
+
+    def disable(self):
+        self.custom_resource.set_value('spec extractor enabled', False)
+        self.custom_resource.set_value('spec properties extractor enableDataExtraction', False)
+        self.custom_resource.set_value('spec kinesis-kafka-connect enabled', False)
+
 
     def is_enabled(self):
         # This is the primary flag that determines whether saas reporting is enabled or not.
@@ -155,17 +262,7 @@ class SaaSReporting:
         if pass_warn is not None:
             warnings.append("Problematic {} password: {}".format(path, pass_warn))
 
-
-# Restarts API pod to apply new configuration changes when grafana and extractor pods finished creation/deletion
-def apply_and_wait(custom_resource_file, timeout: timedelta, polling_interval: timedelta):
-    # apply config changes in kubernetes and restart required containers containers
-    apply_command = 'kubectl apply -f {}'.format(custom_resource_file)
-    print("Applying CR file {}".format(custom_resource_file))
-    subprocess.call(apply_command, shell=True)
-
-    print("Waiting for changes to take effect...")
-
-    def pods_are_ready() -> bool:
+    def pods_are_ready(self) -> bool:
 
         # The shell command:
         #   1. gets the pods
@@ -184,7 +281,37 @@ def apply_and_wait(custom_resource_file, timeout: timedelta, polling_interval: t
         check_ready_pods = int(stdout_value.decode().split("\n")[0])
         return check_ready_pods >= 2
 
-    successful = wait_until_ready(ready=pods_are_ready, timeout=timeout, period=polling_interval)
+    def pods_are_shutdown(self) -> bool:
+        check_ready_pods = "kubectl get pods | " + \
+                           "egrep 'kinesis|extractor' | " + \
+                           "awk '{print $2}' | " + \
+                           "awk -F '/' '{ if($1 == $2) { print $0 } }' | " + \
+                           "wc -l"
+        stdout_value, stderr_value = subprocess.Popen(check_ready_pods, shell=True, stdout=subprocess.PIPE,
+                                                      stderr=subprocess.STDOUT).communicate()
+        check_ready_pods = int(stdout_value.decode().split("\n")[0])
+        return check_ready_pods == 0
+
+    def get_input_from_user(self):
+        #KinesisUserInput = namedtuple('KinesisUserInput', ['kinesis_stream', 'aws_access_key_id', 'aws_secret_access_key'])
+        kinesisSteam = input("Provide the name of the data stream assigned to your account: ")
+        awsAccessKeyId = wait_for_password("Provide the AWS Access Key ID: ")
+        awsSecretAccessKey = wait_for_password("Provide the AWS Secret Access Key: ")
+        self.user_input = KinesisUserInput(kinesisSteam, awsAccessKeyId, awsSecretAccessKey)
+
+
+# Restarts API pod to apply new configuration changes when grafana and extractor pods finished creation/deletion
+def apply_and_wait(custom_resource_file, timeout: timedelta, polling_interval: timedelta, ready_condition: Callable[[], bool]):
+    # apply config changes in kubernetes and restart required containers containers
+    apply_command = 'kubectl apply -f {}'.format(custom_resource_file)
+    print("Applying CR file {}".format(custom_resource_file))
+    subprocess.call(apply_command, shell=True)
+
+    print("Waiting for changes to take effect...")
+
+
+
+    successful = wait_until_ready(ready=ready_condition, timeout=timeout, period=polling_interval)
 
     if successful:
         print("Necessary pods are ready.")
@@ -251,6 +378,11 @@ def main():
                         dest="no_apply")
     parser.add_argument("--validate", help="Don't make any changes, but lint the CR to check for common errors.",
                         action="store_true", dest="validate")
+
+    parser.add_argument("--msk", help="Enable streaming with MSK - managed Kafka", action="store_true", dest="mskEnabled")
+
+    parser.add_argument("--disable", help="Disable streaming", action="store_true", dest="disable")
+
     args = parser.parse_args()
 
     # File to modify - can be overwritten by passing cr file as an arg to the python script
@@ -262,7 +394,19 @@ def main():
     custom_resource = CustomResource(custom_resource_file)
 
     # The SaaS reporting component.
-    saas_reporting = SaaSReporting(custom_resource)
+    stream_type = 'KINESIS'
+    #saas_reporting = SaaSReporting(custom_resource)
+    if args.mskEnabled:
+        stream_type = 'MSK'
+
+    saas_reporting = get_reporting_stream_type(custom_resource, stream_type)
+
+    if args.disable:
+        saas_reporting.disable()
+        custom_resource.write()
+        apply_and_wait(custom_resource_file,  timeout=timedelta(minutes=10), polling_interval=timedelta(seconds=5), ready_condition=saas_reporting.pods_are_shutdown )
+        return
+
 
     if args.validate:
         warnings = saas_reporting.validate()
@@ -278,16 +422,15 @@ def main():
         print("SaaS reporting is already enabled. Please contact support if it is not working.")
         return
 
-    kinesisSteam = input("Provide the name of the data stream assigned to your account: ")
-    awsAccessKeyId = wait_for_password("Provide the AWS Access Key ID: ")
-    awsSecretAccessKey = wait_for_password("Provide the AWS Secret Access Key: ")
-    saas_reporting.enable(kinesisSteam, awsAccessKeyId, awsSecretAccessKey)
+    saas_reporting.get_input_from_user()
+    saas_reporting.enable()
 
-    # write out custom resource component
+
+# write out custom resource component
     custom_resource.write()
 
     if not args.no_apply:
-        apply_and_wait(custom_resource_file, timeout=timedelta(minutes=10), polling_interval=timedelta(seconds=5))
+        apply_and_wait(custom_resource_file, timeout=timedelta(minutes=10), polling_interval=timedelta(seconds=5), ready_condition=saas_reporting.pods_are_ready)
 
 
 if __name__ == "__main__":

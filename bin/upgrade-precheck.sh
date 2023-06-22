@@ -150,14 +150,14 @@ check_database(){
                     echo "${WHITE}Checking MariaDB version"
                 fi
                 MVERSION=$(systemctl list-units --all -t service --full --no-legend "mariadb.service" | awk {'print $6'})
-                # Compare version (if 10.5.18 is the output, that means the version is either equals or above this)
-                VERSION_COMPARE=$(echo -e "10.5.18\n${MVERSION}" | sort -V | head -n1)
-                if [[ ${VERSION_COMPARE} = "10.5.18" ]]; then
+                # Compare version (if 10.5.20 is the output, that means the version is either equals or above this)
+                VERSION_COMPARE=$(echo -e "10.5.20\n${MVERSION}" | sort -V | head -n1)
+                if [[ ${VERSION_COMPARE} = "10.5.20" ]]; then
                     echo "${GREEN}MariaDB checks PASSED"
                     SUMMARY+=( "${WHITE}MariaDB checks | ${GREEN}PASSED" )
                 else                    
                     if [[ ${VERBOSE} = 1 ]]; then
-                        echo "${RED}The version of MariaDB is below version 10.5.18 you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
+                        echo "${RED}The version of MariaDB is below version 10.5.20 you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
                     fi
                     echo "${RED}MariaDB version check FAILED"
                     SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )

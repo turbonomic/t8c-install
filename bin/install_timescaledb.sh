@@ -14,7 +14,13 @@ if [ -d /mnt/iso/rpm/ ]
 then
   sudo yum localinstall --disablerepo="*" -q -y /mnt/iso/rpm/pgdg-redhat-repo-latest.noarch.rpm > /dev/null 2>&1
 else
-  sudo yum install --disablerepo="mariadb" -q -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm > /dev/null 2>&1
+  sudo wget https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+  sudo rpm -ivh --force pgdg-redhat-repo-latest.noarch.rpm
+  result=$?
+  if [ $result = 0 ]
+  then
+    rm -rf pgdg-redhat-repo-latest.noarch.rpm
+  fi
 fi
 
 # Check if the RPMs are on the mounted iso
@@ -24,7 +30,7 @@ then
   sudo yum localinstall --disablerepo="*" -y /mnt/iso/rpm/postgresql12*.rpm
 else
   # install the client, libs and server packages
-  sudo yum install --disablerepo="mariadb" -y postgresql12-libs-12.6-1PGDG.rhel7.x86_64 postgresql12-12.6-1PGDG.rhel7.x86_64 postgresql12-server-12.6-1PGDG.rhel7.x86_64
+  sudo yum install --disablerepo="mariadb" -y postgresql12-libs-12.15-1PGDG.rhel7.x86_64 postgresql12-12.15-1PGDG.rhel7.x86_64 postgresql12-server-12.15-1PGDG.rhel7.x86_64
 fi
 
 log_msg "Successfully installed Postgres."

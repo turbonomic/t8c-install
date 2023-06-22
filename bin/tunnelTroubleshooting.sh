@@ -1,8 +1,18 @@
 #!/bin/bash
 
 errors=()
+namespace=""
 
 function main {
+
+  parse_args $@
+
+  if [[ "${namespace}" == "" ]]
+  then
+    namespace=$(kubectl config view --minify -o jsonpath='{..namespace}')
+    namespace=${namespace:-"default"}
+  fi
+
   echo "Troubleshooting skupper components:"
   echo
   troubleshoot-skupper-component skupper-site-controller app.kubernetes.io/name=skupper-site-controller
@@ -14,6 +24,8 @@ function main {
   troubleshoot_tokens
 
   echo "Troubleshooting complete."
+  echo
+  echo "Namespace: ${namespace}"
   echo
   echo "${#errors[@]} errors detected."
   if [[ ${#errors[@]} -gt 0 ]]
@@ -27,6 +39,22 @@ function main {
   fi
 }
 
+function parse_args() {
+  while [ "${1-}" != "" ]; do
+    case $1 in
+    -n)
+      shift
+      namespace="${1}"
+      ;;
+    *)
+      echo "Invalid option: ${1}" >&2
+      exit 1
+      ;;
+    esac
+    shift
+  done
+}
+
 function troubleshoot-skupper-component {
 
   deploy=${1:?"First arg should be deployment name!"}
@@ -34,7 +62,7 @@ function troubleshoot-skupper-component {
 
   print_header $deploy
 
-  kubectl get deploy/${deploy} -o name > /dev/null 2>&1 || {
+  kubectl -n ${namespace} get deploy/${deploy} -o name > /dev/null 2>&1 || {
     error="ERROR: deployment/${deploy} not found"
     echo "${error}"
     echo
@@ -42,15 +70,15 @@ function troubleshoot-skupper-component {
     return
   }
 
-  kubectl get deploy/${deploy} -o template --template='''{{- "" -}}
+  kubectl -n ${namespace} get deploy/${deploy} -o template --template='''{{- "" -}}
 Name:{{- "\t"}}{{- "\t"}}{{- "\t"}}{{.metadata.name}}
 Desired Replicas:{{- "\t"}}{{.spec.replicas}}
 Current Replicas:{{- "\t"}}{{ or .status.replicas 0}}
 Ready:{{- "\t"}}{{- "\t"}}{{- "\t"}}{{ or .status.readyReplicas 0}}/{{ or .status.replicas 0}}
 '''
 
-  desired_replicas=$(kubectl get deploy/${deploy} -o template --template='{{ or .spec.replicas 0}}')
-  ready_replicas=$(kubectl get deploy/${deploy} -o template --template='{{ or .status.readyReplicas 0}}')
+  desired_replicas=$(kubectl -n ${namespace} get deploy/${deploy} -o template --template='{{ or .spec.replicas 0}}')
+  ready_replicas=$(kubectl -n ${namespace} get deploy/${deploy} -o template --template='{{ or .status.readyReplicas 0}}')
 
   [[ ${desired_replicas} == "0" ]] && {
     error="ERROR: deployment/${deploy} has 0 replicas. Please scale to 1 replica"
@@ -60,7 +88,7 @@ Ready:{{- "\t"}}{{- "\t"}}{{- "\t"}}{{ or .status.readyReplicas 0}}/{{ or .statu
     return
   }
 
-  kubectl get pods -l ${label} -o template --template='''{{- "" -}}
+  kubectl -n ${namespace} get pods -l ${label} -o template --template='''{{- "" -}}
 Pods:
 {{- range .items }}
 - Name: {{.metadata.name}}
@@ -84,7 +112,7 @@ Pods:
 
   [[ ${ready_replicas} == "0" ]] && {
     error="ERROR: deployment/${deploy} has 0 ready replicas.
-$(kubectl get pods -l ${label} -o jsonpath='{range .items[*].status.containerStatuses[*]}{..message}{"\n"}{end}')"
+$(kubectl -n ${namespace} get pods -l ${label} -o jsonpath='{range .items[*].status.containerStatuses[*]}{..message}{"\n"}{end}')"
     echo "${error}"
     echo
     errors+=("${error}")
@@ -96,7 +124,7 @@ $(kubectl get pods -l ${label} -o jsonpath='{range .items[*].status.containerSta
 }
 
 function troubleshoot_tokens {
-  tokens=$(kubectl get secret -l 'skupper.io/type in (connection-token, token-claim)' -o name)
+  tokens=$(kubectl -n ${namespace} get secret -l 'skupper.io/type in (connection-token, token-claim)' -o name)
 
   if [[ "${tokens}" == "" ]]
   then
@@ -117,7 +145,7 @@ function troubleshoot_token {
 
   print_header $token
 
-  type=$(kubectl get $token -o jsonpath='{.metadata.labels.skupper\.io/type}')
+  type=$(kubectl -n ${namespace} get $token -o jsonpath='{.metadata.labels.skupper\.io/type}')
   if [[ "${type}" == "connection-token" ]]
   then
     troubleshoot_connection_token $token
@@ -129,7 +157,7 @@ function troubleshoot_token {
 function troubleshoot_connection_token {
   token=${1:?"First arg should be the token!"}
 
-  remote_services=($(kubectl get service -o=jsonpath='{.items[?(@.metadata.annotations.internal\.skupper\.io/controlled=="true")].metadata.name}'))
+  remote_services=($(kubectl -n ${namespace} get service -o=jsonpath='{.items[?(@.metadata.annotations.internal\.skupper\.io/controlled=="true")].metadata.name}'))
 
   if [[ "${#remote_services[@]}" == "0" ]]
   then
@@ -153,7 +181,7 @@ function troubleshoot_connection_token {
 function troubleshoot_token_claim {
   token=${1:?"First arg should be the token!"}
 
-  url=$(kubectl get $token -o jsonpath='{.metadata.annotations.skupper\.io/url}')
+  url=$(kubectl -n ${namespace} get $token -o jsonpath='{.metadata.annotations.skupper\.io/url}')
   tmp=${url#*://}
   tmp=${tmp%%/*}
 
@@ -169,7 +197,7 @@ function troubleshoot_token_claim {
     return
   }
 
-  status=$(kubectl get $token -o jsonpath='{.metadata.annotations.internal\.skupper\.io/status}')
+  status=$(kubectl -n ${namespace} get $token -o jsonpath='{.metadata.annotations.internal\.skupper\.io/status}')
   error="ERROR: Failed to establish connection to SaaS instance using token ${token#*/}. Status: ${status}."
   if [[ "${status}" == "No such claim" ]]
   then
@@ -191,4 +219,4 @@ function print_header {
   echo "${line}"
 }
 
-main
+main $@

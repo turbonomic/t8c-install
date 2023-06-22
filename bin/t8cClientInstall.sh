@@ -3,8 +3,6 @@
 # get config variables
 source /opt/local/etc/turbo.conf
 
-legacy="false"
-
 main() {
 
   # Run this as the root user
@@ -41,14 +39,8 @@ main() {
   # create the namespace (if it doesn't already exist)
   kubectl get ns ${namespace} > /dev/null 2>&1 && echo "Namespace ${namespace} already exists." || kubectl create ns ${namespace}
 
-  if [ "${legacy}" == "true" ]
-  then
-    install_operator
-  else
-    install_olm
-    install_operator_olm
-  fi
-
+  install_olm
+  install_operator_olm
   install_operand
 
   echo
@@ -67,9 +59,6 @@ parse_args() {
     -v | --version)
       shift
       turboVersion="${1}"
-      ;;
-    --legacy)
-      legacy="true"
       ;;
     *)
       echo "Invalid option: ${1}" >&2
@@ -354,27 +343,6 @@ install_olm() {
   /opt/local/bin/olmInstall.sh
 }
 
-install_operator() {
-
-  echo
-  echo "###############################################################"
-  echo "             Installing Turbonomic Client Operator             "
-  echo "###############################################################"
-  echo
-
-  operatorFile=/opt/turbonomic/kubernetes/yaml/t8c-client-operator/operator.yaml
-
-  kubectl apply -n ${namespace} -f $operatorFile
-
-  echo "Waiting for operator to become ready"
-  kubectl wait deployment t8c-client-operator-controller-manager -n ${namespace} --for condition=Available=true --timeout=300s || {
-    echo "Operator failed to become ready after 300s"
-    exit 1
-  }
-
-  echo "Operator is ready"
-}
-
 install_operator_olm() {
 
   echo
@@ -388,21 +356,60 @@ install_operator_olm() {
   subscriptionFile=/opt/turbonomic/kubernetes/yaml/t8c-client-operator/olm/subscription.yaml
 
   sed "s/__NAMESPACE__/${namespace}/g" $operatorgroupFile | kubectl apply -n $namespace -f -
-  kubectl apply -f $catalogsourceFile
 
-  kubectl apply -f $subscriptionFile -n $namespace
+  echo "Creating catalogsource..."
+  catalogName=$(kubectl apply -f $catalogsourceFile -o jsonpath='{.metadata.name}')
+  echo "catalogsource '${catalogName}' created"
 
-  echo "Waiting for CSV to be created"
-  retry_until_successful "[[ \$(kubectl get -f ${subscriptionFile} -n $namespace -o jsonpath='{.status.currentCSV}') != '' ]]" 120 || {
-    echo "CSV did not appear after 120s"
+  echo "Waiting for catalogsource to become ready..."
+  retry_until_successful "[[ \$(kubectl get catsrc -n olm $catalogName -o jsonpath='{.status.connectionState.lastObservedState}') == 'READY' ]]" 300 || {
+    echo "catalogsource did not ready after 300s"
+    echo "catalogsource status:"
+    kubectl get catsrc -n olm $catalogName -o jsonpath='{.status}{"\n"}'
+    echo "catalog pods:"
+    kubectl get po -n olm -l olm.catalogSource=$catalogName
     exit 1
   }
-  csv=$(kubectl get -f ${subscriptionFile} -n $namespace -o jsonpath='{.status.currentCSV}')
-  echo "CSV has been created: ${csv}"
+  echo "catalogsource '${catalogName}' is ready"
 
-  echo "Waiting for operator to install"
-  retry_until_successful "[[ \$(kubectl get csv ${csv} -n $namespace -o jsonpath='{.status.phase}') == 'Succeeded' ]]" 300 || {
+  echo "Creating subscription..."
+  subscription=$(kubectl apply -f $subscriptionFile -n $namespace -o jsonpath='{.metadata.name}')
+  echo "subscription '${subscription}' created"
+
+  echo "Waiting for installplan to be created..."
+  retry_until_successful "[[ \$(kubectl get subs $subscription -n $namespace -o jsonpath='{.status.installplan.name}') != '' ]]" 300 || {
+    echo "installplan not created after 300s"
+    echo "subscription status:"
+    kubectl get subs $subscription -n $namespace -o jsonpath='{.status}{"\n"}'
+    exit 1
+  }
+  installPlan=$(kubectl get subs $subscription -n $namespace -o jsonpath='{.status.installplan.name}')
+  echo "installplan '${installPlan}' created"
+
+  echo "Waiting for installplan to be completed..."
+  retry_until_successful "[[ \$(kubectl get ip $installPlan -n $namespace -o jsonpath='{.status.phase}') == 'Complete' ]]" 300 || {
+    echo "installplan not completed after 300s"
+    echo "installplan status:"
+    kubectl get ip $installPlan -n $namespace -o jsonpath='{.status}{"\n"}'
+    exit 1
+  }
+  echo "installplan '${installPlan}' completed"
+
+  echo "Waiting for csv to be created..."
+  retry_until_successful "[[ \$(kubectl get subs $subscription -n $namespace -o jsonpath='{.status.currentCSV}') != '' ]]" 300 || {
+    echo "csv did not appear after 300s"
+    echo "subscription status:"
+    kubectl get subs $subscription -n $namespace -o jsonpath='{.status}{"\n"}'
+    exit 1
+  }
+  csv=$(kubectl get subs $subscription -n $namespace -o jsonpath='{.status.currentCSV}')
+  echo "csv '${csv}' created"
+
+  echo "Waiting for Operator to install..."
+  retry_until_successful "[[ \$(kubectl get csv $csv -n $namespace -o jsonpath='{.status.phase}') == 'Succeeded' ]]" 300 || {
     echo "Operator did not successfully install after 300s"
+    echo "csv status:"
+    kubectl get csv $csv -n $namespace -o jsonpath='{.status}{"\n"}'
     exit 1
   }
 
@@ -422,7 +429,9 @@ install_operand() {
   versionmanagerFile=/opt/turbonomic/kubernetes/yaml/t8c-client-operator/versionmanager.yaml
 
   sed -i "s/__VERSION__/${turboVersion}/g" $turbonomicclientFile
-  kubectl apply -f $turbonomicclientFile -n $namespace  
+  kubectl apply -f $turbonomicclientFile -n $namespace
+  # enable automatic version updates
+  kubectl apply -f $versionmanagerFile -n $namespace
 
   echo "Waiting for Turbonomic Client deployment to become ready"
 
@@ -437,9 +446,6 @@ install_operand() {
   }
 
   echo "Turbonomic Client was installed successfully!"
-
-  # enable automatic version updates
-  kubectl apply -f $versionmanagerFile -n $namespace
 }
 
 retry_until_successful() {
@@ -448,11 +454,18 @@ retry_until_successful() {
 
   local start_time=$(date +%s)
 
+  local i=0
   while [[ $(($(date +%s)-start_time)) -lt $timeout ]]
   do
-    eval $cmd > /dev/null 2>&1 && return 0
+    if [[ $(expr $i % 5) -eq 0 ]]
+    then
+      echo -n '.'
+    fi
+    eval $cmd > /dev/null 2>&1 && echo && return 0
     sleep 1
+    i=$(expr $i + 1)
   done
+  echo
 
   return 1
 }

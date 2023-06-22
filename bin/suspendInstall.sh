@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Get hostname
+nodeHostname=$(hostnamectl status | grep "Static hostname:" | awk -F: '{print $2}' | xargs)
+
 # Check if gluster is the default storage class on the ova.  If it is, do nothing.
 kubectl get sc --no-headers | grep turbo-local-storage
 result="$?"
@@ -42,7 +45,7 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - node1
+                - ${nodeHostname}
 EOF
 
   # Create the persistent volumes
