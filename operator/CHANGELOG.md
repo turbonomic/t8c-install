@@ -3,19 +3,6 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
-42.35
-1. Enable online telemetry by default
-
-42.34
-1. Removed redundant Redis secret mount path for suspend
-2. Added DB secret mount path environment variable for suspend
-3. updated clustermgr label
-4. update prometheus/node_exporter to v1.6.0, fix for CVE-2023-24538
-5. Update prometheus-mysqld-exporter image to v0.14.0.3. Fix CVE-2023-24540
-6. Fixed ensuring that the operator now properly respects the AWS Prometheus parameters
-7. Removed default security context for Prometheus so that it can run on OpenShift.
-8. Added new metric to prometheus: turbo_managed_workloads_count
-
 42.33
 1. Changes to configure workerConnections and workerProcesses parameters from CR for nginx
 2. Changed default Prometheus component(s) configuration to require less permissions and resources.
