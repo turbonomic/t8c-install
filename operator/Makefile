@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 42.29
+VERSION ?= 42.35
 
 # TELEMETRY_SECRET is needed for the operand to send telemetry data to some destination. It's an
 # opaque token specifying both where to send telemetry to and how to authenticate with this
@@ -19,7 +19,7 @@ VERSION ?= 42.29
 # - use environment variables to overwrite this value (e.g export TELEMETRY_SECRET=xyz)
 ifndef TELEMETRY_SECRET
 $(warning WARNING: Telemetry secret not provided. Built operator binary will have partial or no telemetry support.)
-TELEMETRY_SECRET = a2luZXNpc19zdHJlYW06IGVtcHR5CmtpbmVzaXNfcmVnaW9uOiBlbXB0eQphd3NfYWNjZXNzX2tleV9pZDogZW1wdHkKYXdzX3NlY3JldF9hY2Nlc3Nfa2V5OiBlbXB0eQo=
+TELEMETRY_SECRET = YXdzX2FjY2Vzc19rZXlfaWQ6IGVtcHR5CmF3c19zZWNyZXRfYWNjZXNzX2tleTogZW1wdHkKa2luZXNpc19yZWdpb246IGVtcHR5CnBsZ19hd3NfYWNjZXNzX2tleV9pZDogZW1wdHkKcGxnX2F3c19zZWNyZXRfYWNjZXNzX2tleTogZW1wdHkKcGxnX3Byb21ldGhldXNfdXJsOiBlbXB0eQo=
 endif
 
 # CHANNELS define the bundle channels used in the bundle.
