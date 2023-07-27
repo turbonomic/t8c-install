@@ -16,6 +16,8 @@ data:
     urlport: 9093
     grpcport: 9094
     namespace: {{ .Release.Namespace }}
+    logging:
+      level: info
     kafka:
       brokers: kafka:9092
       healthverifiers:
@@ -77,9 +79,6 @@ data:
           type: ping
     database:
       driver: mysql
-      name: suspend
-      host: db
-      port: 3306
       maxconns: 10
       idleconns: 10
       healthverifiers:

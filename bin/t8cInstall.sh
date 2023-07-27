@@ -490,7 +490,7 @@ sed -i "s/${oldIP}/${newIP}/g" /opt/turbonomic/kubernetes/operator/deploy/crds/c
 # need to differentiate between online vs offline here. for both online & offline, required zip
 # file is already included in OVA. for online installation, required images will be pulled if not
 # present; for offline installation, all images will be loaded from mounted iso.
-# /opt/local/bin/t8c-license-service.sh -n ibm-common-services -tn ${nameSpace} -o 2>/dev/null
+/opt/local/bin/t8c-license-service.sh -n ibm-common-services -tn ${nameSpace} -o 2>/dev/null
 
 # Update other files, jic
 sed -i "s/${oldIP}/${newIP}/g" /opt/kubespray/inventory/turbocluster/hosts.yml

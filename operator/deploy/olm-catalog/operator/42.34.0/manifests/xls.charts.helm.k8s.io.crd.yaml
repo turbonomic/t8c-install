@@ -279,16 +279,6 @@ spec:
                         type: string
                         description: 'How often to collect telemetry. Should be in the Prometheus
                                       duration format.'
-                      scrubbedLabels:
-                        type: string
-                        description: 'Space-delimited list of labels to remove from each telemetry record'
-                      scrubbedKafkaTopic:
-                        type: string
-                        description: 'Name of Kafka topic containing scrubbed telemetry records
-                                     (do not change unless instructed to by customer support).'
-                      shareTelemetry:
-                        type: string
-                        description: 'Overridden share telemetry mode: FORCE_ON, FORCE_OFF, or USER_CHOICE (default).'
                       automatic:
                         type: object
                         description: 'Settings specific to automatic transmission of telemetry.'
@@ -298,51 +288,6 @@ spec:
                             description: 'Whether to enable the subsystem responsible for automatic
                                           transmission of telemetry. For telemetry to be sent
                                           anywhere, the UI checkbox needs to also be checked.'
-                          connector_name:
-                            type: string
-                            description: 'The name of the Kinesis Kafka connector. WARNING: Changing this
-                                         will cause all previously transmitted telemetry records to be
-                                         retransmitted.'
-                          base_rate:
-                            type: integer
-                            description: 'Maximum transmission rate in bytes/second (do not change
-                                         unless instructed to by customer support).'
-                          batch_size:
-                            type: integer
-                            description: 'Maximum number of records to send per batch (do not change
-                                         unless instructed to by customer support).'
-                          batch_size_bytes:
-                            type: integer
-                            description: 'Maximum number of bytes per batch (do not change unless
-                                         instructed to by customer support).'
-                          cooldown_time:
-                            type: integer
-                            description: 'Backoff time in seconds after transmission error (do not
-                                         change unless instructed to by customer support).'
-                          decrease_factor:
-                            type: number
-                            description: 'Amount to scale transmission rate after a transmission error
-                                         (do not change unless instructed to by customer support).'
-                          error_retries:
-                            type: integer
-                            description: 'Number of times to retry after a transmisstion error (do not
-                                         change unless instructed to by customer support).'
-                          error_retry_delay:
-                            type: number
-                            description: 'Time in seconds to wait before retransmitting (do not change
-                                         unless instructed to by customer support).'
-                          increase_factor:
-                            type: number
-                            description: 'Amount to scale when attempting to increase transmission
-                                         rate (do not change unless instructed to by customer support).'
-                          log_level:
-                            type: string
-                            description: 'Logging level: TRACE, DEBUG, INFO, WARN, ERROR'
-                          recovery_interval:
-                            type: integer
-                            description: 'Amount of time to wait before attempting to increase
-                                         transmission rate (do not change unless instructed to by
-                                         customer support).'
                       frontEnd:
                         type: object
                         description: 'Settings specific to front-end telemetry.'
@@ -602,6 +547,9 @@ spec:
                   enabled:
                     description: Enable extractor
                     type: boolean
+                  enableAwsMsk:
+                    description: Enable MSK stream
+                    type: boolean
                   logstash:
                     properties:
                       enabled:
@@ -656,23 +604,6 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
-              kinesis-kafka-connect:
-                properties:
-                  enabled:
-                    description: Enable the Kinesis connector
-                    type: boolean
-                  connector:
-                    properties:
-                      config:
-                        description: Kinesis connector configuration overrides
-                        type: object
-                        x-kubernetes-preserve-unknown-fields: true
-                    type: object
-                  resources:
-                    description: component resource configuration
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
               metrics-processor:
                 properties:
                   annotations:
@@ -697,6 +628,23 @@ spec:
                   serviceAccountName:
                     description: component serviceAccountName
                     type: string
+                type: object
+              kinesis-kafka-connect:
+                properties:
+                  enabled:
+                    description: Enable the Kinesis connector
+                    type: boolean
+                  connector:
+                    properties:
+                      config:
+                        description: Kinesis connector configuration overrides
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                    type: object
+                  resources:
+                    description: component resource configuration
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
                 type: object
               influxdb:
                 properties:
@@ -826,7 +774,7 @@ spec:
                     description: |-
                       true if nginx is acting as primary ingress for the appliance (typical of OVA installations),
                       as opposed to being downstream of some other ingress mechanism as in something like an
-                      OpenShift deployment
+                      OpenShift deployemnt
                     type: boolean
                   insecureHttpOnly:
                     description: |-
@@ -1608,6 +1556,12 @@ spec:
                   enabled:
                     description: Enable AWS mediation
                     type: boolean
+                  metrics:
+                    properties:
+                      enabled:
+                        description: Enable AWS metrics adapters
+                        type: boolean
+                    type: object
                 type: object
               awslambda:
                 properties:
@@ -1620,6 +1574,18 @@ spec:
                   enabled:
                     description: Enable Azure mediation
                     type: boolean
+                  billing:
+                    properties:
+                      enabled:
+                        description: Enable Azure mediation
+                        type: boolean
+                    type: object
+                  infra:
+                    properties:
+                      enabled:
+                        description: Enable Azure infra mediation
+                        type: boolean
+                    type: object
                 type: object
               baremetal:
                 properties:
@@ -1656,6 +1622,12 @@ spec:
                   enabled:
                     description: Enable GCP mediation
                     type: boolean
+                  infra:
+                    properties:
+                      enabled:
+                        description: Enable GCP infra mediation
+                        type: boolean
+                    type: object
                 type: object
               hds:
                 properties:
@@ -1691,12 +1663,6 @@ spec:
                 properties:
                   enabled:
                     description: Enable IBM PowerVM mediation
-                    type: boolean
-                type: object
-              server-power-modeler:
-                properties:
-                  enabled:
-                    description: Enable Server power modeler
                     type: boolean
                 type: object
               ibmstorage-flashsystem:
@@ -2567,6 +2533,43 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
+              server-power-modeler:
+                properties:
+                  enabled:
+                    description: Enable Server power modeler
+                    type: boolean
+                  annotations:
+                    description: component specific pod annotations list
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  env:
+                    description: component environment variable
+                    type: array
+                    items:
+                      type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  image:
+                    description: component specific image options
+                    properties:
+                      repository:
+                        description: component container registry and repository name
+                        type: string
+                      tag:
+                        description: component container tag
+                        type: string
+                      pullPolicy:
+                        description: component image pull policy
+                        type: string
+                    type: object
+                  resources:
+                    description: component resource configuration
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  serviceAccountName:
+                    description: component serviceAccountName
+                    type: string
+                type: object
+
 
               # Resources limits - Probes
               mediation-actionscript:
@@ -3385,57 +3388,7 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
-              mediation-azureinfra:
-                properties:
-                  annotations:
-                    description: component specific pod annotations list
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  env:
-                    description: component environment variable
-                    type: array
-                    items:
-                      type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  image:
-                    description: component specific image options
-                    properties:
-                      repository:
-                        description: component container registry and repository name
-                        type: string
-                      tag:
-                        description: component container tag
-                        type: string
-                      pullPolicy:
-                        description: component image pull policy
-                        type: string
-                    type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
-                  javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
-                    type: string
-                  debug:
-                    description: component debug
-                    type: boolean
-                  resources:
-                    description: component resource configuration
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  serviceAccountName:
-                    description: component serviceAccountName
-                    type: string
-                type: object
+              # enable new metrics adapter component.
               metrics-adapter-aws-cloudwatch:
                 properties:
                   annotations:
@@ -3465,6 +3418,57 @@ spec:
                         type: string
                     type: object
                     x-kubernetes-preserve-unknown-fields: true
+                  javaBaseOptions:
+                    description: java base options override
+                    type: string
+                  javaComponentOptions:
+                    description: java component options
+                    type: string
+                  javaDebugOptions:
+                    description: java debug options override
+                    type: string
+                  javaMaxRAMPercentage:
+                    description: java max RAM percentage override
+                    type: string
+                  javaOptions:
+                    description: java options override
+                    type: string
+                  debug:
+                    description: component debug
+                    type: boolean
+                  resources:
+                    description: component resource configuration
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  serviceAccountName:
+                    description: component serviceAccountName
+                    type: string
+                type: object
+              mediation-azureinfra:
+                properties:
+                  annotations:
+                    description: component specific pod annotations list
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  env:
+                    description: component environment variable
+                    type: array
+                    items:
+                      type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  image:
+                    description: component specific image options
+                    properties:
+                      repository:
+                        description: component container registry and repository name
+                        type: string
+                      tag:
+                        description: component container tag
+                        type: string
+                      pullPolicy:
+                        description: component image pull policy
+                        type: string
+                    type: object
                   javaBaseOptions:
                     description: java base options override
                     type: string
@@ -4230,9 +4234,6 @@ spec:
                             type: integer
                           krbRenewHours:
                             description: renew krb tickets after hours.
-                            type: integer
-                          connectionTimeoutSec:
-                            description: connection timeout for winrm-proxy.
                             type: integer
                   annotations:
                     description: component specific pod annotations list
@@ -5617,14 +5618,14 @@ spec:
                               log level for winrm-proxy server, eg, debug, info,
                               waring, error
                             type: string
+                          logPrefix:
+                            description: prefix for log
+                            type: string
                           serverWorker:
                             description: how many request workers running in winrm-proxy server
                             type: integer
                           krbRenewHours:
                             description: renew krb tickets after hours.
-                            type: integer
-                          connectionTimeoutSec:
-                            description: connection timeout for winrm-proxy.
                             type: integer
                   annotations:
                     description: component specific pod annotations list
@@ -6117,6 +6118,9 @@ spec:
                         type: string
                       openIdJwkSetUri:
                         description: URI for the SSO provider JWK certificate endpoint
+                        type: string
+                      trialExpirationTime:
+                        description: For SAAS_TRIAL deploymentMode, when does the trial expire, in ISO 8601 Format
                         type: string
                     type: object
                     x-kubernetes-preserve-unknown-fields: true

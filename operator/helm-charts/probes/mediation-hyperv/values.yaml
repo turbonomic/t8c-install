@@ -42,6 +42,7 @@ winrm-proxy:
     logPrefix: hyperv
     serverWorker: 4
     krbRenewHours: 5
+    connectionTimeoutSec: 240
 
 resources:
   limits:

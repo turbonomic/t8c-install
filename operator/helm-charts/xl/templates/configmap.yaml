@@ -106,6 +106,12 @@ data:
         settingStyleFile: settingSpecStyle.json
         externalApiSwaggerUri: /vmturbo/apidoc/**
         externalApiFileSystemBase: file:/swagger/
+{{- if .Values.global.telemetry.plg.enabled }}
+  {{- if (((.Values.prometheus).server).global).external_labels }}
+        tenantId: {{ .Values.prometheus.server.global.external_labels.tenant_id | default "" }}
+        ibmUniqueId: {{ .Values.prometheus.server.global.external_labels.iui | default "" }}
+  {{- end }}
+{{- end }}
       auth:
         dbSchemaName: auth
         identityGeneratorPrefix: 7
@@ -219,6 +225,14 @@ data:
             host: timescaledb
             port: {{ $dbPorts.timescale }}
 {{- end }}
+  {{- /*
+       Suspend has its own configmap, so the majority of its settings are found there. In order
+       to support IWO, the dbSchemaName needs to exist here such that it can be overridden. The
+       db provisioning scripts in the Suspend project will read this value and share it with the
+       Suspend app
+    */}}
+      suspend:
+        dbSchemaName: suspend
 {{- if .Values.properties }}
     customProperties:
 {{ toYaml .Values.properties | indent 12 }}

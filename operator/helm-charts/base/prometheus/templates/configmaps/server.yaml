@@ -415,7 +415,8 @@ data:
                   grpc_server_handled_latency_seconds_count|\
                   jvm_gc_collection_seconds_sum|\
                   jvm_memory_bytes_used|\
-                  jvm_memory_bytes_max"
+                  jvm_memory_bytes_max|\
+                  turbo_managed_workloads_count"
       {{- end }}
       kubernetes_sd_configs:
         - role: endpoints

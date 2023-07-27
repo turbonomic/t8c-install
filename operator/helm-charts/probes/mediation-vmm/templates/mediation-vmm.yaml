@@ -98,6 +98,8 @@ spec:
             value: {{ index .Values "winrm-proxy" "env" "serverWorker" | quote}}
           - name: KRB_RENEW_HOURS
             value: {{ index .Values "winrm-proxy" "env" "krbRenewHours" | quote }}
+          - name: CONNECTION_TIMEOUT_SEC
+            value: {{ index .Values "winrm-proxy" "env" "connectionTimeoutSec" | quote }}
 {{- end }}
 
 {{- if .Values.global }}

@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 42.33
+VERSION ?= 42.36
 
 # TELEMETRY_SECRET is needed for the operand to send telemetry data to some destination. It's an
 # opaque token specifying both where to send telemetry to and how to authenticate with this
@@ -73,7 +73,7 @@ undeploy: kustomize
 
 # Build the docker image
 docker-build: xl
-	docker build -t ${IMG} .
+	docker build --no-cache -t ${IMG} .
 
 # Push the docker image
 docker-push:
@@ -149,4 +149,4 @@ bundle: kustomize
 
 .PHONY: bundle-build ## Build the bundle image.
 bundle-build:
-	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
+	docker build -f bundle.Dockerfile --no-cache -t $(BUNDLE_IMG) .

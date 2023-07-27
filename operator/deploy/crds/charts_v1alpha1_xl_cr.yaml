@@ -1,3 +1,4 @@
+---
 apiVersion: charts.helm.k8s.io/v1
 kind: Xl
 metadata:
@@ -18,7 +19,7 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: icr.io/cpopen/turbonomic
-    tag: 8.9.2
+    tag: 8.9.5
     externalIP: 10.0.2.15
     externalDbIP: 10.0.2.15
     externalTimescaleDBIP: 10.0.2.15
@@ -30,7 +31,8 @@ spec:
     adminPassword: admin
     grafana.ini:
       database:
-        # Store data in sqlite3 (no persistence across restarts) by default. To persist, uncomment:
+        # Store data in sqlite3 (no persistence across restarts) by default.
+        # To persist, uncomment:
         type: postgres
         password: grafana
 
@@ -121,4 +123,6 @@ spec:
   jboss:
     enabled: false
   datadog:
+    enabled: true
+  powervm:
     enabled: true

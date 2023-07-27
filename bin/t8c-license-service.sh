@@ -20,6 +20,7 @@ version_installed=""
 thanos_url="http://prometheus-server.${turbo_namespace}:9090/api/v1/query"
 offline_install="false"
 offline_sources_folder="/opt/local/downloads"
+verbose=0
 
 function timestamp() {
 	date '+%Y-%m-%d %H:%M:%S'
@@ -119,7 +120,7 @@ done
 
 
 function print_args() {
-    echo -e "Starting the $0 script with args:"
+    echo -e "Starting the $0 script with the following arguments:"
     if [[ "${uninstall}" == "true" ]]
     then
       echo -e "\t-r  | uninstall\t\t\t: ${uninstall}"
@@ -147,6 +148,14 @@ function print_args() {
     echo ""
 }
 
+function verbose_output_command(){
+  if [ "$verbose" = "1" ]; then
+    "$@"
+  else
+    "$@" 1> /dev/null 2>&1
+  fi
+}
+
 function create_sources_folder() {
   INFO "Creating a sources folder under ${src_folder}"
   sudo mkdir -p ${src_folder}
@@ -159,23 +168,23 @@ function check_pre_req() {
     then
         if ! which docker >/dev/null
         then
-            ERROR "Pre requirement check: failed"
+            ERROR "Pre requirement check: FAILED"
             exit 2
         fi
     fi
-    INFO "Pre requirement check: ok"
+    INFO "Pre requirement check: OK"
   else
-    ERROR "Pre requirement check: failed"
+    ERROR "Pre requirement check: FAILED"
     exit 2
   fi
 }
 
 function check_ls_exists() {
-  INFO "Checking if License Service is already installed"
-  if ! kubectl get ibmlicensing --all-namespaces
+  INFO "Checking if the License Service is already installed"
+  if ! verbose_output_command kubectl get ibmlicensing --all-namespaces
   then
     version_installed=""
-    INFO "License Service doesn't seem to be installed"
+    INFO "License Service is not installed"
   else
     version_installed=$(kubectl get IBMLicensing instance --all-namespaces -o jsonpath='{.spec.version}')
     INFO "License Service seems to be installed with version ${version_installed}."
@@ -184,7 +193,7 @@ function check_ls_exists() {
 
 function create_namespace() {
   INFO "Creating licensing namespace ${licensing_namespace} and setting it as context"
-  if ! kubectl get namespace "${licensing_namespace}"
+  if ! verbose_output_command kubectl get namespace "${licensing_namespace}"
   then
     INFO "Creating namespace ${licensing_namespace}"
     if ! kubectl create namespace "${licensing_namespace}"
@@ -196,7 +205,6 @@ function create_namespace() {
   else
     INFO "Needed namespace: \"${licensing_namespace}\", already exists"
   fi
-  kubectl config set-context --current --namespace=${licensing_namespace}
 }
 
 function fetch_sources() {
@@ -306,11 +314,11 @@ function apply_yaml() {
   kubectl apply -f ${src_folder}/config/rbac/service_account.yaml
   kubectl apply -f ${src_folder}/config/rbac/role_binding.yaml
   INFO "Adding operator"
-  kubectl apply -f ${src_folder}/config/manager/manager.yaml
+  kubectl apply -f ${src_folder}/config/manager/manager.yaml -n ${licensing_namespace}
 }
 
 function create_instance() {
-  if ! kubectl get IBMLicensing instance
+  if ! verbose_output_command kubectl get IBMLicensing instance -n ${licensing_namespace}
   then
     INFO "Creating the IBM Licensing instance"
     mkdir -p ${src_folder}/config/instance
@@ -347,6 +355,7 @@ spec:
   apiSecretToken: ibm-licensing-token
   datasource: datacollector
   httpsEnable: true
+  ingressEnabled: false
   envVariable:
     PROMETHEUS_QUERY_SOURCE_ENABLED: "true"
     thanos_url: ${thanos_url}
@@ -363,7 +372,7 @@ EOF
       printf "  imagePullSecrets:\n    - my-registry-token" >> ${src_folder}/config/instance/ibmlicensings_instance.yaml
     fi
     # apply the yaml file for the instance
-    if ! kubectl apply -f ${src_folder}/config/instance/ibmlicensings_instance.yaml
+    if ! kubectl apply -f ${src_folder}/config/instance/ibmlicensings_instance.yaml -n ${licensing_namespace}
     then
       ERROR "Failed to apply IBMLicensing instance at namespace ${licensing_namespace}"
       exit 19
@@ -374,9 +383,9 @@ EOF
 }
 
 function wait_for_ready() {
-  INFO "Waiting for ibm-licensing-operator pod to become ready"
-  kubectl wait --for=condition=ready pod -l name=ibm-licensing-operator
-  INFO "Checking IBMLicensing instance status"
+  INFO "Waiting for the ibm-licensing-operator pod to be ready"
+  kubectl wait --for=condition=ready pod -l name=ibm-licensing-operator -n ${licensing_namespace}
+  INFO "Checking the ibm-licensing-service-instance status"
   retries=36
   ibmlicensing_phase=""
   until [[ ${retries} == 0 || "${ibmlicensing_phase}" == Running* ]]
@@ -387,14 +396,14 @@ function wait_for_ready() {
       sleep 30
     fi
     retries=$((retries - 1))
-    ibmlicensing_phase=$(kubectl get IBMLicensing instance -o jsonpath='{.status..phase}' 2>/dev/null)
+    ibmlicensing_phase=$(kubectl get IBMLicensing instance -o jsonpath='{.status..phase}' -n ${licensing_namespace} 2>/dev/null)
     if [ "${ibmlicensing_phase}" == "Failed" ]
     then
       ERROR "Problem during installation of IBMLicensing, try running script again when fixed."
       exit 20
     elif [[ "${ibmlicensing_phase}" == "" ]]
     then
-      INFO "Waiting for IBMLicensing pod to appear"
+      INFO "Waiting for the ibm-licensing-service-instance pod to be ready"
     else
       INFO "IBMLicensing Pod phase: ${ibmlicensing_phase}"
     fi
@@ -480,9 +489,8 @@ function main() {
     fi
       wait_for_ready
       show_token
-      INFO "IBM License Service should be running."
+      INFO "IBM License Service is ready."
   fi
-  INFO "Script terminated."
 }
 
 # Start

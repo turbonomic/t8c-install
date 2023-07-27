@@ -291,10 +291,6 @@ alertmanager:
   ## Security context to be added to alertmanager pods
   ##
   securityContext:
-    runAsUser: 65534
-    runAsNonRoot: true
-    runAsGroup: 65534
-    fsGroup: 65534
 
   service:
     annotations: {}
@@ -334,7 +330,7 @@ configmapReload:
     ##
     image:
       repository: icr.io/cpopen/turbonomic/configmap-reload
-      tag: v0.8.0.3
+      tag: v0.8.0.4
       pullPolicy: IfNotPresent
 
     ## Additional configmap-reload container arguments
@@ -372,7 +368,7 @@ configmapReload:
     ##
     image:
       repository: icr.io/cpopen/turbonomic/configmap-reload
-      tag: v0.8.0.3
+      tag: v0.8.0.4
       pullPolicy: IfNotPresent
 
     ## Additional configmap-reload container arguments
@@ -421,6 +417,9 @@ kube-state-metrics:
     # (if useExistingRole is set this name is used as ClusterRole or Role to bind to)
     useClusterRole: false
 
+  securityContext:
+    enabled: false # Don't force UID and GID so that pod can run on OpenShift.
+
   # Comma-separated list of metrics to be exposed.
   # This list comprises exact metric names and/or regex patterns.
   metricAllowlist: [kube_pod_status_phase, kube_service_status_load_balancer_ingress]
@@ -463,7 +462,7 @@ nodeExporter:
   ##
   image:
     repository: icr.io/cpopen/turbonomic/node-exporter
-    tag: v1.5.0.1
+    tag: v1.6.0.1
     pullPolicy: IfNotPresent
 
   #nameOverride: ""
@@ -629,7 +628,7 @@ server:
       # Image name will always be "prometheus-kafka-adapter"
       # This is odd -- double check this
       repository: icr.io/cpopen/turbonomic
-      tag: 1.8.0.3
+      tag: 1.8.0.4
       pullPolicy: IfNotPresent
     # Additional arguments to use when starting the prometheus-kafka-adapter process.
     args: []
@@ -669,7 +668,7 @@ server:
   ##
   image:
     repository: icr.io/cpopen/turbonomic/prometheus
-    tag: v2.42.0.2
+    tag: v2.45.0
     pullPolicy: IfNotPresent
 
   #nameOverride: ""
@@ -1021,10 +1020,6 @@ server:
   ## Security context to be added to server pods
   ##
   securityContext:
-    runAsUser: 65534
-    runAsNonRoot: true
-    runAsGroup: 65534
-    fsGroup: 65534
 
   service:
     annotations: {}
@@ -1188,8 +1183,6 @@ pushgateway:
   ## Security context to be added to push-gateway pods
   ##
   securityContext:
-    runAsUser: 65534
-    runAsNonRoot: true
 
   service:
     annotations:

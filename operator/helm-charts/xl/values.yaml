@@ -99,7 +99,7 @@ global:
     shareTelemetry: USER_CHOICE
     # Whether to enable automatic transmission of telemetry (enables the telemetry Kinesis connector).
     automatic:
-      enabled: false
+      enabled: true
       # Kinesis connector instance name
       connector_name: online-telemetry
     # Intentionally opaque so that we can keep the same configuration parameter as we change
@@ -140,7 +140,8 @@ global:
                         turbo_actions|\
                         turbo_suspendable_entities|\
                         turbo_schedule_overrides|\
-                        turbo_timespan_schedules"
+                        turbo_timespan_schedules|\
+                        turbo_managed_workloads_count"
     # Specifies which labels will be removed by the telemetry scrubber. This is a
     # space-delimited list.
     scrubbedLabels: "customer_id customer_domain"
@@ -200,7 +201,7 @@ promtail:
 fluent-bit:
   enabled: false
 prometheus:
-  enabled: false
+  enabled: true
 prometheus-mysql-exporter:
   enabled: false
 grafana:

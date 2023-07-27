@@ -42,6 +42,7 @@ winrm-proxy:
     logPrefix: vmm
     serverWorker: 4
     krbRenewHours: 5
+    connectionTimeoutSec: 240
 
 resources:
   limits:

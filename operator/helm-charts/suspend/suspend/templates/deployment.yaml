@@ -89,6 +89,12 @@ spec:
                 secretKeyRef:
                   name: redis
                   key: redis-password
+{{- if .Values.global }}
+  {{- if or .Values.dbSecretName .Values.global.dbSecretName }}
+            - name: secretsYamlPath
+              value: /vault/db/secrets/db-creds
+  {{- end }}
+{{- end }}
           ports:
             - name: http
               containerPort: 9093
@@ -115,9 +121,6 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-          - mountPath: /vault/redis/secrets
-            name: redis-creds
-            readOnly: true
 {{- if .Values.global }}
   {{- if or .Values.dbSecretName .Values.global.dbSecretName }}
           - mountPath: /vault/db/secrets
@@ -138,10 +141,6 @@ spec:
             name: turbo-volume
             readOnly: true
       volumes:
-        - name: redis-creds
-          secret:
-            secretName: xl-release-redis
-            optional: true
 {{- if .Values.global }}
   {{- if .Values.global.enableExternalSecrets }}
     {{/* Kubernetes secrets are enabled for auth. Attach one secret for the directory of secret files. */}}

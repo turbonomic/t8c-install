@@ -3,6 +3,31 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.36
+1. Granted permissions to client-network-service to list Services and OpenShift Routes.
+2. Update prometheus-mysqld-exporter image to v0.14.0.4. Fix CVE-2023-29404
+3. update prometheus/node_exporter image to v1.6.0.1. Fix for CVE-2023-29404
+4. Added connection timeout setting winrm-proxy. 
+5. Added additional configuration to embed tenantId and ibmUniqueId into api component properties.
+
+42.35
+1. Enable online telemetry by default
+2. Added custom database name configuration support for suspend
+3. Removed unused database configuration parameters for suspend
+4. Update prometheus to use offical Docker image to address CVE-2023-29404 and others.
+5. Update prometheus kafka adapter image to v1.8.0.4, fix for CVE-2023-29404
+6. Update configmap-reload image to v0.8.0.4, fix for CVE-2023-29404. 
+
+42.34
+1. Removed redundant Redis secret mount path for suspend
+2. Added DB secret mount path environment variable for suspend
+3. updated clustermgr label
+4. update prometheus/node_exporter to v1.6.0, fix for CVE-2023-24538
+5. Update prometheus-mysqld-exporter image to v0.14.0.3. Fix CVE-2023-24540
+6. Fixed ensuring that the operator now properly respects the AWS Prometheus parameters
+7. Removed default security context for Prometheus so that it can run on OpenShift.
+8. Added new metric to prometheus: turbo_managed_workloads_count
+
 42.33
 1. Changes to configure workerConnections and workerProcesses parameters from CR for nginx
 2. Changed default Prometheus component(s) configuration to require less permissions and resources.

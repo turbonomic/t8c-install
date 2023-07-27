@@ -183,7 +183,7 @@ Parameter | Description | Default
 `configmapReload.prometheus.enabled` | If false, the configmap-reload container for Prometheus will not be deployed | `true`
 `configmapReload.prometheus.name` | configmap-reload container name | `configmap-reload`
 `configmapReload.prometheus.image.repository` | configmap-reload container image repository | `jimmidyson/configmap-reload`
-`configmapReload.prometheus.image.tag` | configmap-reload container image tag | `v0.8.0.3`
+`configmapReload.prometheus.image.tag` | configmap-reload container image tag | `v0.8.0.4`
 `configmapReload.prometheus.image.pullPolicy` | configmap-reload container image pull policy | `IfNotPresent`
 `configmapReload.prometheus.extraArgs` | Additional configmap-reload container arguments | `{}`
 `configmapReload.prometheus.extraVolumeDirs` | Additional configmap-reload volume directories | `{}`
@@ -209,7 +209,7 @@ Parameter | Description | Default
 `nodeExporter.enabled` | If true, create node-exporter | `true`
 `nodeExporter.name` | node-exporter container name | `node-exporter`
 `nodeExporter.image.repository` | node-exporter container image repository| `prom/node-exporter`
-`nodeExporter.image.tag` | node-exporter container image tag | `v1.5.0.1`
+`nodeExporter.image.tag` | node-exporter container image tag | `v1.6.0.1`
 `nodeExporter.image.pullPolicy` | node-exporter container image pull policy | `IfNotPresent`
 `nodeExporter.extraArgs` | Additional node-exporter container arguments | `{}`
 `nodeExporter.extraInitContainers` | Init containers to launch alongside the node-exporter | `[]`
