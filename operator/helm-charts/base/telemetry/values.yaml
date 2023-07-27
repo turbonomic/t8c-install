@@ -8,3 +8,11 @@ config:
   connector_name: telemetry-connector
   batch_size: 500
   batch_size_bytes: 3670016
+  base_rate: 5000000
+  cooldown_time: 5
+  decrease_factor: 1.0
+  increase_factor: 1.0
+  recovery_interval: 10
+  error_retries: 20
+  error_retry_delay: 30
+  log_level: INFO

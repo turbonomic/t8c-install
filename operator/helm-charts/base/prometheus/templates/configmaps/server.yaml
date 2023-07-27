@@ -28,6 +28,18 @@ data:
         queue_config:
           max_backoff: 2h
       {{- end }}
+      {{- if and $root.Values.global.telemetry.enabled $root.Values.global.telemetry.plg.enabled }}
+      - name: "aws-prometheus"
+        url: {{ ($root.Values.global.telemetry.secret | b64dec | fromYaml).plg_prometheus_url }}
+        sigv4:
+          region: {{ ($root.Values.global.telemetry.secret | b64dec | fromYaml).kinesis_region }}
+        write_relabel_configs:
+          - source_labels: [ '__name__' ]
+            regex: 'turbo_api_calls_total|turbo_targets|turbo_actions|turbo_plans_total|turbo_policies'
+            action: 'keep'
+        queue_config:
+{{ toYaml $root.Values.global.telemetry.plg.queue_config | indent 10 }}
+      {{- end }}
       {{- if $root.Values.server.remoteWrite }}
 {{ $root.Values.server.remoteWrite | toYaml | indent 4 }}
       {{- end }}
@@ -52,8 +64,8 @@ data:
 {{ toYaml $value | default "{}" | indent 4 }}
 {{- end }}
 {{- if eq $key "prometheus.yml" -}}
-{{- if $root.Values.extraScrapeConfigs }}
-{{ tpl $root.Values.extraScrapeConfigs $root | indent 4 }}
+{{- if not $value.scrape_configs }}
+    scrape_configs:
 {{- end -}}
 {{- if $root.Values.global.telemetry.enabled }}
     - job_name: telemetry
@@ -62,8 +74,7 @@ data:
       kubernetes_sd_configs:
         - role: endpoints
           namespaces:
-            names:
-              - {{ $root.Release.Namespace }}
+            own_namespace: true
       relabel_configs:
         - action: replace
           source_labels:
@@ -78,6 +89,12 @@ data:
           source_labels:
             - __name__
           regex: {{ $root.Values.global.telemetry.metricsWhiteList }}
+{{- end }}
+{{- if $root.Values.server.outOfTheBoxScrapeConfigs.prometheus.enabled }}
+    - job_name: prometheus
+      static_configs:
+        - targets:
+          - localhost:9090
 {{- end }}
 {{- if $root.Values.server.outOfTheBoxScrapeConfigs.kubernetes.enabled }}
       # A scrape configuration for running Prometheus on a Kubernetes cluster.
@@ -382,8 +399,31 @@ data:
       # Scrape config for xl core components
       #
     - job_name: 'xl'
+      {{- if $root.Values.server.outOfTheBoxScrapeConfigs.xl.lightweight }}
+      scrape_interval: 5m
+      metric_relabel_configs:
+        - action: keep
+          source_labels:
+            - __name__
+          regex: "turbo_api_call_latency_seconds_sum|\
+                  turbo_api_call_latency_seconds_count|\
+                  plan_run_time_seconds_sum|\
+                  plan_run_time_seconds_count|\
+                  turbo_api_calls_total|\
+                  grpc_server_handled_total|\
+                  grpc_server_handled_latency_seconds_sum|\
+                  grpc_server_handled_latency_seconds_count|\
+                  jvm_gc_collection_seconds_sum|\
+                  jvm_memory_bytes_used|\
+                  jvm_memory_bytes_max|\
+                  turbo_managed_workloads_count"
+      {{- end }}
       kubernetes_sd_configs:
         - role: endpoints
+          {{- if not $root.Values.server.useClusterRole }}
+          namespaces:
+            own_namespace: true
+          {{- end }}
       relabel_configs:
         - action: keep
           source_labels:
@@ -414,9 +454,25 @@ data:
       # Scrape config for xl mediation components
       #
     - job_name: 'xl-mediation'
+      {{- if $root.Values.server.outOfTheBoxScrapeConfigs.xl.lightweight }}
+      scrape_interval: 5m
+      metric_relabel_configs:
+        - action: keep
+          source_labels:
+            - __name__
+          regex: "jvm_gc_collection_seconds_sum|\
+                  jvm_memory_bytes_used|\
+                  jvm_memory_bytes_max|\
+                  mediation_ongoing_full_discoveries"
+      {{- else }}
       scrape_interval: 20s
+      {{- end }}
       kubernetes_sd_configs:
         - role: endpoints
+          {{- if not $root.Values.server.useClusterRole }}
+          namespaces:
+            own_namespace: true
+          {{- end }}
       relabel_configs:
         - source_labels:
             - __meta_kubernetes_service_name
@@ -455,8 +511,26 @@ data:
       # Scrape config for XL mysql.
       #
     - job_name: 'xl-mysql'
+      {{- if $root.Values.server.outOfTheBoxScrapeConfigs.xl.lightweight }}
+      scrape_interval: 5m
+      metric_relabel_configs:
+        - action: keep
+          source_labels:
+            - __name__
+          regex: "mysql_global_status_innodb_buffer_pool_bytes_data|\
+                  mysql_global_variables_innodb_buffer_pool_size|\
+                  mysql_global_status_innodb_buffer_pool_reads|\
+                  mysql_global_status_innodb_buffer_pool_read_requests|\
+                  mysql_global_status_threads_connected|\
+                  mysql_global_variables_max_connections|\
+                  mysql_global_status_commands_total"
+      {{- end }}
       kubernetes_sd_configs:
         - role: pod
+          {{- if not $root.Values.server.useClusterRole }}
+          namespaces:
+            own_namespace: true
+          {{- end }}
       relabel_configs:
         - source_labels:
             - __meta_kubernetes_pod_label_app
@@ -489,6 +563,36 @@ data:
         - source_labels:
             - __meta_kubernetes_namespace
           action: replace
+          target_label: namespace
+
+      # Scrape config for kube-state-metrics used by health checks
+      #
+    - job_name: 'xl-health-checks'
+      scrape_interval: 1m
+      kubernetes_sd_configs:
+        - role: endpoints
+          namespaces:
+            own_namespace: true
+      relabel_configs:
+        - action: keep
+          source_labels:
+            - __meta_kubernetes_service_name
+          regex: {{ (index $root.Values "kube-state-metrics").fullnameOverride }}
+        - action: keep
+          source_labels:
+            - __meta_kubernetes_endpoint_port_name
+          regex: http
+        - action: replace
+          source_labels:
+            - __meta_kubernetes_service_name
+          target_label: service
+        - action: replace
+          source_labels:
+            - __meta_kubernetes_endpoint_node_name
+          target_label: node
+        - action: replace
+          source_labels:
+            - __meta_kubernetes_namespace
           target_label: namespace
 {{- end }}
 {{- if or ($root.Values.alertmanager.enabled) ($root.Values.server.alertmanagers) }}

@@ -1,7 +1,11 @@
 #!/bin/bash
-#Upgrade pre-check script - Jan. 10, 2023
+#Upgrade pre-check script - Jul. 13, 2023
 #Author: CS/JS
 echo " "
+#MariaDB Version Check - latest supported version
+MDBV="10.5.20"
+
+#Color changes for output
 RED=`tput setaf 1`
 WHITE=`tput setaf 7`
 GREEN=`tput setaf 2`
@@ -9,6 +13,17 @@ BLUE=`tput setaf 4`
 YELLOW=`tput setaf 3`
 NC=`tput sgr0` # No Color
 
+#Variables
+DFAIL=0
+EFAIL=0
+MFAIL=0
+MVFAIL=0
+KFAIL=0
+CFAIL=0
+RFAIL=0
+TFAIL=0
+PFAIL=0
+FAILED=0
 MAX_TIME=10
 VERBOSE=0
 ECC=0 # Endpoints connectivity checks details
@@ -21,7 +36,7 @@ trap 'tput sgr0' EXIT
 usage () {
    echo ""
    echo "Upgrade Precheck Script"
-   echo "v2.34"
+   echo "v2.35"
    echo ""
    echo "Usage:"
    echo ""
@@ -42,6 +57,7 @@ check_space(){
     echo "${WHITE}****************************"
     echo "Checking for free disk space..."
     VARSPACE=$(df | egrep -v "overlay|shm")
+    VARSPACEGB=$(df -h|egrep -v "overlay|shm"|grep /var$ | awk {'print $4'})
     if [[ ${VERBOSE} = 1 ]]; then
         df -h | egrep -v "overlay|shm"
         echo " "
@@ -54,7 +70,7 @@ check_space(){
         SUMMARY+=( "${WHITE}Disk space check | ${GREEN}PASSED" )
     else
         if [[ ${VERBOSE} = 1 ]]; then
-            echo "${RED}/var has less than 12GB free - if needed remove un-used docker images to clear enough space."
+            echo "${RED}/var has less than 12.5GB free - if needed remove un-used docker images to clear enough space."
             echo "${WHITE}***************************"
             echo " "
             echo "${WHITE}Reclaimable space list below - By deleting un-used docker images${WHITE}"
@@ -62,18 +78,20 @@ check_space(){
                 docker_command=`which crictl`
                 echo "${WHITE}To reclaim space from un-used images above you need to confirm the previous version of IBM Turbonomic images installed:"
                 echo "Run the command ${YELLOW}'sudo crictl images | grep turbonomic/auth'${WHITE} to find the previous versions."
-                echo "Run the command ${YELLOW}'for i in \`sudo crictl images | grep 8.7.5 | awk '{print \$3}'\`; do sudo crictl rmi \$i;done'${WHITE} replacing ${YELLOW}'8.7.5'${YELLOW} with the old previous versions of the images installed to be removed to clear up the required disk space."
+                echo "Run the command ${YELLOW}'for i in \`sudo crictl images | grep 8.8.1 | awk '{print \$3}'\`; do sudo crictl rmi \$i;done'${WHITE} replacing ${YELLOW}'8.8.1'${YELLOW} with the old previous versions of the images installed to be removed to clear up the required disk space."
                 echo "${WHITE}***************************"
             else
                 docker_command=`which docker`
                 sudo docker system df
                 echo "${WHITE}To reclaim space from un-used docker images above you need to confirm the previous version of IBM Turbonomic images installed:"
                 echo "Run the command ${YELLOW}'sudo docker images | grep turbonomic/auth'${WHITE} to find the previous versions."
-                echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 8.3.0 | awk '{print \$3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'8.3.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space."
+                echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 8.8.1 | awk '{print \$3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'8.8.1'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space."
                 echo "${WHITE}***************************"
             fi
         fi
         echo "${RED}Disk space checks FAILED"
+        let "FAILED=FAILED+1"
+        DFAIL=1
         SUMMARY+=( "${WHITE}Disk space check | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -126,6 +144,8 @@ check_internet(){
         SUMMARY+=( "${WHITE}Endpoints connectivity checks | ${GREEN}PASSED" )
     else
         echo "${RED}Endpoints connectivity checks FAILED"
+        let "FAILED=FAILED+1"
+        EFAIL=1
         SUMMARY+=( "${WHITE}Endpoints connectivity checks | ${RED}FAILED" )
         if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
             echo "${WHITE}List of failing endpoints:"
@@ -147,19 +167,22 @@ check_database(){
         active)
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${GREEN}MariaDB service is running."
+                    echo " "
                     echo "${WHITE}Checking MariaDB version"
                 fi
                 MVERSION=$(systemctl list-units --all -t service --full --no-legend "mariadb.service" | awk {'print $6'})
-                # Compare version (if 10.5.20 is the output, that means the version is either equals or above this)
-                VERSION_COMPARE=$(echo -e "10.5.20\n${MVERSION}" | sort -V | head -n1)
-                if [[ ${VERSION_COMPARE} = "10.5.20" ]]; then
+                # Compare version (if $MDBV variable value is the output, that means the version is either equals or above this)
+                VERSION_COMPARE=$(echo -e "${MDBV}\n${MVERSION}" | sort -V | head -n1)
+                if [[ ${VERSION_COMPARE} = ${MDBV} ]]; then
                     echo "${GREEN}MariaDB checks PASSED"
                     SUMMARY+=( "${WHITE}MariaDB checks | ${GREEN}PASSED" )
                 else                    
                     if [[ ${VERBOSE} = 1 ]]; then
-                        echo "${RED}The version of MariaDB is below version 10.5.20 you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
+                        echo "${RED}The version of MariaDB is below version ${MDBV} you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
                     fi
                     echo "${RED}MariaDB version check FAILED"
+                    let "FAILED=FAILED+1"
+                    MVFAIL=1
                     SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
                 fi
                 ;;
@@ -175,6 +198,8 @@ check_database(){
                     echo "${RED}MariaDB service is not running....please resolve before upgrading."
                 fi
                 echo "${RED}MariaDB service check FAILED"
+                let "FAILED=FAILED+1"
+                MFAIL=1
                 SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
                 ;;
     esac
@@ -196,6 +221,8 @@ check_kubernetes_service(){
             echo "${RED}Kubernetes service is not running. Please resolve before upgrading."
         fi
         echo "${RED}Kubernetes service checks FAILED"
+        let "FAILED=FAILED+1"
+        KFAIL=1
         SUMMARY+=( "${WHITE}Kubernetes service checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -216,6 +243,12 @@ check_kubernetes_certs(){
     # As the command works, let's get the version
     #kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
     kubeVersion=$(/usr/local/bin/kubectl version --output=yaml | grep -m1 gitVersion | awk {'print $2'} | awk -F. '{print $2}')
+    kubeCVersion=$(/usr/local/bin/kubectl version --output=yaml | grep clientVersion -F5 | grep gitVersion | awk {'print $2'})
+    kubeSVersion=$(/usr/local/bin/kubectl version --output=yaml | grep serverVersion -F5 | grep gitVersion | awk {'print $2'})
+    echo " "
+    echo "Kubernetes Client Version installed is: $kubeCVersion"
+    echo "Kubernetes Server Version installed is: $kubeSVersion"
+    echo " "
         if [[ $kubeVersion -ge 20 ]]; then
             CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
             if [[ ${VERBOSE} = 1 ]]; then
@@ -287,8 +320,13 @@ check_kubernetes_certs(){
     if [[ ${#EXPIRED_CERTS[@]} = 0 && ${#ERRORS[@]} = 0 ]]; then
         echo "${GREEN}Certificate checks PASSED"
         SUMMARY+=( "${WHITE}Certificate checks | ${GREEN}PASSED" )
+        if [[ ${KFAIL} = 1 ]]; then
+           echo "${RED}Kubernetes service (kubelet) failed, could be related to expired certificates..."
+        fi
     else
         echo "${RED}Certificate checks FAILED"
+        let "FAILED=FAILED+1"
+        CFAIL=1
         SUMMARY+=( "${WHITE}Certificate checks | ${RED}FAILED" )
         if [[ ${VERBOSE} = 1 ]]; then
             if [[ ${#EXPIRED_CERTS[@]} != 0 ]]; then # in that case kubectl command worked but certificates are expired
@@ -370,6 +408,8 @@ check_root_password(){
         SUMMARY+=( "${WHITE}Root account checks | ${GREEN}PASSED" )
     else
         echo "${RED}Root account checks FAILED"
+        let "FAILED=FAILED+1"
+        RFAIL=1
         SUMMARY+=( "${WHITE}Root account checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -443,6 +483,8 @@ check_time_and_date(){
         SUMMARY+=( "${WHITE}Time and date settings checks | ${GREEN}PASSED" )
     else
         echo "${RED}Time and date settings checks FAILED"
+        let "FAILED=FAILED+1"
+        TFAIL=1
         SUMMARY+=( "${WHITE}Time and date settings checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -480,6 +522,8 @@ check_turbonomic_pods(){
                     printf '%s\n' "${FAILING_PODS[@]}"
                 fi
                 echo "${RED}IBM Turbonomic pods checks FAILED"
+                let "FAILED=FAILED+1"
+                PFAIL=1
                 SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
             fi
         else # kubectl command failed - cluster is messed up?
@@ -487,6 +531,8 @@ check_turbonomic_pods(){
                 echo "${RED}Kubectl command is failing. Please check the status of your Kubernetes cluster."
             fi
             echo "${RED}IBM Turbonomic pods checks FAILED"
+            let "FAILED=FAILED+1"
+            PFAIL=1
             SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
         fi
     else
@@ -527,6 +573,8 @@ check_turbonomic_pods(){
                     done
                 fi
                 echo "${RED}IBM Turbonomic pods checks FAILED"
+                let "FAILED=FAILED+1"
+                PFAIL=1
                 SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
             fi
         else # kubectl command failed - cluster is messed up?
@@ -534,6 +582,8 @@ check_turbonomic_pods(){
                 echo "${RED}Kubectl command is failing. Please check the status of your Kubernetes cluster."
             fi
             echo "${RED}IBM Turbonomic pods checks FAILED"
+            let "FAILED=FAILED+1"
+            PFAIL=1
             SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
         fi
     fi
@@ -577,7 +627,7 @@ do
          ;;
    esac
 done
-echo "Starting Upgrade Pre-check..."
+echo "--Starting Upgrade Pre-check..."
 echo " "
 check_space
 echo " "
@@ -611,10 +661,42 @@ if [[ ${SUMMARY_TABLE} = 1 ]]; then
     printf "%s\n" "${WHITE}-------------------------------------------"
 fi
 echo " "
-if [[ ${VERBOSE} = 1 ]]; then
-    echo "${WHITE}Please review and resolve any ${RED}FAILED ${WHITE}issues above before proceeding with the upgrade, if you cannot resolve **please contact IBM Turbonomic support**"
+if [[ ${FAILED} = 0 ]]; then
+   echo "${WHITE}All tests ${GREEN}PASSED${WHITE} you can proceed with upgrade!"
 else
-    echo "${WHITE}Please review and resolve any ${RED}FAILED ${WHITE}issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact IBM Turbonomic support**"
+   echo "${RED}**${WHITE}You have ${RED}${FAILED} FAILED check(s)${WHITE} that should be resolved before upgrading, if you cannot resolve **please contact IBM Turbonomic support${RED}**"
+   echo "${RED}**${WHITE}List of ${RED}FAILED${WHITE} items to resolve:"
+   if [[ ${DFAIL} = 1 ]]; then
+      echo "${RED}Disk space check for /var failed as it only has $VARSPACEGB free and needs more free space"
+   fi
+   if [[ ${EFAIL} = 1 ]]; then
+      echo "${RED}Endpoint check failed for online upgrades"
+   fi
+   if [[ ${MVFAIL} = 1 ]]; then
+      echo "${RED}MariaDB version: $MVERSION check failed, should be upgraded to version: ${MDBV}"
+   fi
+   if [[ ${MFAIL} = 1 ]]; then
+      echo "${RED}MariaDB service check failed"
+   fi
+   if [[ ${KFAIL} = 1 ]]; then
+      echo "${RED}Kubernetes (kubelet) service check failed, could be related to expired certificates"
+   fi
+   if [[ ${CFAIL} = 1 ]]; then
+      echo "${RED}Certificate check failed"
+   fi
+   if [[ ${RFAIL} = 1 ]]; then
+      echo "${RED}Root account check failed"
+   fi
+   if [[ ${TFAIL} = 1 ]]; then
+      echo "${RED}Time and date check failed"
+   fi
+   if [[ ${PFAIL} = 1 ]]; then
+      echo "${RED}Turbonomic pod status check failed"
+   fi
+fi
+if [[ ${VERBOSE} = 0 ]]; then
+    echo " "
+    echo "${WHITE}If you need more details for any of the checks, re-run the script with the -v switch for verbose mode"
 fi
 echo " "
-echo "End of Upgrade Pre-Check"
+echo "${WHITE}--End of Upgrade Pre-Check--"

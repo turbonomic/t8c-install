@@ -35,6 +35,15 @@ env:
   - name: clustermgr_port
     value: "8080"
 
+winrm-proxy:
+  enabled: false
+  env:
+    logLevel: info
+    logPrefix: vmm
+    serverWorker: 4
+    krbRenewHours: 5
+    connectionTimeoutSec: 240
+
 resources:
   limits:
     memory: 32Gi

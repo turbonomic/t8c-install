@@ -20,6 +20,8 @@ spec:
     port: 8000
   {{- end -}}
 {{- end }}
+  - name: grpc-metrics-adapter-aws-cloudwatch
+    port: 9001
   selector:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}

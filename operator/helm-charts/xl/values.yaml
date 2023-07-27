@@ -95,9 +95,11 @@ global:
     # Kafka topic names. WARNING: Do not change these without making matching changes in the clustermgr.
     kafkaTopic: telemetry
     scrubbedKafkaTopic: telemetry-scrubbed
+    # Telemetry sharing modes: USER_CHOICE, FORCE_ON, FORCE_OFF
+    shareTelemetry: USER_CHOICE
     # Whether to enable automatic transmission of telemetry (enables the telemetry Kinesis connector).
     automatic:
-      enabled: false
+      enabled: true
       # Kinesis connector instance name
       connector_name: online-telemetry
     # Intentionally opaque so that we can keep the same configuration parameter as we change
@@ -138,7 +140,8 @@ global:
                         turbo_actions|\
                         turbo_suspendable_entities|\
                         turbo_schedule_overrides|\
-                        turbo_timespan_schedules"
+                        turbo_timespan_schedules|\
+                        turbo_managed_workloads_count"
     # Specifies which labels will be removed by the telemetry scrubber. This is a
     # space-delimited list.
     scrubbedLabels: "customer_id customer_domain"
@@ -146,7 +149,13 @@ global:
     # Front End Telemetry Adaptor will not collect data until user opts-in from UI
     frontEnd:
       enabled: true
-
+    # disable plg by default
+    plg:
+      enabled: false
+      queue_config:
+        max_samples_per_send: 1000
+        max_shards: 200
+        capacity: 2500
 nginxingress:
   enabled: true
 openshiftingress:
@@ -183,7 +192,7 @@ suspend:
   enabled: true
 
 server-power-modeler:
-  enabled: false
+  enabled: true
 
 loki:
   enabled: false
@@ -192,7 +201,7 @@ promtail:
 fluent-bit:
   enabled: false
 prometheus:
-  enabled: false
+  enabled: true
 prometheus-mysql-exporter:
   enabled: false
 grafana:

@@ -71,4 +71,6 @@ spec:
             path: "worker.properties"
           - key: "sink.properties"
             path: "sink.properties"
+          - key: "connect-log4j.properties"
+            path: "connect-log4j.properties"
 {{- end }}

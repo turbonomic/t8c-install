@@ -21,14 +21,14 @@ env:
     value: nginx
   - name: instance_id
     value: nginx-1
-  - name: WORKER_CONNECTIONS
-    value: "512"
-  - name: WORKER_PROCESSES
-    value: "2"
 
 httpsRedirect: true
 nginxIsPrimaryIngress: true
 insecureHttpOnly: false
+
+# worker configurations
+workerConnections: 512
+workerProcesses: 2
 
 resources: {}
 

@@ -3,6 +3,53 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.36
+1. Granted permissions to client-network-service to list Services and OpenShift Routes.
+2. Update prometheus-mysqld-exporter image to v0.14.0.4. Fix CVE-2023-29404
+3. update prometheus/node_exporter image to v1.6.0.1. Fix for CVE-2023-29404
+4. Added connection timeout setting winrm-proxy. 
+5. Added additional configuration to embed tenantId and ibmUniqueId into api component properties.
+
+42.35
+1. Enable online telemetry by default
+2. Added custom database name configuration support for suspend
+3. Removed unused database configuration parameters for suspend
+4. Update prometheus to use offical Docker image to address CVE-2023-29404 and others.
+5. Update prometheus kafka adapter image to v1.8.0.4, fix for CVE-2023-29404
+6. Update configmap-reload image to v0.8.0.4, fix for CVE-2023-29404. 
+
+42.34
+1. Removed redundant Redis secret mount path for suspend
+2. Added DB secret mount path environment variable for suspend
+3. updated clustermgr label
+4. update prometheus/node_exporter to v1.6.0, fix for CVE-2023-24538
+5. Update prometheus-mysqld-exporter image to v0.14.0.3. Fix CVE-2023-24540
+6. Fixed ensuring that the operator now properly respects the AWS Prometheus parameters
+7. Removed default security context for Prometheus so that it can run on OpenShift.
+8. Added new metric to prometheus: turbo_managed_workloads_count
+
+42.33
+1. Changes to configure workerConnections and workerProcesses parameters from CR for nginx
+2. Changed default Prometheus component(s) configuration to require less permissions and resources.
+3. Added additional configuration options for Prometheus component(s).
+4. Add support for defining external labels.
+5. Fix CVE-2023-24540 in configmap-reload
+6. Enable server-power-modeler by default.
+7. Update prometheus kafka adapter image to v1.8.0.3, fix for CVE-2023-24540
+8. Allow specification of security context in prometheus.server CR file section.
+
+42.32
+1. Add properties in mediation-hyperv and mediation-vmm pods to support proxy mode.
+2. Add policy evaluator config for suspend service
+3. Allow overriding sharing telemetry setting via shareTelemetry setting.
+4. Fix handling of nonstandard external DB ports (for `db`, `postgres` and `timescaledb` services)
+5. Add group discoverer engine config for suspend service
+
+42.31
+1. Update prometheus image to v2.42.0.2
+2. Update prometheus kafka adapter image to v1.8.0.2
+3. Update configmap-reload to v0.8.0.2 (change Go version to 1.20.3)
+
 42.30
 1. Give metrics-processor service access to topology-processor's persistent volume
 2. Updated timescaledb image to version 2.10.2.

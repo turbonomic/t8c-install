@@ -37,10 +37,10 @@ The command removes all the Kubernetes components associated with the chart and 
 The following table lists the configurable parameters of the mysql exporter chart and their default values.
 
 | Parameter                              | Description                                         | Default                            |
-| -------------------------------------- | --------------------------------------------------- | ---------------------------------- |
+| -------------------------------------- | --------------------------------------------------- |------------------------------------|
 | `replicaCount`                         | Amount of pods for the deployment                   | `1`                                |
 | `image.repository`                     | Image repository                                    | `prom/mysqld-exporter`             |
-| `image.tag`                            | Image tag                                           | `v0.14.0.2`                        |
+| `image.tag`                            | Image tag                                           | `v0.14.0.4`                        |
 | `image.pullPolicy`                     | Image pull policy                                   | `IfNotPresent`                     |
 | `service.name`                         | Service name                                        | `mysql-exporter`                   |
 | `service.type`                         | Service type                                        | `ClusterIP`                        |

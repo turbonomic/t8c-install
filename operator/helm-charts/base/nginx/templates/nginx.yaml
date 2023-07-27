@@ -55,6 +55,10 @@ spec:
           value: hydra-public.{{ .Release.Namespace }}.svc.cluster.local
         - name: CLIENT_NETWORK
           value: client-network.{{ .Release.Namespace }}.svc.cluster.local
+        - name: WORKER_CONNECTIONS
+          value: {{ .Values.workerConnections | quote }}
+        - name: WORKER_PROCESSES
+          value: {{ .Values.workerProcesses | quote }}
 {{ toYaml .Values.env | indent 8 }}
 {{- if .Values.global }}
   {{- if .Values.global.blockRemoteProbes }}

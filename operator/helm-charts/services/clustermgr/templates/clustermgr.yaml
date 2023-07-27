@@ -30,7 +30,7 @@ spec:
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
-        app.kubernetes.io/part-of: non-mediation
+        app.kubernetes.io/part-of: mediation
     spec:
 {{- if .Values.global }}
   {{- if or .Values.serviceAccountName .Values.global.serviceAccountName }}

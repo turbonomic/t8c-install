@@ -12,12 +12,23 @@ data:
 {{- if .Values.plugins }}
   plugins: {{ join "," .Values.plugins }}
 {{- end }}
-  grafana.ini: |
   {{- $deploymentMode := index .Values "global" "deploymentMode" | default "_default" }}
     # grafana config generated for deployment mode '{{- $deploymentMode -}}'
-  {{ $iniValues := mergeOverwrite (index .Values "grafana.ini")
-                                  (index .Values "grafana.ini.defaults" "_base")
-                                  (index .Values "grafana.ini.defaults" $deploymentMode) -}}
+  {{ $iniValues := mergeOverwrite 
+        (index .Values "grafana.ini")
+        (index .Values "grafana.ini.defaults" "_base")
+        (index .Values "grafana.ini.defaults" $deploymentMode)
+    -}}
+  {{/* the grafana.ini file needs `host` to include a nonstanard port in host:port format; we
+       cannot supply them separately, which is how they currently appear in $iniValues */}}
+  {{ $port := (and .Values.global (eq .Values.global.deploymentMode "SAAS")) | ternary
+      ((and .Values.global.externalDBName (not .Values.global.externalDbIP)
+            .Values.global.externalDbPort) | default 3306)
+      ((and .Values.global .Values.global.externalTimescaleDBName
+            (not .Values.global.externalTimescaleDBIP)
+            .Values.global.externalTimescaleDBPort) | default 5432) }}
+  {{ $iniValues := set $iniValues.database "host" (printf "%s:%d" $iniValues.database.host $port) }}
+  grafana.ini: |
 {{- range $key, $value := index .Values "grafana.ini" }}
     [{{- $key -}}]
 {{- range $elem, $elemVal := $value }}

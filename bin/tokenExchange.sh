@@ -103,6 +103,7 @@ function ask_user_for_token() {
   done
 }
 
+namespace=""
 login="false"
 token=""
 
