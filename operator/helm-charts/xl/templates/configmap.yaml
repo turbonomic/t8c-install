@@ -235,5 +235,12 @@ data:
         dbSchemaName: suspend
 {{- if .Values.properties }}
     customProperties:
-{{ toYaml .Values.properties | indent 12 }}
+    {{- $config := deepCopy .Values.properties }}
+    {{- if $config.global }}
+    {{- $global := $config.global }}
+    {{- if eq $global.deploymentMode "SAAS" }}
+      {{- $global = set $global "deploymentMode" "HYBRID_SAAS" }}
+    {{- end }}
+    {{- end }}
+{{ toYaml $config | indent 6 }}
 {{- end }}

@@ -21,6 +21,8 @@ thanos_url="http://prometheus-server.${turbo_namespace}:9090/api/v1/query"
 offline_install="false"
 offline_sources_folder="/opt/local/downloads"
 verbose=0
+KUBECTL=${KUBECTL-/usr/local/bin/kubectl}
+kubernetes_min_version=1.19
 
 function timestamp() {
 	date '+%Y-%m-%d %H:%M:%S'
@@ -162,7 +164,20 @@ function create_sources_folder() {
 }
 
 function check_pre_req() {
-  if which wget unzip kubectl unzip >/dev/null
+  if [[ ! -x "$KUBECTL" ]]
+    then
+      ERROR "$KUBECTL is not an executable file"
+      exit 2
+  fi
+  kubernetes_installed_version=$($KUBECTL version -o json | jq -rj '.serverVersion|.major,".",.minor')
+  INFO "Kubernetes version installed:  ${kubernetes_installed_version}"
+  if [[ "${kubernetes_installed_version}" < "${kubernetes_min_version}" ]]
+    then
+      ERROR "Kubernetes version is too low. Update OVA for licence to be installed. Please contact
+       support if more assistance is required."
+      exit 2
+  fi
+  if which wget unzip $KUBECTL unzip >/dev/null
   then
     if [[ "${use_private_docker_registry}" == "true" ]]
     then
@@ -181,22 +196,22 @@ function check_pre_req() {
 
 function check_ls_exists() {
   INFO "Checking if the License Service is already installed"
-  if ! verbose_output_command kubectl get ibmlicensing --all-namespaces
+  if ! verbose_output_command $KUBECTL get ibmlicensing --all-namespaces
   then
     version_installed=""
     INFO "License Service is not installed"
   else
-    version_installed=$(kubectl get IBMLicensing instance --all-namespaces -o jsonpath='{.spec.version}')
+    version_installed=$($KUBECTL get IBMLicensing instance --all-namespaces -o jsonpath='{.spec.version}')
     INFO "License Service seems to be installed with version ${version_installed}."
   fi
 }
 
 function create_namespace() {
-  INFO "Creating licensing namespace ${licensing_namespace} and setting it as context"
-  if ! verbose_output_command kubectl get namespace "${licensing_namespace}"
+  INFO "Creating licensing namespace ${licensing_namespace}"
+  if ! verbose_output_command $KUBECTL get namespace "${licensing_namespace}"
   then
     INFO "Creating namespace ${licensing_namespace}"
-    if ! kubectl create namespace "${licensing_namespace}"
+    if ! $KUBECTL create namespace "${licensing_namespace}"
     then
       ERROR "kubectl command cannot create needed namespace"
       ERROR "make sure you are connected to your cluster where you want to install IBM License Service and have admin permissions"
@@ -278,7 +293,7 @@ function fetch_sources() {
     if [[ "${use_private_docker_registry_creds}" == "true" ]]
     then
       INFO "Creating secret with the registry access token"
-      kubectl create secret -n ${licensing_namespace} docker-registry my-registry-token --docker-server=${my_docker_registry} \
+      $KUBECTL create secret -n ${licensing_namespace} docker-registry my-registry-token --docker-server=${my_docker_registry} \
       --docker-username=${my_docker_registry_username} --docker-password=${my_docker_registry_token} --docker-email=${my_docker_registry_username}
       sed -i -e "/name: ibm-licensing-operator$/{N;s/$/\nimagePullSecrets:\n- name: my-registry-token/}" ${src_folder}/config/rbac/service_account.yaml
     fi
@@ -303,22 +318,22 @@ function apply_yaml() {
     sed -i "s/annotations\['olm.targetNamespaces'\]/namespace/g" ${src_folder}/config/manager/manager.yaml
   fi
   INFO "Adding CRD"
-  kubectl apply -f ${src_folder}/config/crd/bases/operator.ibm.com_ibmlicensings.yaml
-  kubectl apply -f ${src_folder}/config/crd/bases/operator.ibm.com_ibmlicenseservicereporters.yaml
-  kubectl apply -f ${src_folder}/config/crd/bases/operator.ibm.com_ibmlicensingmetadatas.yaml
-  kubectl apply -f ${src_folder}/config/crd/bases/operator.ibm.com_ibmlicensingdefinitions.yaml
-  kubectl apply -f ${src_folder}/config/crd/bases/operator.ibm.com_ibmlicensingquerysources.yaml
+  $KUBECTL apply -f ${src_folder}/config/crd/bases/operator.ibm.com_ibmlicensings.yaml
+  $KUBECTL apply -f ${src_folder}/config/crd/bases/operator.ibm.com_ibmlicenseservicereporters.yaml
+  $KUBECTL apply -f ${src_folder}/config/crd/bases/operator.ibm.com_ibmlicensingmetadatas.yaml
+  $KUBECTL apply -f ${src_folder}/config/crd/bases/operator.ibm.com_ibmlicensingdefinitions.yaml
+  $KUBECTL apply -f ${src_folder}/config/crd/bases/operator.ibm.com_ibmlicensingquerysources.yaml
   INFO "Adding RBAC"
-  kubectl apply -f ${src_folder}/config/rbac/role.yaml
-  kubectl apply -f ${src_folder}/config/rbac/role_operands.yaml
-  kubectl apply -f ${src_folder}/config/rbac/service_account.yaml
-  kubectl apply -f ${src_folder}/config/rbac/role_binding.yaml
+  $KUBECTL apply -f ${src_folder}/config/rbac/role.yaml
+  $KUBECTL apply -f ${src_folder}/config/rbac/role_operands.yaml
+  $KUBECTL apply -f ${src_folder}/config/rbac/service_account.yaml
+  $KUBECTL apply -f ${src_folder}/config/rbac/role_binding.yaml
   INFO "Adding operator"
-  kubectl apply -f ${src_folder}/config/manager/manager.yaml -n ${licensing_namespace}
+  $KUBECTL apply -f ${src_folder}/config/manager/manager.yaml -n ${licensing_namespace}
 }
 
 function create_instance() {
-  if ! verbose_output_command kubectl get IBMLicensing instance -n ${licensing_namespace}
+  if ! verbose_output_command $KUBECTL get IBMLicensing instance -n ${licensing_namespace}
   then
     INFO "Creating the IBM Licensing instance"
     mkdir -p ${src_folder}/config/instance
@@ -372,7 +387,7 @@ EOF
       printf "  imagePullSecrets:\n    - my-registry-token" >> ${src_folder}/config/instance/ibmlicensings_instance.yaml
     fi
     # apply the yaml file for the instance
-    if ! kubectl apply -f ${src_folder}/config/instance/ibmlicensings_instance.yaml -n ${licensing_namespace}
+    if ! $KUBECTL apply -f ${src_folder}/config/instance/ibmlicensings_instance.yaml -n ${licensing_namespace}
     then
       ERROR "Failed to apply IBMLicensing instance at namespace ${licensing_namespace}"
       exit 19
@@ -384,7 +399,7 @@ EOF
 
 function wait_for_ready() {
   INFO "Waiting for the ibm-licensing-operator pod to be ready"
-  kubectl wait --for=condition=ready pod -l name=ibm-licensing-operator -n ${licensing_namespace}
+  $KUBECTL wait --for=condition=ready pod -l name=ibm-licensing-operator -n ${licensing_namespace}
   INFO "Checking the ibm-licensing-service-instance status"
   retries=36
   ibmlicensing_phase=""
@@ -396,7 +411,7 @@ function wait_for_ready() {
       sleep 30
     fi
     retries=$((retries - 1))
-    ibmlicensing_phase=$(kubectl get IBMLicensing instance -o jsonpath='{.status..phase}' -n ${licensing_namespace} 2>/dev/null)
+    ibmlicensing_phase=$($KUBECTL get IBMLicensing instance -o jsonpath='{.status..phase}' -n ${licensing_namespace} 2>/dev/null)
     if [ "${ibmlicensing_phase}" == "Failed" ]
     then
       ERROR "Problem during installation of IBMLicensing, try running script again when fixed."
@@ -416,7 +431,7 @@ function wait_for_ready() {
 }
 
 function show_token() {
-  if ! licensing_token=$(kubectl get secret ibm-licensing-token -o jsonpath='{.data.token}' -n "${licensing_namespace}" | base64 -d) || [ "${licensing_token}" == "" ]
+  if ! licensing_token=$($KUBECTL get secret ibm-licensing-token -o jsonpath='{.data.token}' -n "${licensing_namespace}" | base64 -d) || [ "${licensing_token}" == "" ]
   then
     WARN "Could not get ibm-licensing-token in ${licensing_namespace}, something might be wrong"
   else
@@ -427,33 +442,33 @@ function show_token() {
 function uninstall() {
   INFO "Uninstalling ibm-licensing-instance"
   INFO "Deleting the operator deployment"
-  kubectl delete deployment ibm-licensing-operator -n ${licensing_namespace}
+  $KUBECTL delete deployment ibm-licensing-operator -n ${licensing_namespace}
   INFO "Deleting the role-based access control (RBAC) for operand"
-  kubectl delete RoleBinding ibm-license-service -n ${licensing_namespace}
-  kubectl delete RoleBinding ibm-license-service-restricted -n ${licensing_namespace}
-  kubectl delete ClusterRoleBinding ibm-license-service
-  kubectl delete ClusterRoleBinding ibm-license-service-restricted
-  kubectl delete ClusterRoleBinding ibm-licensing-default-reader
-  kubectl delete ServiceAccount ibm-license-service -n ${licensing_namespace}
-  kubectl delete ServiceAccount ibm-license-service-restricted -n ${licensing_namespace}
-  kubectl delete ServiceAccount ibm-licensing-default-reader -n ${licensing_namespace}
-  kubectl delete Role ibm-license-service -n ${licensing_namespace}
-  kubectl delete Role ibm-license-service-restricted -n ${licensing_namespace}
-  kubectl delete ClusterRole ibm-license-service
-  kubectl delete ClusterRole ibm-license-service-restricted
-  kubectl delete ClusterRole ibm-licensing-default-reader
+  $KUBECTL delete RoleBinding ibm-license-service -n ${licensing_namespace}
+  $KUBECTL delete RoleBinding ibm-license-service-restricted -n ${licensing_namespace}
+  $KUBECTL delete ClusterRoleBinding ibm-license-service
+  $KUBECTL delete ClusterRoleBinding ibm-license-service-restricted
+  $KUBECTL delete ClusterRoleBinding ibm-licensing-default-reader
+  $KUBECTL delete ServiceAccount ibm-license-service -n ${licensing_namespace}
+  $KUBECTL delete ServiceAccount ibm-license-service-restricted -n ${licensing_namespace}
+  $KUBECTL delete ServiceAccount ibm-licensing-default-reader -n ${licensing_namespace}
+  $KUBECTL delete Role ibm-license-service -n ${licensing_namespace}
+  $KUBECTL delete Role ibm-license-service-restricted -n ${licensing_namespace}
+  $KUBECTL delete ClusterRole ibm-license-service
+  $KUBECTL delete ClusterRole ibm-license-service-restricted
+  $KUBECTL delete ClusterRole ibm-licensing-default-reader
   INFO "Deleting the role-based access control (RBAC) for operator"
-  kubectl delete RoleBinding ibm-licensing-operator -n ${licensing_namespace}
-  kubectl delete ClusterRoleBinding ibm-licensing-operator
-  kubectl delete ServiceAccount ibm-licensing-operator -n ${licensing_namespace}
-  kubectl delete Role ibm-licensing-operator -n ${licensing_namespace}
-  kubectl delete ClusterRole ibm-licensing-operator
+  $KUBECTL delete RoleBinding ibm-licensing-operator -n ${licensing_namespace}
+  $KUBECTL delete ClusterRoleBinding ibm-licensing-operator
+  $KUBECTL delete ServiceAccount ibm-licensing-operator -n ${licensing_namespace}
+  $KUBECTL delete Role ibm-licensing-operator -n ${licensing_namespace}
+  $KUBECTL delete ClusterRole ibm-licensing-operator
   INFO "Deleting the Custom Resource Definition (CRD)"
-  kubectl delete CustomResourceDefinition ibmlicensings.operator.ibm.com
-  kubectl delete CustomResourceDefinition ibmlicenseservicereporters.operator.ibm.com
-  kubectl delete CustomResourceDefinition ibmlicensingdefinitions.operator.ibm.com
-  kubectl delete CustomResourceDefinition ibmlicensingmetadatas.operator.ibm.com
-  kubectl delete CustomResourceDefinition ibmlicensingquerysources.operator.ibm.com
+  $KUBECTL delete CustomResourceDefinition ibmlicensings.operator.ibm.com
+  $KUBECTL delete CustomResourceDefinition ibmlicenseservicereporters.operator.ibm.com
+  $KUBECTL delete CustomResourceDefinition ibmlicensingdefinitions.operator.ibm.com
+  $KUBECTL delete CustomResourceDefinition ibmlicensingmetadatas.operator.ibm.com
+  $KUBECTL delete CustomResourceDefinition ibmlicensingquerysources.operator.ibm.com
   if [[ "${use_private_docker_registry}" == "true" ]]
   then
     INFO "Deleting images from private registry"
@@ -461,9 +476,9 @@ function uninstall() {
     docker rmi ${my_docker_registry}/ibm-licensing:${operator_version}
   fi
   INFO "Waiting ibm-licensing-operator pod to terminate"
-  kubectl wait --for=delete pod -l name=ibm-licensing-operator --timeout=60s -n ${licensing_namespace}
+  $KUBECTL wait --for=delete pod -l name=ibm-licensing-operator --timeout=60s -n ${licensing_namespace}
   INFO "Waiting ibm-licensing-service-instance pod to terminate"
-  kubectl wait --for=delete pod -l app.kubernetes.io/name=ibm-licensing-service-instance  \
+  $KUBECTL wait --for=delete pod -l app.kubernetes.io/name=ibm-licensing-service-instance  \
   --timeout=60s -n ${licensing_namespace}
 }
 

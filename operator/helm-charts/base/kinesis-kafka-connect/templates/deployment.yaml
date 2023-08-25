@@ -54,3 +54,7 @@ spec:
             path: "worker.properties"
           - key: "sink.properties"
             path: "sink.properties"
+    {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+    {{- end }}

@@ -3,6 +3,17 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+42.38
+1. Removed SAAS deploymentMode, added logic to convert SAAS to HYBRID_SAAS in configmap.
+2. Enable single class loader for mediation-awscloudbilling to enable metrics.
+3. Update latest crd.yaml version with enable msk block for saas reporting
+4. Sharing turbo_discovered_entities for PLG 
+
+42.37
+1. Enable single class loader for mediation-aws to enable metrics.
+2. Enable passing environment variables to the server-power-modeler via the CR file.
+3. Propagate tolerations from CR into deployments that don't already have them.
+
 42.36
 1. Granted permissions to client-network-service to list Services and OpenShift Routes.
 2. Update prometheus-mysqld-exporter image to v0.14.0.4. Fix CVE-2023-29404
@@ -37,6 +48,7 @@ Operator Versions
 6. Enable server-power-modeler by default.
 7. Update prometheus kafka adapter image to v1.8.0.3, fix for CVE-2023-24540
 8. Allow specification of security context in prometheus.server CR file section.
+9. Add saas reporting export through msk
 
 42.32
 1. Add properties in mediation-hyperv and mediation-vmm pods to support proxy mode.

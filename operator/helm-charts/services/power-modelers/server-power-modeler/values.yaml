@@ -14,29 +14,17 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-env:
-  - name: component_type
-    value: server-power-modeler
-  - name: instance_id
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.name
-  - name: HISTORY_BASE_URL
-    value: http://history:8080
-  - name: REPOSITORY_BASE_URL
-    value: http://repository:8080
-  - name: LOG_CONFIG
-    value: logger.conf
+defaultEnv:
+  - name: LOG_LEVEL
+    value: INFO
+  - name: INITIAL_DELAY_MINUTES
+    value: 60
   - name: ONE_SHOT_EXEC
     value: 0
-  - name: SLEEP_DURATION
+  - name: SLEEP_DURATION_MINUTES
     value: 1440
-  - name: clustermgr_host
-    value: clustermgr
-  - name: clustermgr_port
-    value: "8080"
-  - name: kafkaServers
-    value: kafka:9092
+  - name: IDLE_FRAC
+    value: 0.3
 resources:
   limits:
     #  cpu: 100m

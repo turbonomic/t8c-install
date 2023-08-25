@@ -659,23 +659,6 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
-              kinesis-kafka-connect:
-                properties:
-                  enabled:
-                    description: Enable the Kinesis connector
-                    type: boolean
-                  connector:
-                    properties:
-                      config:
-                        description: Kinesis connector configuration overrides
-                        type: object
-                        x-kubernetes-preserve-unknown-fields: true
-                    type: object
-                  resources:
-                    description: component resource configuration
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                type: object
               metrics-processor:
                 properties:
                   annotations:
@@ -700,6 +683,23 @@ spec:
                   serviceAccountName:
                     description: component serviceAccountName
                     type: string
+                type: object
+              kinesis-kafka-connect:
+                properties:
+                  enabled:
+                    description: Enable the Kinesis connector
+                    type: boolean
+                  connector:
+                    properties:
+                      config:
+                        description: Kinesis connector configuration overrides
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                    type: object
+                  resources:
+                    description: component resource configuration
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
                 type: object
               influxdb:
                 properties:
@@ -829,7 +829,7 @@ spec:
                     description: |-
                       true if nginx is acting as primary ingress for the appliance (typical of OVA installations),
                       as opposed to being downstream of some other ingress mechanism as in something like an
-                      OpenShift deployment
+                      OpenShift deployemnt
                     type: boolean
                   insecureHttpOnly:
                     description: |-
@@ -1611,6 +1611,12 @@ spec:
                   enabled:
                     description: Enable AWS mediation
                     type: boolean
+                  metrics:
+                    properties:
+                      enabled:
+                        description: Enable AWS metrics adapters
+                        type: boolean
+                    type: object
                 type: object
               awslambda:
                 properties:
@@ -1623,6 +1629,18 @@ spec:
                   enabled:
                     description: Enable Azure mediation
                     type: boolean
+                  billing:
+                    properties:
+                      enabled:
+                        description: Enable Azure mediation
+                        type: boolean
+                    type: object
+                  infra:
+                    properties:
+                      enabled:
+                        description: Enable Azure infra mediation
+                        type: boolean
+                    type: object
                 type: object
               baremetal:
                 properties:
@@ -1659,6 +1677,12 @@ spec:
                   enabled:
                     description: Enable GCP mediation
                     type: boolean
+                  infra:
+                    properties:
+                      enabled:
+                        description: Enable GCP infra mediation
+                        type: boolean
+                    type: object
                 type: object
               hds:
                 properties:
@@ -1694,12 +1718,6 @@ spec:
                 properties:
                   enabled:
                     description: Enable IBM PowerVM mediation
-                    type: boolean
-                type: object
-              server-power-modeler:
-                properties:
-                  enabled:
-                    description: Enable Server power modeler
                     type: boolean
                 type: object
               ibmstorage-flashsystem:
@@ -2570,6 +2588,43 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
+              server-power-modeler:
+                properties:
+                  enabled:
+                    description: Enable Server power modeler
+                    type: boolean
+                  annotations:
+                    description: component specific pod annotations list
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  env:
+                    description: component environment variable
+                    type: array
+                    items:
+                      type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  image:
+                    description: component specific image options
+                    properties:
+                      repository:
+                        description: component container registry and repository name
+                        type: string
+                      tag:
+                        description: component container tag
+                        type: string
+                      pullPolicy:
+                        description: component image pull policy
+                        type: string
+                    type: object
+                  resources:
+                    description: component resource configuration
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  serviceAccountName:
+                    description: component serviceAccountName
+                    type: string
+                type: object
+
 
               # Resources limits - Probes
               mediation-actionscript:
@@ -3388,57 +3443,7 @@ spec:
                     description: component serviceAccountName
                     type: string
                 type: object
-              mediation-azureinfra:
-                properties:
-                  annotations:
-                    description: component specific pod annotations list
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  env:
-                    description: component environment variable
-                    type: array
-                    items:
-                      type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  image:
-                    description: component specific image options
-                    properties:
-                      repository:
-                        description: component container registry and repository name
-                        type: string
-                      tag:
-                        description: component container tag
-                        type: string
-                      pullPolicy:
-                        description: component image pull policy
-                        type: string
-                    type: object
-                  javaBaseOptions:
-                    description: java base options override
-                    type: string
-                  javaComponentOptions:
-                    description: java component options
-                    type: string
-                  javaDebugOptions:
-                    description: java debug options override
-                    type: string
-                  javaMaxRAMPercentage:
-                    description: java max RAM percentage override
-                    type: string
-                  javaOptions:
-                    description: java options override
-                    type: string
-                  debug:
-                    description: component debug
-                    type: boolean
-                  resources:
-                    description: component resource configuration
-                    type: object
-                    x-kubernetes-preserve-unknown-fields: true
-                  serviceAccountName:
-                    description: component serviceAccountName
-                    type: string
-                type: object
+              # enable new metrics adapter component.
               metrics-adapter-aws-cloudwatch:
                 properties:
                   annotations:
@@ -3468,6 +3473,57 @@ spec:
                         type: string
                     type: object
                     x-kubernetes-preserve-unknown-fields: true
+                  javaBaseOptions:
+                    description: java base options override
+                    type: string
+                  javaComponentOptions:
+                    description: java component options
+                    type: string
+                  javaDebugOptions:
+                    description: java debug options override
+                    type: string
+                  javaMaxRAMPercentage:
+                    description: java max RAM percentage override
+                    type: string
+                  javaOptions:
+                    description: java options override
+                    type: string
+                  debug:
+                    description: component debug
+                    type: boolean
+                  resources:
+                    description: component resource configuration
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  serviceAccountName:
+                    description: component serviceAccountName
+                    type: string
+                type: object
+              mediation-azureinfra:
+                properties:
+                  annotations:
+                    description: component specific pod annotations list
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  env:
+                    description: component environment variable
+                    type: array
+                    items:
+                      type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  image:
+                    description: component specific image options
+                    properties:
+                      repository:
+                        description: component container registry and repository name
+                        type: string
+                      tag:
+                        description: component container tag
+                        type: string
+                      pullPolicy:
+                        description: component image pull policy
+                        type: string
+                    type: object
                   javaBaseOptions:
                     description: java base options override
                     type: string
@@ -5620,6 +5676,9 @@ spec:
                               log level for winrm-proxy server, eg, debug, info,
                               waring, error
                             type: string
+                          logPrefix:
+                            description: prefix for log
+                            type: string
                           serverWorker:
                             description: how many request workers running in winrm-proxy server
                             type: integer
@@ -6120,6 +6179,9 @@ spec:
                         type: string
                       openIdJwkSetUri:
                         description: URI for the SSO provider JWK certificate endpoint
+                        type: string
+                      trialExpirationTime:
+                        description: For SAAS_TRIAL deploymentMode, when does the trial expire, in ISO 8601 Format
                         type: string
                     type: object
                     x-kubernetes-preserve-unknown-fields: true

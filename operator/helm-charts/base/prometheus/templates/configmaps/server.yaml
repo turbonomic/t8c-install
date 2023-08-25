@@ -35,7 +35,7 @@ data:
           region: {{ ($root.Values.global.telemetry.secret | b64dec | fromYaml).kinesis_region }}
         write_relabel_configs:
           - source_labels: [ '__name__' ]
-            regex: 'turbo_api_calls_total|turbo_targets|turbo_actions|turbo_plans_total|turbo_policies'
+            regex: 'turbo_discovered_entities|turbo_api_calls_total|turbo_targets|turbo_actions|turbo_plans_total|turbo_policies'
             action: 'keep'
         queue_config:
 {{ toYaml $root.Values.global.telemetry.plg.queue_config | indent 10 }}

@@ -244,9 +244,9 @@ spec:
       securityContext:
 {{ toYaml .Values.server.securityContext | indent 8 }}
     {{- end }}
-    {{- if .Values.server.tolerations }}
+    {{- if .Values.global.tolerations }}
       tolerations:
-{{ toYaml .Values.server.tolerations | indent 8 }}
+{{ toYaml .Values.global.tolerations | indent 8 }}
     {{- end }}
     {{- if .Values.server.affinity }}
       affinity:
