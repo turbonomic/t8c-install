@@ -53,6 +53,19 @@ spec:
         - name: {{ .Chart.Name }}
           image: {{ template "image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- $env := dict }}
+            {{- range $entry := .Values.env }}
+            - name: {{ $entry.name }}
+              value: {{ $entry.value | quote }}
+            {{- $_ := set $env $entry.name $entry.value }}
+            {{- end }}
+            {{- range $entry := .Values.defaultEnv }}
+            {{- if not (get $env $entry.name) }}
+            - name: {{ $entry.name }}
+              value: {{ $entry.value | quote }}
+            {{- end }}
+            {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -61,7 +74,7 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+    {{- if .Values.global.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{ toYaml .Values.global.tolerations | indent 8 }}
+    {{- end }}

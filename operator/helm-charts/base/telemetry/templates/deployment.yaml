@@ -73,4 +73,8 @@ spec:
             path: "sink.properties"
           - key: "connect-log4j.properties"
             path: "connect-log4j.properties"
+    {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+    {{- end }}
 {{- end }}

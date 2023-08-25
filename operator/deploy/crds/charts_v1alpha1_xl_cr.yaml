@@ -19,7 +19,7 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: icr.io/cpopen/turbonomic
-    tag: 8.9.5
+    tag: 8.9.7
     externalIP: 10.0.2.15
     externalDbIP: 10.0.2.15
     externalTimescaleDBIP: 10.0.2.15
