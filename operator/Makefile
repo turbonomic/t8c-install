@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 42.36
+VERSION ?= 42.41
 
 # TELEMETRY_SECRET is needed for the operand to send telemetry data to some destination. It's an
 # opaque token specifying both where to send telemetry to and how to authenticate with this

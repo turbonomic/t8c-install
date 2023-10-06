@@ -253,6 +253,10 @@ spec:
         runAsGroup: {{ .Values.global.securityContext.fsGroup | default 1337 }}
         runAsNonRoot: true
       serviceAccountName: t8c-operator
+    {{- if .Values.global.tolerations }}
+      tolerations:
+{{ toYaml .Values.global.tolerations | indent 8 }}
+    {{- end }}
       volumes:
       - configMap:
           name: istio-ca-root-cert

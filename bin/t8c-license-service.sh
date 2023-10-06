@@ -173,7 +173,7 @@ function check_pre_req() {
   INFO "Kubernetes version installed:  ${kubernetes_installed_version}"
   if [[ "${kubernetes_installed_version}" < "${kubernetes_min_version}" ]]
     then
-      ERROR "Kubernetes version is too low. Update OVA for licence to be installed. Please contact
+      ERROR "Kubernetes version is too low. Update OVA for license service to be installed. Please contact
        support if more assistance is required."
       exit 2
   fi

@@ -78,12 +78,7 @@ spec:
               value: "true"
   {{- end }}
 {{- end }}
-            - name: component_type
-              value: suspend
-            - name: instance_id
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
+{{ toYaml .Values.env | indent 12 }}
             - name: SUSPEND_REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -97,26 +92,26 @@ spec:
 {{- end }}
           ports:
             - name: http
-              containerPort: 9093
+              containerPort: 8080
               protocol: TCP
             - name: grpc
               containerPort: 9094
               protocol: TCP
            
           livenessProbe:
-            initialDelaySeconds: 30
+            initialDelaySeconds: 20
             httpGet:
               path: /liveness
-              port: 9093
-            failureThreshold: 3
-            periodSeconds: 30
+              port: 8080
+            failureThreshold: 59
+            periodSeconds: 20
           readinessProbe:
-            initialDelaySeconds: 30
+            initialDelaySeconds: 20
             httpGet:
               path: /readiness
-              port: 9093
-            failureThreshold: 3
-            periodSeconds: 30
+              port: 8080
+            failureThreshold: 59
+            periodSeconds: 20
  
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

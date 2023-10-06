@@ -8,7 +8,7 @@ replicaCount: 1
 
 image:
   repository: icr.io/cpopen/turbonomic/redis
-  tag: 6.1.118
+  tag: 6.1.136
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []

@@ -330,7 +330,7 @@ configmapReload:
     ##
     image:
       repository: icr.io/cpopen/turbonomic/configmap-reload
-      tag: v0.8.0.4
+      tag: v0.11.1
       pullPolicy: IfNotPresent
 
     ## Additional configmap-reload container arguments
@@ -368,7 +368,7 @@ configmapReload:
     ##
     image:
       repository: icr.io/cpopen/turbonomic/configmap-reload
-      tag: v0.8.0.4
+      tag: v0.11.1
       pullPolicy: IfNotPresent
 
     ## Additional configmap-reload container arguments
@@ -462,7 +462,7 @@ nodeExporter:
   ##
   image:
     repository: icr.io/cpopen/turbonomic/node-exporter
-    tag: v1.6.0.1
+    tag: v1.6.0.2
     pullPolicy: IfNotPresent
 
   #nameOverride: ""
@@ -628,7 +628,7 @@ server:
       # Image name will always be "prometheus-kafka-adapter"
       # This is odd -- double check this
       repository: icr.io/cpopen/turbonomic
-      tag: 1.8.0.4
+      tag: 1.8.0.5
       pullPolicy: IfNotPresent
     # Additional arguments to use when starting the prometheus-kafka-adapter process.
     args: []
@@ -668,7 +668,7 @@ server:
   ##
   image:
     repository: icr.io/cpopen/turbonomic/prometheus
-    tag: v2.45.0
+    tag: v2.46.0
     pullPolicy: IfNotPresent
 
   #nameOverride: ""
