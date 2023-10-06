@@ -243,6 +243,9 @@ spec:
     {{- if .Values.server.securityContext }}
       securityContext:
 {{ toYaml .Values.server.securityContext | indent 8 }}
+    {{- else if .Values.global.securityContext }}
+      securityContext:
+{{ toYaml .Values.global.securityContext | indent 8 }}
     {{- end }}
     {{- if .Values.global.tolerations }}
       tolerations:

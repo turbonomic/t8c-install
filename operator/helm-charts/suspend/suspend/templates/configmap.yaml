@@ -13,9 +13,10 @@ data:
     pmcenv: dev
     urlscheme: http
     urlhost: 0.0.0.0
-    urlport: 9093
+    urlport: 8080
     grpcport: 9094
     namespace: {{ .Release.Namespace }}
+    enableconsulregistration: true
     logging:
       level: info
     kafka:

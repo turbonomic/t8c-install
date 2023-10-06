@@ -22,14 +22,10 @@ env:
     valueFrom:
       fieldRef:
         fieldPath: metadata.name
-  - name: clustermgr_host
-    value: clustermgr
-  - name: clustermgr_port
-    value: "8080"
-  - name: kafkaServers
-    value: kafka:9092
-  - name: redisServers
-    value: xl-release-redis-master:6379
+  - name: instance_ip
+    valueFrom:
+      fieldRef:
+        fieldPath: status.podIP
 
 customizeConfigMap: false
 
@@ -61,7 +57,7 @@ service:
       protocal: TCP
     - name: http
       targetPort: http
-      port: 9093
+      port: 8080
       protocal: TCP
 ingress:
   enabled: false

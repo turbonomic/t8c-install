@@ -35,6 +35,8 @@ env:
     value: clustermgr
   - name: clustermgr_port
     value: "8080"
+  - name: SINGLE_CLASS_LOADER
+    value: "1"
 
 resources:
   limits:

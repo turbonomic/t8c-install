@@ -29,7 +29,7 @@ versionTag=$(grep 'tag' /opt/turbonomic/kubernetes/operator/deploy/crds/charts_v
 versionTag=${versionTag/-SNAPSHOT/}
 currentTag=$(echo ${versionTag} | sed 's/\.//g')
 updateTag=$(echo ${turboVersion} | sed 's/\.//g')
-if [[ "${updateTag}" < "${currentTag}" ]] || [[ "${updateTag}" = "${currentTag}" ]]
+if [[ "${updateTag}" -lt "${currentTag}" ]] || [[ "${updateTag}" -eq "${currentTag}" ]]
 then
   echo "Exiting....."
   echo "Ensure that the OpsManager is upgraded to a newer version than the current version"

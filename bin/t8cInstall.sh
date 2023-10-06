@@ -367,7 +367,6 @@ echo "######################################################################"
 echo "                   Operator Installation                              "
 echo "######################################################################"
 # See if the operator has an external ip
-sed -i "s/tag:.*/tag: ${turboVersion}/g" ${chartsFile}
 grep -r "externalIP:" ${chartsFile} > /dev/null 2>&1
 result="$?"
 if [ $result -ne 0 ]; then

@@ -141,7 +141,9 @@ global:
                         turbo_suspendable_entities|\
                         turbo_schedule_overrides|\
                         turbo_timespan_schedules|\
-                        turbo_managed_workloads_count"
+                        turbo_managed_workloads_count|\
+                        turbo_cloud_service_quantity|\
+                        turbo_cloud_service_cost"
     # Specifies which labels will be removed by the telemetry scrubber. This is a
     # space-delimited list.
     scrubbedLabels: "customer_id customer_domain"
@@ -384,6 +386,6 @@ xtremio:
 xen:
   enabled: false
 metadata:
-  enabled: false
+  enabled: true
 metrics-processor:
   enabled: false

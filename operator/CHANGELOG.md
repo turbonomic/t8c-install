@@ -3,11 +3,37 @@ T8C-Operator Changelog
 
 Operator Versions
 ---------------------
+
+42.41
+1. populated new env variable for suspend
+2. switched suspend http port to 8080
+3. Add config for enabling consul registration for suspend service.
+4. Increased readiness and liveness timeout for suspend to 20 minutes.
+
+42.40
+1. Enable single class loader for mediation-azurebilling and  mediation-gcpbilling to enable 
+   metrics.
+2. Bump prometheus to v2.46.0 to address CVE-2023-39533.
+3. Rebuild configmap-reload v0.11.1 using golang 1.20.7 to address CVE-2023-39533.
+4. Update prometheus kafka adapter image to v1.8.0.5, fix for CVE-2023-39533.
+5. Update prometheus-mysqld-exporter image to v0.14.0.5. Fix for CVE-2023-39533.
+6. update prometheus/node_exporter image to v1.6.0.2. Fix for CVE-2023-39533.
+7. Updated grafana deployment to include tolerations from CR.
+8. Set MetadataComponent to be enabled by default.
+9. Import kube-state-metrics charts from prometheus-community/helm-charts on
+   github. Propagate tolerations from CR to the kube-state-metrics and istio deployments.
+10. The prometheus-server pod will use global.securityContext if present
+11. Whitelisted "turbo_cloud_service_quantity" and "turbo_cloud_service_cost" metrics.
+
+
+42.39
+1. Bump prometheus to v2.46.0 to address CVE-2023-39533.
+2. Bump redis version to 6.1.136 to address CVE-2023-3899. 
 42.38
 1. Removed SAAS deploymentMode, added logic to convert SAAS to HYBRID_SAAS in configmap.
 2. Enable single class loader for mediation-awscloudbilling to enable metrics.
 3. Update latest crd.yaml version with enable msk block for saas reporting
-4. Sharing turbo_discovered_entities for PLG 
+4. Sharing turbo_discovered_entities for PLG
 
 42.37
 1. Enable single class loader for mediation-aws to enable metrics.
