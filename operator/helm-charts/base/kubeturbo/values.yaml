@@ -57,6 +57,27 @@ HANodeConfig:
 #   daemonPodNamespaces2: OpenShift
 #   daemonPodNamePatterns: .*ignorePod.*
 
+# Flag system workloads such as those defined in kube-system, openshift-system, etc.
+# Kubeturbo will not generate actions for workloads that match the supplied patterns.
+# systemWorkloadDetectors:
+  # A list of regular expressions that match the namespace names for system workloads.
+  # namespacePatterns:
+  # - .*-system
+  # - openshift-.*
+
+# Identity operator-controlled workloads by name or namespace using regular expressions
+# exclusionDetectors:
+  # A list of operator-controlled Workload Controllers. Workload Controllers that 
+  # match the supplied names will not have actions generated against them.
+  # operatorControlledWorkloadsPatterns:
+  # - example-.*
+  # - .*-example
+  # A list of namespaces containing operator-controlled Workload Controllers. Workload
+  # Controllers deployed within the following namespaces will not have actions generated
+  # against them.
+  # operatorControlledNamespacePatterns:
+  # - .*-example.*
+
 args:
   # logging level
   logginglevel: 2
