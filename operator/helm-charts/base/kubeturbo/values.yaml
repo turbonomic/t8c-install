@@ -21,7 +21,7 @@ roleName: "cluster-admin"
 
 # Turbo server version and address
 serverMeta:
-  version: 8.0
+  version: 8.10
   turboServer: http://topology-processor:8080
 #  proxy: http://username:password@proxyserver:proxyport
 
@@ -66,20 +66,19 @@ systemWorkloadDetectors:
   - openshift-.*
   - cattle.*
 
-# Identity operator-controlled workloads by name or namespace using regular expressions
+# List operator-controlled workloads by name or namespace (using regular expressions)
+# that should be excluded from the operator-controlled WorkloadController resize policy. 
+# By default, matching workloads will generate actions that are not in Recommend mode.
 # exclusionDetectors:
   # A list of regular expressions representing operator-controlled Workload Controllers. 
-  # Workload Controllers that match the supplied expression will not have actions generated 
-  # against them.
   # operatorControlledWorkloadsPatterns:
   # - example-.*
   # - .*-example
   # A list of regular expressions representing namespaces containing operator-controlled 
-  # Workload Controllers. Workload Controllers deployed within the matching namespaces 
-  # will not have actions generated against them.
+  # Workload Controllers. 
   # operatorControlledNamespacePatterns:
   # - .*-example.*
-  
+
 args:
   # logging level
   logginglevel: 2
