@@ -68,17 +68,18 @@ systemWorkloadDetectors:
 
 # Identity operator-controlled workloads by name or namespace using regular expressions
 # exclusionDetectors:
-  # A list of operator-controlled Workload Controllers. Workload Controllers that 
-  # match the supplied names will not have actions generated against them.
+  # A list of regular expressions representing operator-controlled Workload Controllers. 
+  # Workload Controllers that match the supplied expression will not have actions generated 
+  # against them.
   # operatorControlledWorkloadsPatterns:
   # - example-.*
   # - .*-example
-  # A list of namespaces containing operator-controlled Workload Controllers. Workload
-  # Controllers deployed within the following namespaces will not have actions generated
-  # against them.
+  # A list of regular expressions representing namespaces containing operator-controlled 
+  # Workload Controllers. Workload Controllers deployed within the matching namespaces 
+  # will not have actions generated against them.
   # operatorControlledNamespacePatterns:
   # - .*-example.*
-
+  
 args:
   # logging level
   logginglevel: 2
