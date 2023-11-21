@@ -62,8 +62,9 @@ HANodeConfig:
 # systemWorkloadDetectors:
   # A list of regular expressions that match the namespace names for system workloads.
   # namespacePatterns:
-  # - .*-system
+  # - kube-.*
   # - openshift-.*
+  # - cattle.*
 
 # Identity operator-controlled workloads by name or namespace using regular expressions
 # exclusionDetectors:
