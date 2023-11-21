@@ -59,12 +59,12 @@ HANodeConfig:
 
 # Flag system workloads such as those defined in kube-system, openshift-system, etc.
 # Kubeturbo will not generate actions for workloads that match the supplied patterns.
-# systemWorkloadDetectors:
+systemWorkloadDetectors:
   # A list of regular expressions that match the namespace names for system workloads.
-  # namespacePatterns:
-  # - kube-.*
-  # - openshift-.*
-  # - cattle.*
+  namespacePatterns:
+  - kube-.*
+  - openshift-.*
+  - cattle.*
 
 # Identity operator-controlled workloads by name or namespace using regular expressions
 # exclusionDetectors:
