@@ -51,13 +51,17 @@ data:
         "namespaces": ["{{ .Values.daemonPodDetectors.daemonPodNamespaces1 }}", "{{ .Values.daemonPodDetectors.daemonPodNamespaces2 }}"],
         "podNamePatterns": ["{{ .Values.daemonPodDetectors.daemonPodNamePatterns }}"]
       {{- end }}
+      }
+    }
   turbo-autoreload.config: |-
+    {{- $systemWorkloadDetectors := .Values.systemWorkloadDetectors | default dict }}
+    {{- $exclusionDetectors := .Values.exclusionDetectors | default dict }}
     {
       "systemWorkloadDetectors": {
-        "namespacePatterns": {{ .Values.systemWorkloadDetectors.namespacePatterns | default list | toJson }}
+        "namespacePatterns": {{ $systemWorkloadDetectors.namespacePatterns | default list | toJson }}
       },
       "exclusionDetectors": {
-        "operatorControlledWorkloadsPatterns": {{ .Values.exclusionDetectors.operatorControlledWorkloadsPatterns | default list | toJson }},
-        "operatorControlledNamespacePatterns": {{ .Values.exclusionDetectors.operatorControlledNamespacePatterns | default list | toJson }}
+        "operatorControlledWorkloadsPatterns": {{ $exclusionDetectors.operatorControlledWorkloadsPatterns | default list | toJson }},
+        "operatorControlledNamespacePatterns": {{ $exclusionDetectors.operatorControlledNamespacePatterns | default list | toJson }}
       }
     }
